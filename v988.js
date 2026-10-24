@@ -230,11 +230,11 @@ render=function(){
  const root=document.getElementById('content');if(!root)return;
  if(tab==='text'){
   const first=root.querySelector('#v988FacadeSection');
-  if(first)first.insertAdjacentHTML('beforebegin',V988manualStatus());
+  if(first)first.insertAdjacentHTML('beforebegin',V988manualStatus()+V988manualFinder());
  }
  if(tab==='scenes'){
   const sub=root.querySelector('.bds986-subnav');
-  root.insertAdjacentHTML('afterbegin',V988manualStatus()+V988manualFinder());
+  root.insertAdjacentHTML('afterbegin',V988manualStatus());
   if(sub&&sub.parentElement===root)root.prepend(sub);
  }
 };
