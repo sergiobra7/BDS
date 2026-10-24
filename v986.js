@@ -38,6 +38,8 @@ document.addEventListener('click',e=>{
  const group=BDS986_GROUPS.find(g=>g.id===btn.dataset.bds986Group);if(!group)return;
  BDS986_activeGroup=group.id;tab=group.tabs[0][0];render();
 });
+const BDS986_oldValidate=V972validate;
+V972validate=function(s){if(s?.version==='9.8.6'){if(!s.settings||typeof s.settings!=='object'||!s.v941||!Array.isArray(s.v941.figures)||JSON.stringify(s).length>12000000)throw Error('Ungültiger V9.8.6 Projektstand');return s;}return BDS986_oldValidate(s);};
 const BDS986_oldReadZip=V972readZip;
 V972readZip=function(buffer){
  const entries=BDS986_oldReadZip(buffer);
@@ -52,6 +54,7 @@ V970export=async function(){
  const entries=[];
  for(const name of names){const response=await fetch('./'+name,{cache:'no-store'});if(!response.ok)throw Error('Datei fehlt: '+name);entries.push([name,new Uint8Array(await response.arrayBuffer())]);}
  const snapshot=V970snapshot(); // retain legacy state for lossless migration of older backups
+ snapshot.version='9.8.6';
  entries.push(['PROJECT_SNAPSHOT_V9.8.6.json',JSON.stringify(snapshot,null,2)]);
  entries.push(['PROJECT_SNAPSHOT_V9.7.3.json',JSON.stringify(snapshot,null,2)]);
  const blob=V970zip(entries),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS 9.8.6.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);
