@@ -29,6 +29,8 @@ jobs:
             node --check "$f" || exit 1
           done
           node -e "const fs=require('fs'),a=fs.readFileSync('v988.js','utf8'),h=fs.readFileSync('index.html','utf8');for(const s of ['3 NEUE FASSADEN ANZEIGEN','3 NEUE SZENENIDEEN','SMART SCENE DIRECTOR PRO','BDS987editorUI()','FIGURENBIBLIOTHEK','POSEN · KOMPAKT'])if(!a.includes(s))throw Error('Missing '+s);if(!h.includes('v988.js'))throw Error('V988 not loaded');console.log('Static V9.8.8 checks passed')"
+      - name: Functional V9.8.8 smoke tests
+        run: node tests/v988-smoke.cjs
       - name: Extract latest BDS ZIP
         run: |
           ZIP=$(find . -maxdepth 1 -type f -iname 'BDS*.zip' -printf '%f\n' | sort -V | tail -n 1)
