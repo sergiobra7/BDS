@@ -37,6 +37,8 @@ jobs:
           cp v985.js _site/v985.js
           test -f v986.js
           cp v986.js _site/v986.js
+          test -f v987.js
+          cp v987.js _site/v987.js
           cp index.html _site/index.html
           cp styles.css _site/styles.css
           cp sw.js _site/sw.js
