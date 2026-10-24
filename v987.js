@@ -4,6 +4,11 @@ const BDS987_KEY='bds-v987-editorial';
 let BDS987={main:true,poster:false,notes:{},posterAction:'',wallFinish:'Standard'};
 try{const saved=JSON.parse(localStorage.getItem(BDS987_KEY)||'null');if(saved&&typeof saved==='object')BDS987={...BDS987,...saved,notes:saved.notes||{}}}catch(_){}
 function BDS987save(){localStorage.setItem(BDS987_KEY,JSON.stringify(BDS987))}
+function BDS987posterDefault(){
+ const selected=String((typeof DATA!=='undefined'&&DATA.cities&&typeof scene!=='undefined'&&DATA.cities[Number(scene)-1])||'').trim();
+ const context=selected?' Die Platzierung passt zur gewählten Szene '+selected+'.':'';
+ return 'Der Mantelmann hält das Plakat mit einer Hand sicher seitlich am Rand; die andere Hand bleibt anatomisch natürlich und frei. Das Plakat ist vollständig lesbar, verdeckt weder Gesicht noch Wandtext und befindet sich in einer physikalisch plausiblen Position.'+context+' Der Kopf und Blick bleiben zur ersten roten Wandtextzeile gerichtet.';
+}
 const BDS987_GROUPS=[
  {id:'text',name:'01 TEXTE',tabs:[['text','Wandtext & Plakat']]},
  {id:'scene',name:'02 SZENE',tabs:[['scenes','Szenen'],['facade','Fassaden PRO']]},
@@ -27,7 +32,7 @@ function BDS987figures(){return [{id:'main',label:'Mann mit Zopf',enabled:V941.m
 function BDS987editorUI(){
  const figures=BDS987figures();
  const rows=figures.map(f=>'<div class="bds987-figure"><label class="v941switch"><input type="checkbox" data-bds987-figure="'+escapeHTML(f.id)+'" '+(BDS987[f.id]===true||f.id==='main'&&BDS987.main!==false?'checked':'')+' '+(!f.enabled?'disabled':'')+'><span>'+escapeHTML(f.label)+(f.enabled?'':' (in Figurenbibliothek deaktiviert)')+'</span></label>'+((BDS987[f.id]===true||f.id==='main'&&BDS987.main!==false)&&f.enabled?'<label class="label">Pose, Handlung, Hände, Gegenstände und Interaktion</label><textarea rows="4" data-bds987-note="'+escapeHTML(f.id)+'" placeholder="Wer hält was? Welche Hand? Woran lehnt sich die Figur?">'+escapeHTML(BDS987.notes[f.id]||'')+'</textarea>':'')+'</div>').join('');
- return '<section class="panel" id="bds987Editorial"><h2>EDITORIAL IMPACT PRO</h2><p class="hint">Figuren aus der bestehenden Figurenbibliothek einbeziehen. Individuelle Regie ergänzt die gespeicherte Pose. Zentraler Blickrichtungs-Lock: Mitte der ersten roten Wandtextzeile.</p><details open><summary><b>Figuren aus Figurenbibliothek</b></summary>'+rows+'</details><details '+(BDS987.poster?'open':'')+'><summary><b>Plakat-Handlung</b></summary><label class="v941switch"><input type="checkbox" data-bds987-poster '+(BDS987.poster?'checked':'')+' '+(!V941.signOn?'disabled':'')+'><span>Plakat in Handlung einbeziehen'+(!V941.signOn?' (zuerst unter 01 TEXTE aktivieren)':'')+'</span></label>'+(BDS987.poster&&V941.signOn?'<label class="label">Wer hält das Plakat, woran ist es angelehnt?</label><textarea rows="5" data-bds987-poster-note placeholder="Plakat wird vom Mantelmann mit der rechten Hand gehalten …">'+escapeHTML(BDS987.posterAction||'')+'</textarea>':'')+'</details></section>';
+ return '<section class="panel" id="bds987Editorial"><h2>EDITORIAL IMPACT PRO</h2><p class="hint">Figuren aus der bestehenden Figurenbibliothek einbeziehen. Individuelle Regie ergänzt die gespeicherte Pose. Zentraler Blickrichtungs-Lock: Mitte der ersten roten Wandtextzeile.</p><details open><summary><b>Figuren aus Figurenbibliothek</b></summary>'+rows+'</details><details '+(BDS987.poster?'open':'')+'><summary><b>Plakat-Handlung</b></summary><label class="v941switch"><input type="checkbox" data-bds987-poster '+(BDS987.poster?'checked':'')+' '+(!V941.signOn?'disabled':'')+'><span>Plakat in Handlung einbeziehen'+(!V941.signOn?' (zuerst unter 01 TEXTE aktivieren)':'')+'</span></label>'+(BDS987.poster&&V941.signOn?'<label class="label">Wer hält das Plakat, woran ist es angelehnt?</label><textarea rows="5" data-bds987-poster-note placeholder="Plakat wird vom Mantelmann mit der rechten Hand gehalten …">'+escapeHTML(BDS987.posterAction||BDS987posterDefault())+'</textarea>':'')+'</details></section>';
 }
 const BDS987previousRender=render;
 render=function(){
@@ -47,7 +52,7 @@ document.addEventListener('change',e=>{
  const el=e.target;
  if(el.matches('[data-bds987-wall]')){BDS987.wallFinish=el.value;BDS987save();render()}
  else if(el.matches('[data-bds987-figure]')){BDS987[el.dataset.bds987Figure]=el.checked;BDS987save();render()}
- else if(el.matches('[data-bds987-poster]')){BDS987.poster=el.checked;BDS987save();render()}
+ else if(el.matches('[data-bds987-poster]')){BDS987.poster=el.checked;if(BDS987.poster&&!String(BDS987.posterAction||'').trim())BDS987.posterAction=BDS987posterDefault();BDS987save();render()}
 });
 document.addEventListener('input',e=>{
  const el=e.target;
@@ -64,7 +69,7 @@ prompt=function(){
  if(instructions.length||BDS987.poster&&V941.signOn&&BDS987.posterAction.trim()){
   result+='\n\nEDITORIAL IMPACT PRO — CHARACTER ACTION DIRECTOR:\n';
   for(const item of instructions)result+=item.label+': '+item.note+'\n';
-  if(BDS987.poster&&V941.signOn&&BDS987.posterAction.trim())result+='POSTER PHYSICAL INTERACTION: '+BDS987.posterAction.trim()+'\n';
+  if(BDS987.poster&&V941.signOn)result+='POSTER PHYSICAL INTERACTION: '+(BDS987.posterAction.trim()||BDS987posterDefault())+'\n';
   result+='GLOBAL GAZE LOCK: All active figures must direct head, neck and eyes to the center of the FIRST red wall-text line. Preserve physically plausible anatomy, object contact and unobstructed lettering.\n';
  }
  return result;
