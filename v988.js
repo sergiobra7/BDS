@@ -10,7 +10,7 @@ function V988facades(){
  const all=V94matches().filter(x=>(state.facadeShape==='Auto'||x.shape===state.facadeShape)&&(state.lineFilter==='Auto'||x.lim[0]>=Number(state.lineFilter)));
  const pool=all.length?all:V94matches();
  const page=Array.from({length:Math.min(3,pool.length)},(_,i)=>pool[(V988.facadePage*3+i)%pool.length]);
- return '<section class="panel"><h2>FASSADENFINDER</h2><p class="hint">'+pool.length+' passende Fassaden · 3 je Durchlauf</p><button class="btn primary" data-v988="facades">3 NEUE FASSADEN ANZEIGEN</button>'+page.map(x=>'<div class="item"><strong>'+escapeHTML(x.name)+'</strong><p class="hint">'+x.score+' Punkte</p><button class="btn" data-set="scene" data-val="'+(x.i+1)+'">Diese Fassade auswählen</button></div>').join('')+'</section>';
+ return '<section class="panel"><h2>FASSADENFINDER</h2><p class="hint">'+pool.length+' passende Fassaden · 3 je Durchlauf</p><button class="btn primary" data-v988="facades">3 NEUE FASSADEN ANZEIGEN</button>'+page.map(x=>'<div class="item"><strong>'+escapeHTML(x.name)+'</strong><p class="hint">'+escapeHTML(x.shape)+' • '+x.lim[0]+' Zeilen • bis '+x.lim[2]+' Zeichen/Zeile</p><p class=\"hint\">'+x.score+' Punkte</p><button class="btn" data-set="scene" data-val="'+(x.i+1)+'">Diese Fassade auswählen</button></div>').join('')+'</section>';
 }
 function V988scenes(){
  if(V988.sceneText!==state.wall){V988.sceneText=state.wall;V988.scenePage=0;V988save()}
@@ -134,6 +134,29 @@ render=function(){
   if(title&&opened.has(title))d.open=true;
  });
  window.scrollTo(x,y);requestAnimationFrame(()=>window.scrollTo(x,y));
+};
+
+
+/* A recommendation is not active until its select/apply button is clicked. */
+V988.activeDirector=['facade','smart'].includes(V988.activeDirector)?V988.activeDirector:null;
+function V988activateDirector(which){V988.activeDirector=which;V988save()}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.matches('[data-set="scene"]')&&b.closest('#v988FacadeSection'))V988activateDirector('facade');
+ if(['apply','scene'].includes(b.dataset.v96)&&b.closest('#v988SmartSection'))V988activateDirector('smart');
+},true);
+const V988directorPreviousRender=render;
+render=function(){
+ V988directorPreviousRender();
+ if(tab!=='text')return;
+ const root=document.getElementById('content');if(!root)return;
+ for(const [heading,id,mode] of [['FASSADENFINDER','v988FacadeSection','facade'],['SMART SCENE DIRECTOR PRO','v988SmartSection','smart']]){
+  const h=[...root.querySelectorAll('h2')].find(x=>x.textContent.trim()===heading);
+  const section=h?.closest('section');if(!section)continue;
+  section.id=id;section.dataset.directorActive=String(V988.activeDirector===mode);
+  section.style.opacity=V988.activeDirector&&V988.activeDirector!==mode?'0.65':'1';
+  h.textContent=heading+(V988.activeDirector===mode?' · AKTIV':V988.activeDirector?' · INAKTIV':'');
+ }
 };
 
 render();
