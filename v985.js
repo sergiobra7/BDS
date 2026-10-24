@@ -78,6 +78,8 @@ prompt=function(){
 };
 const BDS985oldSnapshot=V970snapshot;
 V970snapshot=function(){return {...BDS985oldSnapshot(),v985:{...BDS985}}};
+const BDS985oldRestore=V972restore;
+V972restore=function(snapshot){BDS985oldRestore(snapshot);if(snapshot&&snapshot.v985){BDS985={...BDS985,...snapshot.v985};BDS985save();render();}};
 const BDS985oldExport=V970export;
 V970export=async function(){const names=['index.html','styles.css','data.js','app.js','v94.js','v941.js','v942.js','v96scenes.js','v96.js','v961.js','v962.js','v963.js','v964.js','v965.js','v966.js','v967.js','v968.js','v969.js','v970.js','v972.js','v973.js','v974.js','v976.js','v977.js','v978.js','v979.js','v980.js','v981.js','v982.js','v9823.js','v985.js','sw.js','manifest.webmanifest','icon-192.png','icon-512.png'];const entries=[];for(const name of names){const r=await fetch('./'+name,{cache:'no-store'});if(!r.ok)throw Error('Datei fehlt: '+name);entries.push([name,new Uint8Array(await r.arrayBuffer())]);}entries.push(['PROJECT_SNAPSHOT_V9.8.5.json',JSON.stringify(V970snapshot(),null,2)]);const blob=V970zip(entries),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS 9.8.5.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);};
 
