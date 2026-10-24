@@ -2,8 +2,8 @@
 'use strict';
 const BDS985_KEY='bds-v985';
 // Apply defaults only to fresh configuration; never overwrite saved project choices.
-if(!localStorage.getItem('bds-v985-font-default-applied') && V941.fontChoice===V941default.fontChoice){V941.fontChoice='T705';V941save();try{localStorage.setItem('bds-v985-font-default-applied','1')}catch(_){}}
-if(!localStorage.getItem('bds-v985-wall-default-applied')){if(V963.wallPreset===V963default.wallPreset)V963.wallPreset='DIN CONDENSED BLACK';if(V963.wallFinish===V963default.wallFinish)V963.wallFinish='BLACK INDUSTRIAL BRICK · soot-black matte brick with visible joints';V963.signAlign='Zentriert';V963save();try{localStorage.setItem('bds-v985-wall-default-applied','1')}catch(_){}}
+if(!localStorage.getItem(V941KEY) && V941.fontChoice===V941default.fontChoice){V941.fontChoice='T705';V941save();try{localStorage.setItem('bds-v985-font-default-applied','1')}catch(_){}}
+if(!localStorage.getItem(V963KEY)){if(V963.wallPreset===V963default.wallPreset)V963.wallPreset='DIN CONDENSED BLACK';if(V963.wallFinish===V963default.wallFinish)V963.wallFinish='BLACK INDUSTRIAL BRICK · soot-black matte brick with visible joints';V963.signAlign='Zentriert';V963save();try{localStorage.setItem('bds-v985-wall-default-applied','1')}catch(_){}}
 let BDS985={idea:'',makeSign:true};
 try{BDS985={...BDS985,...JSON.parse(localStorage.getItem(BDS985_KEY)||'{}')}}catch(_){}
 function BDS985save(){try{localStorage.setItem(BDS985_KEY,JSON.stringify(BDS985))}catch(_){}}
