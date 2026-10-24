@@ -231,6 +231,7 @@ render=function(){
  if(tab==='text'){
   const first=root.querySelector('#v988FacadeSection');
   if(first)first.insertAdjacentHTML('beforebegin',V988manualStatus()+V988manualFinder());
+  else root.insertAdjacentHTML('afterbegin',V988manualStatus()+V988manualFinder());
  }
  if(tab==='scenes'){
   const sub=root.querySelector('.bds986-subnav');
