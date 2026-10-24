@@ -36,6 +36,7 @@ jobs:
           test -f v985.js
           cp v985.js _site/v985.js
           cp index.html _site/index.html
+          cp sw.js _site/sw.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
