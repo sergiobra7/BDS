@@ -21,7 +21,7 @@ const ctx={
  V941main:()=>'',V941figures:()=>'',V941figHTML:()=>'',V969figureControls:()=>'',poseTab:()=>'',castTab:()=>'',V941oldTextTab:()=>'',V94sceneCode:()=>'',toast:()=>{},
  escapeHTML:x=>String(x),tab:'text'
 };
-vm.createContext(ctx);vm.runInContext(fs.readFileSync('v988.js','utf8'),ctx);
+vm.createContext(ctx);vm.runInContext(fs.readFileSync('v988.js','utf8'),ctx);ctx.V988=vm.runInContext('V988',ctx);
 function ok(name,fn){fn();console.log('PASS '+name)}
 ok('3 facade recommendations',()=>assert.equal((ctx.V988facades().match(/Diese Fassade auswählen/g)||[]).length,3));
 ok('facades rotate',()=>{const a=ctx.V988facades();ctx.V988.facadePage=1;assert.notEqual(a,ctx.V988facades())});
@@ -29,6 +29,6 @@ ok('3 scene recommendations',()=>assert.equal((ctx.V988scenes().match(/Szene \+ 
 ok('scene scores vary by topic',()=>{ctx.V988scenes();assert.notEqual(ctx.V96.proposals[0].score,ctx.V96.proposals[1].score)});
 ok('3 editorial ideas',()=>assert.equal(ctx.V988editorIdeas().length,3));
 ok('editorial includes active figures',()=>assert.equal(ctx.V988editorIdeas()[0].notes.length,2));
-ok('editorial apply changes saved notes',()=>{const b={dataset:{v988Apply:'0'},hasAttribute:x=>x==='data-v988-apply'};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.ok(ctx.BDS987.notes.main?.includes('erste roten Textzeile'));assert.ok(ctx.BDS987.notes.N1)});
+ok('editorial apply changes saved notes',()=>{const b={dataset:{v988Apply:'0'},hasAttribute:x=>x==='data-v988-apply'};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.ok(ctx.BDS987.notes.main?.includes('ersten roten Textzeile'));assert.ok(ctx.BDS987.notes.N1)});
 ok('manual settings unaffected by recommendation refresh',()=>{const original=ctx.state.scene;const b={dataset:{v988:'scenes'},hasAttribute:()=>false};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.equal(ctx.state.scene,original)});
 console.log('V9.8.8 functional smoke checks complete');
