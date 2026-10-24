@@ -39,7 +39,7 @@ function BDS987textUI(){
  const finder='<section class="panel"><h2>FASSADENFINDER</h2><p class="hint">Passende Fassaden zum aktuellen Wandtext. Empfehlungen nach Textänderungen erneut prüfen.</p>'+V94recommendations()+'<details class="v94details"><summary>Vollständiger Text-Checker und Fassadenanalyse</summary>'+V941oldTextTab()+'</details></section>';
  return wall+poster+finder;
 }
-function BDS987figures(){return [{id:'main',label:String(V941.mainSource||'Mann mit Zopf'),enabled:V941.mainEnabled!==false},...V941.figures.map((f,i)=>({id:String(f.id),label:String(f.type||'Figur')+' · N'+(i+1),enabled:f.enabled!==false}))]}
+function BDS987figures(){return [{id:'main',label:'Mann mit Zopf',enabled:V941.mainEnabled!==false},...V941.figures.map((f,i)=>({id:String(f.id),label:String(f.type||'Figur')+' · N'+(i+1),enabled:f.enabled!==false}))]}
 BDS987.posterOwner=BDS987.posterOwner||'main';
 BDS987.posterPosition=BDS987.posterPosition||'auto';
 BDS987.posterHand=BDS987.posterHand||'auto';
