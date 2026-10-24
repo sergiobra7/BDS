@@ -1,10 +1,10 @@
 /* BIR.DUVARSESI V9.8.5 - additive CLEAN STUDIO, no storage reset */
 'use strict';
-const BDS985_KEY='bds-v985';
+const BDS985_KEY='bds-v985'; // legacy snapshot key retained for backward compatibility
 // Apply defaults only to fresh configuration; never overwrite saved project choices.
 if(!localStorage.getItem(V941KEY) && V941.fontChoice===V941default.fontChoice){V941.fontChoice='T705';V941save();try{localStorage.setItem('bds-v985-font-default-applied','1')}catch(_){}}
 if(!localStorage.getItem(V963KEY)){if(V963.wallPreset===V963default.wallPreset)V963.wallPreset='DIN CONDENSED BLACK';if(V963.wallFinish===V963default.wallFinish)V963.wallFinish='BLACK INDUSTRIAL BRICK · soot-black matte brick with visible joints';V963.signAlign='Zentriert';V963save();try{localStorage.setItem('bds-v985-wall-default-applied','1')}catch(_){}}
-let BDS985={idea:'',makeSign:true};
+let BDS985={};
 try{BDS985={...BDS985,...JSON.parse(localStorage.getItem(BDS985_KEY)||'{}')}}catch(_){}
 function BDS985save(){try{localStorage.setItem(BDS985_KEY,JSON.stringify(BDS985))}catch(_){}}
 function BDS985first(){return String(state.wall||'').split('\n').find(x=>x.trim())||''}
@@ -24,15 +24,6 @@ render=function(){
  const root=document.getElementById('content');if(!root)return;
  // Legacy gaze controls are intentionally hidden: gaze always targets the first red line.
  root.querySelectorAll('[data-bds-gaze],[data-v979-gaze],[data-v979-precision],[data-v941-key="mainGaze"],[data-v941-key="gaze"]').forEach(el=>{const label=el.previousElementSibling;if(label&&label.matches('label'))label.hidden=true;el.hidden=true});
- if(tab==='text'){
-  const panel=document.createElement('section');panel.className='panel';panel.id='bds985Creator';
-  panel.innerHTML='<h2>TEXT CREATOR · V9.8.5</h2><p class="hint">Geschichte auf Deutsch oder Türkisch eingeben. Wandtext und optional Plakattext separat erstellen und übernehmen.</p>'+
-   '<label class="label" for="bds985Idea">Deine Geschichte / Beschreibung</label><textarea id="bds985Idea" rows="6" placeholder="Eine kurze Idee oder eine längere Geschichte ...">'+escapeHTML(BDS985.idea)+'</textarea>'+
-   '<label class="check"><input id="bds985MakeSign" type="checkbox" '+(BDS985.makeSign?'checked':'')+'> Plakattext erzeugen</label>'+
-   '<button type="button" class="btn" id="bds985Create">KI-Auftrag für ChatGPT kopieren</button>'+
-   '<p class="hint">GitHub Pages hat keinen sicheren eigenen KI-Dienst. Der Auftrag wird kopiert; das Ergebnis kann in die vorhandenen Textfelder eingefügt werden. Bestehende Texte werden nicht überschrieben.</p>';
-  root.insertBefore(panel,root.firstChild);
- }
  if(tab==='export'){
   const g=BDS985geometry(),p=document.createElement('section');p.className='panel';
   p.innerHTML='<h2>GAZE DIRECTOR · ERSTE ZEILE</h2><p class="hint">Alle aktiven Figuren fixieren ausschließlich die Mitte der ersten roten Wandtextzeile. Bei zu steilem Blickwinkel mehr Abstand erzeugen. Anatomie hat Vorrang vor der gewählten Distanz.</p>'+
@@ -42,20 +33,12 @@ render=function(){
   root.insertBefore(p,root.firstChild);
  }
 };
-document.addEventListener('input',e=>{if(e.target.id==='bds985Idea'){BDS985.idea=e.target.value;BDS985save()}});
-document.addEventListener('change',e=>{if(e.target.id==='bds985MakeSign'){BDS985.makeSign=e.target.checked;BDS985save()}});
-document.addEventListener('click',e=>{if(e.target.id!=='bds985Create')return;
- const idea=BDS985.idea.trim();if(!idea){toast('Bitte zuerst eine Beschreibung eingeben');return}
- const q='Erstelle für BİR.DUVARSESİ aus dieser Beschreibung einen originellen türkischen Wandtext'+(BDS985.makeSign?' und einen eigenständigen passenden türkischen Plakattext':' (ohne Plakattext)')+'. Die Beschreibung darf lang sein; bewahre konkrete Details und den Sinn. Standard: kompakt, bei Bedarf längere Zeilenanzahl. Natürliches Türkisch, spannender Einstieg, prägnante Pointe, keine recycelten Hooks. '+(BDS985.makeSign?'Plakattext separat mit genau vier Zeilen. ':'')+'BESCHREIBUNG:\n'+idea;
- if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(q).then(()=>toast('KI-Auftrag kopiert – in ChatGPT einfügen')).catch(()=>{window.prompt('KI-Auftrag kopieren',q)});
- else window.prompt('KI-Auftrag kopieren',q);
-});
 /* One canonical prompt: no legacy duplicate gaze overrides. Existing source data and pose selection remain intact. */
 prompt=function(){
  const s=state,g=BDS985geometry(),figures=V982activeFigures();
  const profile=V982.profile||'Dokumentarisch';
  const scene=DATA.scenes[s.scene-1]||'',city=DATA.cities[s.scene-1]||'';
- const lines=['BİR.DUVARSESİ V9.8.5 — CLEAN MASTER','OUTPUT: Exactly ONE native '+s.format+' ultra-photorealistic documentary photograph; natural anatomy, real optics, never CGI.',
+ const lines=['BİR.DUVARSESİ V9.8.6 — CLEAN MASTER','OUTPUT: Exactly ONE native '+s.format+' ultra-photorealistic documentary photograph; natural anatomy, real optics, never CGI.',
  'MODE: '+(s.mode==='Bild bearbeiten'?'Edit the supplied original photograph. Preserve all unrelated details.':'Create a new photograph.')+
  ' SCENE: '+scene+'; location '+city+'. Preserve real architecture, safe public access and genuine foreground-to-facade depth.',
  'WALL: '+(V941.wallOn?'ON':'OFF')+'. Selected finish: '+(V963.wallFinish||s.facadeTexture)+'. If BLACK INDUSTRIAL BRICK, use soot-black matte brick with visible joints. No lamps or floodlights. Wall typography selected font '+(V941.fontChoice==='T705'?'DIN CONDENSED BLACK':V941.fontChoice)+', bold matte red, left-aligned lines within a centered text block. Do not center individual wall lines.',
