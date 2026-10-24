@@ -24,6 +24,7 @@ function V988figurePhoto(){const id=String(V988.focus||'main');const f=V941.figu
 const V988officialJobs=['Alevitischer Dede','Anatolischer Dorf-Opa','Anatolische Großmutter','Älterer Arbeiter','Pensionierter Lehrer','Straßenhändler','Älterer Fischer','Traditioneller Handwerker','Älterer Familienvater','Ältere Marktfrau'];
 function V988ensureLibrary(){
  let changed=false;
+ if(!V941.figures.some(f=>f.type==='Mantelmann')){const fig=V941newFigure('Mantelmann');fig.enabled=false;V941.figures.unshift(fig);changed=true;}
  for(const type of V988officialJobs){
   if(V941.figures.some(f=>f.type===type))continue;
   const fig=V941newFigure(type);fig.enabled=false;
