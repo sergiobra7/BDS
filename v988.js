@@ -35,11 +35,20 @@ V988ensureLibrary();
 function V988figurePicker(){
  const figures=BDS987figures();
  const active=figures.filter(f=>f.enabled);
- if(!active.some(f=>f.id===V988.focus)){V988.focus=active[0]?.id||'main';}
+ if(!active.some(f=>f.id===V988.focus))V988.focus=active[0]?.id||'main';
  const tabs=active.map(f=>'<button type="button" class="btn" data-v988-pick="'+escapeHTML(f.id)+'" style="flex:1 1 42%;min-width:130px;'+(V988.focus===f.id?'border-color:#ed3656;background:#46242d;':'')+'">'+escapeHTML(f.label)+'</button>').join('');
- const options=figures.filter(f=>!f.enabled).map(f=>'<button type="button" class="btn" data-v988-add="'+escapeHTML(f.id)+'" style="display:block;width:100%;margin:7px 0;text-align:left">+ '+escapeHTML(f.label)+'</button>').join('');
- return '<div class="v988-active-tabs"><strong>Aktive Figuren · eigene Reiter</strong><div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">'+(tabs||'<p class="hint">Noch keine aktive Figur.</p>')+'</div></div><details class="v94details" id="v988AddLibrary"><summary><b>+ FIGUR HINZUFÜGEN · BIBLIOTHEK ÖFFNEN</b></summary><p class="hint">Figur auswählen, um sie als eigenen Reiter hinzuzufügen.</p>'+ (options||'<p class="hint">Alle Figuren bereits hinzugefügt.</p>')+'</details>';
+ const available=figures.filter(f=>!f.enabled);
+ return '<div class="v988-active-tabs"><strong>Hinzugefügte Figuren · eigene Reiter</strong><div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">'+(tabs||'<p class="hint">Noch keine Figur hinzugefügt.</p>')+'</div></div><label class="label" for="v988AddSelect">+ FIGUR HINZUFÜGEN</label><select id="v988AddSelect" data-v988-add-select style="width:100%;max-width:100%;min-height:48px"><option value="">Figurenbibliothek öffnen …</option>'+available.map(f=>'<option value="'+escapeHTML(f.id)+'">'+escapeHTML(f.label)+'</option>').join('')+'</select>'+(available.length?'':'<p class="hint">Alle Figuren sind bereits hinzugefügt.</p>');
 }
+document.addEventListener('change',e=>{
+ const select=e.target.closest('[data-v988-add-select]');
+ if(!select||!select.value)return;
+ const id=select.value;
+ if(id==='main')V941.mainEnabled=true;
+ else{const f=V941.figures.find(x=>String(x.id)===id);if(f)f.enabled=true;}
+ V988.focus=id;V941save();V988save();render();
+});
+
 document.addEventListener('click',e=>{
  const pick=e.target.closest('[data-v988-pick]');
  if(pick){V988.focus=pick.dataset.v988Pick;V988save();render();return;}
