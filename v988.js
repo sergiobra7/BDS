@@ -229,9 +229,15 @@ render=function(){
  V988manualRender();
  const root=document.getElementById('content');if(!root)return;
  if(tab==='text'){
-  const first=root.querySelector('#v988FacadeSection');
-  if(first)first.insertAdjacentHTML('beforebegin',V988manualStatus()+V988manualFinder());
-  else root.insertAdjacentHTML('afterbegin',V988manualStatus()+V988manualFinder());
+  const headings=[...root.querySelectorAll('h2')];
+  const poster=headings.find(h=>h.textContent.trim()==='PLAKAT')?.closest('section.panel');
+  const markup=V988manualFinder()+V988manualStatus();
+  if(poster)poster.insertAdjacentHTML('afterend',markup);
+  else {
+   const first=root.querySelector('#v988FacadeSection');
+   if(first)first.insertAdjacentHTML('beforebegin',markup);
+   else root.insertAdjacentHTML('afterbegin',markup);
+  }
  }
  if(tab==='scenes'){
   const sub=root.querySelector('.bds986-subnav');
