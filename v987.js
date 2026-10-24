@@ -44,10 +44,18 @@ BDS987.posterOwner=BDS987.posterOwner||'main';
 BDS987.posterPosition=BDS987.posterPosition||'auto';
 BDS987.posterHand=BDS987.posterHand||'auto';
 BDS987.posterManual=!!BDS987.posterManual;
+function BDS987autoFigureNote(f){
+ const record=f.id==='main'?null:V941.figures.find(x=>String(x.id)===f.id);
+ const pose=String(record?.pose||record?.poseName||record?.selectedPose||'').trim();
+ const position=String(record?.position||V941.mainPosition||'Automatisch passend zur Szene');
+ const gaze=String(record?.gaze||V941.mainGaze||'Zur Wand');
+ return f.label+' befindet sich '+position.toLowerCase()+'. '+(pose?'Gewählte Pose: '+pose+'. ':'Die Körperhaltung wird natürlich an die gewählte Szene angepasst. ')+'Kopf, Hals und Blick zur Mitte der ersten roten Wandtextzeile; Hände anatomisch korrekt, keine Zeigegeste. Requisiten nur bei ausdrücklich gewählter Handlung, keine erfundenen Gegenstände. Blickrichtung: '+gaze+'.';
+}
+function BDS987effectiveFigureNote(f){return String(BDS987.notes[f.id]||'').trim()||BDS987autoFigureNote(f)}
 function BDS987editorUI(){
  const figures=BDS987figures();
  const active=figures.filter(f=>f.enabled);
- const rows=active.map(f=>'<div class="bds987-figure"><strong>'+escapeHTML(f.label)+'</strong><label class="label">Pose, Handlung, Hände, Gegenstände und Interaktion</label><textarea rows="4" data-bds987-note="'+escapeHTML(f.id)+'" placeholder="Wer hält was? Welche Hand? Woran lehnt sich die Figur?">'+escapeHTML(BDS987.notes[f.id]||'')+'</textarea></div>').join('');
+ const rows=active.map(f=>'<div class="bds987-figure"><strong>'+escapeHTML(f.label)+'</strong><label class="label">Pose, Handlung, Hände, Gegenstände und Interaktion</label><textarea rows="4" data-bds987-note="'+escapeHTML(f.id)+'" placeholder="Wer hält was? Welche Hand? Woran lehnt sich die Figur?">'+escapeHTML(BDS987effectiveFigureNote(f))+'</textarea></div>').join('');
  return '<section class="panel" id="bds987Editorial"><h2>EDITORIAL IMPACT PRO</h2><p class="hint">Figuren aus der bestehenden Figurenbibliothek einbeziehen. Individuelle Regie ergänzt die gespeicherte Pose. Zentraler Blickrichtungs-Lock: Mitte der ersten roten Wandtextzeile.</p><details open><summary><b>Figuren aus Figurenbibliothek</b></summary>'+rows+'</details><details '+(BDS987.poster?'open':'')+'><summary><b>Plakat-Handlung</b></summary><label class="v941switch"><input type="checkbox" data-bds987-poster '+(BDS987.poster?'checked':'')+' '+(!V941.signOn?'disabled':'')+'><span>Plakat in Handlung einbeziehen'+(!V941.signOn?' (zuerst unter 01 TEXTE aktivieren)':'')+'</span></label>'+(BDS987.poster&&V941.signOn?BDS987posterSelect('posterOwner','Plakat bei wem?',[...(figures[0].enabled?[['main',figures[0].label]]:[]),...figures.filter(f=>f.id!=='main'&&f.enabled).map(f=>[f.id,f.label]),['none','Niemand / freistehend']])+BDS987posterSelect('posterPosition','Plakatposition',[['auto','Automatisch passend zur Pose'],['held','In der Hand'],['floor','Auf dem Boden stehend'],['bank','An Bank angelehnt'],['chair','An Stuhl angelehnt'],['free','Frei positioniert']])+BDS987posterSelect('posterHand','Handwahl',[['auto','Automatisch'],['left','Links'],['right','Rechts'],['both','Beide Hände'],['none','Keine Hand']])+'<label class="v941switch"><input type="checkbox" data-bds987-poster-manual '+(BDS987.posterManual?'checked':'')+'><span>Eigene Beschreibung sperren (manuell)</span></label><label class="label">Plakat-Handlung · '+(BDS987.posterManual?'manuell gesperrt':'automatisch aus Auswahl und Pose')+'</label><textarea rows="5" data-bds987-poster-note '+(!BDS987.posterManual?'readonly':'')+'>'+escapeHTML(BDS987posterEffective())+'</textarea>':'')+'</details></section>';
 }
 const BDS987previousRender=render;
@@ -83,8 +91,8 @@ prompt=function(){
  let result=BDS987previousPrompt();
  if(BDS987.wallFinish!=='Standard')result+='\nWALL MATERIAL OVERRIDE: '+BDS987.wallFinish+'. Authentic matte deep-black brick, real mortar joints, no wall-mounted lights or facade spotlights.\n';
  if(V941.fontChoice==='T706'||V941.fontChoice==='T707')result+='\nTYPOGRAPHY REFERENCE: '+(V941.fontChoice==='T706'?'MONUMENTAL CONDENSED, extremely bold condensed uppercase':'INDUSTRIAL HEAVY, massive bold industrial uppercase')+'. Preserve original Turkish letters, line breaks and matte red pigment.\n';
- const active=BDS987figures().filter(f=>f.enabled&&(f.id==='main'?BDS987.main!==false:BDS987[f.id]===true));
- const instructions=active.map(f=>({label:f.label,note:String(BDS987.notes[f.id]||'').trim()})).filter(x=>x.note);
+ const active=BDS987figures().filter(f=>f.enabled);
+ const instructions=active.map(f=>({label:f.label,note:BDS987effectiveFigureNote(f)})).filter(x=>x.note);
  if(instructions.length||BDS987.poster&&V941.signOn){
   result+='\n\nEDITORIAL IMPACT PRO — CHARACTER ACTION DIRECTOR:\n';
   for(const item of instructions)result+=item.label+': '+item.note+'\n';
