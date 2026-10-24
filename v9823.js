@@ -159,3 +159,61 @@ render();
 const BDS983render=render;
 render=function(){BDS983render();document.title='BİR.DUVARSESİ V9.8.3';const h=document.querySelector('header small');if(h)h.textContent='PREMIUM STUDIO · V9.8.3';const x=document.querySelector('#v979Export h2');if(x)x.textContent=x.textContent.replace(/V9\.8\.2\.4/g,'V9.8.3');};
 render();
+
+/* V9.8.4 — 200 additive four-line architecture presets and consolidated gaze direction.
+   No storage clearing, no replacement of prior scenes, poses, photos or projects. */
+const BDS984_VERSION='9.8.4';
+const BDS984_ROWS="Industrie & Monumental~Zechen-Kohlenwäsche|Kokerei-Seitenfassade|Maschinenfabrik|Stahlwerkshalle|Backstein-Kraftwerk|Walzwerk|Gasometer-Vorplatz|Textilfabrik|Industriespeicher|Lokomotivdepot|Fabrikkomplex|Gießerei-Innenhof|Kanal-Industriehalle|Papierfabrik|Lagerhalle|Brauereifassade|Maschinenhalle|Spinnerei|Hafenwerkstatt|Werfthalle|Ziegelfabrik|Fabrik an Bahngleisen|Produktionshalle|Industriearkade|Hochofen-Seitenfassade~Essen|Dortmund|Duisburg|Oberhausen|Gelsenkirchen|Bochum|Oberhausen|Krefeld|Münster|Hagen|Wuppertal|Solingen|Herne|Düren|Düsseldorf|Köln|Chemnitz|Zwickau|Hamburg|Kiel|Bremen|Hannover|Magdeburg|Berlin|Duisburg\nHafen & Ufer~Speicherstadt-Kanalfront|Hafenspeicher|Hafenbecken-Lagerhaus|Kaianlage|Fischereihafen|Werft vom öffentlichen Ufer|Rheinhafenspeicher|Rheinufer-Industriefassade|Hafenpromenade mit Kran|Zollgebäude|Trave-Lagerhaus|Mainspeicher|Hafenmauer|Hafenplatz mit Hallen|Dockhallen|Kanalspeicher|Alte Dockfront|Hafenspeicher am Fluss|Kaispeicher|Hafenterrasse|Handelshafen|Hafenlagerkomplex|Uferpromenade mit Speicher|Historische Hafenmauer|Galata-Uferfassade~Hamburg|Bremen|Duisburg|Lübeck|Bremerhaven|Rostock|Köln|Düsseldorf|Mannheim|Emden|Lübeck|Frankfurt|Mainz|Rotterdam|Liverpool|Amsterdam|Glasgow|Antwerpen|Rouen|Marseille|Genua|Triest|Thessaloniki|İzmir|Istanbul\nBahn & Verkehr~Bahnhof-Seitenfassade|Bahnhofsvorplatz|Güterbahnhof|Bahnbetriebswerk|Bahnhofsarkaden|Güterhalle|Eisenbahnviadukt|Brückenunterführung|Straßenbahndepot|Bahnhofslagerhalle|Bahnviadukt am Fluss|Historischer Kopfbahnhof|Bahnwerkstatt|Backstein-Depot|Bahnhofshalle-Außenplatz|Historischer Bahnhofskomplex|Gemauerter Brückenpfeiler|Zugdepot|Tramdepot|Bahnwerkstatt am Hafen|Historischer Zugdepot-Hof|Bahnwerkstatt-Innenhof|Bahnhofsmauer|Eisenbahnviadukt am Hafen|Monumentale Bahnhofsseitenwand~Leipzig|Hannover|Berlin|Dresden|Hamburg|Bremen|Wuppertal|Köln|Düsseldorf|Frankfurt|Prag|Budapest|Wien|Warschau|Mailand|Paris|London|Manchester|Lissabon|Porto|Istanbul|Eskişehir|Ankara|İzmir|Konya\nPlätze & Großfassaden~Rathausplatz-Seitenfassade|Marktplatz-Backsteinbau|Messevorplatz|Industriehallenplatz|Kulturzentrum-Seitenwand|Stadtplatz-Verwaltungsbau|Fabrik-Innenhof|Ausstellungshallenplatz|Kongresszentrum-Vorplatz|Messefreifläche|Kulturquartier-Fabrikfassade|Ziegelbau-Platz|Historischer Messeplatz|Kulturgebäude-Vorplatz|Lagerhaus-Platz|Industriebau-Stadtplatz|Kulturplatz-Seitenfassade|Ausstellungsquartier|Industrieplatz|Kulturhof|Krakauer Stadtplatz|Fabrikquartier-Terrasse|Großzügiger Kulturplatz|Historischer Stadtplatz|Turiner Fabrikplatz~Hamburg|Bremen|Hannover|Essen|Dortmund|Münster|Leipzig|Berlin|Frankfurt|Köln|Chemnitz|Nürnberg|Leipzig|Stuttgart|Amsterdam|Rotterdam|Antwerpen|Wien|Prag|Budapest|Krakau|Barcelona|Madrid|Turin|Düsseldorf\nCampus & Kultur~Backstein-Auditorium|Hochschulhof|Campusbibliothek|Universitätsplatz|Museumsquartier|Industriemuseum|Ausstellungshalle|Backsteinbibliothek|Hochschul-Innenhof|Produktionshalle-Museum|Fabrik-Kunstzentrum|Campus-Institutsfassade|Industriemuseum-Hof|Museum-Seitenflügel|Hochschul-Ziegelbau|Depot-Kulturzentrum|Hafenspeicher-Museum|Universitäts-Backsteinbau|Industriekunstzentrum|Kulturhalle|Ausstellungshaus-Hof|Kulturfabrik|Universitäts-Innenhof|Industrie-Kunsthalle|Historischer Hochschulhof~Bochum|Dortmund|Münster|Hannover|Essen|Duisburg|Köln|Hamburg|Bremen|Leipzig|Berlin|Dresden|Chemnitz|Frankfurt|Karlsruhe|Amsterdam|Rotterdam|London|Manchester|Glasgow|Paris|Lyon|Bologna|Mailand|Istanbul\nTürkei & Anatolien~Historische Fabrikmauer|Speicher am Goldenen Horn|Alte Werftfassade|Uferterrasse-Industriebau|Produktionshalle|Hafenlager-Seitenwand|Bahnhofshof|Textilfabrik|Fabrikfassade|Industrieplatz|Maschinenwerkstatt|Bahnhofsvorplatz|Kulturhallenbau|Industriehalle|Historischer Lagerhof|Produktionshalle mit Hof|Fabrikhof|Hafenspeicher|Hafenmauer|Industriequartier|Alte Fabrikhalle|Markthallenbau|Bahnhofslager|Historischer Industriehof|Werkstattfassade~Istanbul|Istanbul|Istanbul|Istanbul|İzmir|İzmir|İzmir|Denizli|Bursa|Kocaeli|Eskişehir|Ankara|Ankara|Konya|Kayseri|Gaziantep|Adana|Mersin|Samsun|Trabzon|Malatya|Şanlıurfa|Sivas|Erzurum|Diyarbakır\nTerrassen & Gegenüber~Aussichtsterrasse am Speicher|Brückenpromenade|Erhöhter Uferweg|Terrassenplatz am Fabrikhof|Öffentlicher Dachgarten|Fußgängerbrücke vor Messehalle|Aussichtsplattform zur Zeche|Hochgelegener Stadtplatz|Flusspromenade|Öffentliche Treppenanlage|Brückenterrasse am Hafen|Erhöhter Kanalweg|Aussichtsterrasse an Docks|Uferstufen am Speicher|Fußgängerbrücke zur Kulturfabrik|Öffentliche Flussterrasse|Erhöhter Platz am Ziegelbau|Uferpromenade zur Werft|Hafenaussichtsterrasse|Brückenterrasse am Speicher|Galata-Brückenperspektive|Goldenes-Horn-Uferterrasse|Erhöhter Fabrikplatz|Küstenpromenade|Terrassenweg am Hafen~Hamburg|Duisburg|Düsseldorf|Essen|Berlin|Hannover|Bochum|Leipzig|Dresden|Köln|Rotterdam|Amsterdam|Liverpool|Antwerpen|Wien|Prag|Budapest|Genua|Marseille|Porto|Istanbul|Istanbul|Bursa|İzmir|Mersin\nSpezialarchitektur~Logistikzentrum-Seitenfassade|Flugzeugwartungshalle|Messehallen-Rückfassade|Historische Markthalle|Alter Schlachthof|Backstein-Siloensemble|Alte Eisfabrik|Elektrizitätswerk|Straßenbahndepot-Seitenwand|Brauereihalle-Innenhof|Wasserturm-Lagerwand|Alte Druckerei|Postverladehalle|Großküchenfabrik|Ehemaliges Kühlhaus|Güterbahnhof-Lagerhalle|Maschinenbauhalle|Industriekulturpark|Historische Ziegelei|Kraftwerksmaschinenhaus|Tabakfabrik-Innenhof|Seifenfabrik|Getreidespeicher|Baumwollfabrik-Innenhof|Werftwerkstatt-Ufer~Hannover|Berlin|Köln|Hamburg|München|Bremen|Berlin|Frankfurt|Leipzig|Dortmund|Essen|Düsseldorf|Köln|Stuttgart|Hamburg|Nürnberg|Mannheim|Duisburg|Münsterland|Berlin|Linz|Marseille|Rotterdam|Adana|Istanbul".split('\n');
+const BDS984_CATALOG=BDS984_ROWS.flatMap((row,group)=>{
+ const [category,names,cities]=row.split('~');
+ const a=names.split('|'),b=cities.split('|');
+ return a.map((name,i)=>({category,name,city:b[i],label:'4 ZEILEN · '+name+' · '+b[i]}));
+});
+if(BDS984_CATALOG.length!==200)throw Error('Expected exactly 200 scene presets');
+const BDS984_START=DATA.scenes.length;
+BDS984_CATALOG.forEach((p,i)=>{
+ DATA.scenes.push(p.label);
+ DATA.cities.push(p.city);
+ DATA.limits.push([4,8,42]);
+ DATA.wide.push(DATA.scenes.length);
+ if(/terrasse|dachgarten|brücke|erhöht|aussicht|uferweg/i.test(p.name))DATA.roof.push(DATA.scenes.length);
+});
+const BDS984baseRender=render;
+render=function(){
+ BDS984baseRender();
+ document.title='BİR.DUVARSESİ V'+BDS984_VERSION;
+ const h=document.querySelector('header small');if(h)h.textContent='PREMIUM STUDIO · V'+BDS984_VERSION;
+ const x=document.querySelector('#v979Export h2');if(x)x.textContent=x.textContent.replace(/V9\.8\.[0-9.]+/g,'V'+BDS984_VERSION);
+ const m=document.querySelector('.metrics b');if(m)m.textContent=DATA.scenes.length;
+ if(tab==='scene'||document.getElementById('v982Scenes')){
+  const old=document.getElementById('bds984Scenes');if(old)old.remove();
+  const root=document.getElementById('content');if(!root)return;
+  const section=document.createElement('section');section.id='bds984Scenes';section.className='panel';
+  const current=state.scene-BDS984_START-1;
+  section.innerHTML='<h2>200 NEUE ORTE · V9.8.4 · VIERZEILER</h2><p class="hint">Zusätzliche Architektur-Presets, alle bisherigen Szenen bleiben erhalten. Realistische öffentliche Standorte und freie Textfassaden beachten.</p><label class="label" for="bds984Pick">Ort / Fassade auswählen</label><select id="bds984Pick"><option value="">— Aus 200 Presets auswählen —</option>'+BDS984_CATALOG.map((p,i)=>'<option value="'+i+'" '+(i===current?'selected':'')+'>'+(i+1)+'. '+escapeHTML(p.label)+'</option>').join('')+'</select><p class="hint">Auswahl wird im bestehenden Projekt gespeichert. Für vier Zeilen freie Fassade ohne verdeckende Fenster, Lampen, Flaggen oder Schilder bevorzugen.</p>';
+  root.insertBefore(section,root.firstChild);
+ }
+};
+document.addEventListener('change',e=>{
+ if(e.target.id!=='bds984Pick'||e.target.value==='')return;
+ state.scene=BDS984_START+Number(e.target.value)+1;
+ try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}
+ render();toast('Neuer Vierzeiler-Ort übernommen');
+});
+const BDS984basePrompt=prompt;
+prompt=function(){
+ let p=BDS984basePrompt().replace(/BİR\.DUVARSESİ V9\.8\.2\.4/g,'BİR.DUVARSESİ V'+BDS984_VERSION);
+ const figures=V982activeFigures();
+ const first=String(state.wall||'').split('\n').find(x=>x.trim())||'';
+ const firstTarget='geometric center of the FIRST RED WALL TEXT LINE ('+first+')';
+ // Replace vague wall-facing gaze in per-figure sections; preserve explicit non-wall targets.
+ p=p.replace(/(GAZE:\s*)Zur Wand\b/gi,'$1'+firstTarget).replace(/(gaze\s+)Zur Wand\b/gi,'$1'+firstTarget);
+ p=p.replace(/(FIRST RED WALL LINE:\s*[^\n]*\n)/g,'$1');
+ const detail=figures.map(f=>{
+  const raw=(V979.manualGaze[f.id]||'').trim()||(f.id==='main'?V941.mainGaze:f.gaze)||'';
+  const reading=/wand|wall|schrift|text|first|zeile/i.test(raw);
+  return 'FIGURE '+f.id+' ('+f.name+'): '+(reading?'EYES TARGET: '+firstTarget+'. From THIS figure’s actual eye position, align both pupils, nose axis, skull and natural neck rotation to that same target; account for independent horizontal displacement and height; position shoulders and torso to avoid extreme neck twisting.':'Preserve the explicitly selected gaze target: '+raw+'.')+' Preserve assigned individual seat/furniture; never merge separate chair and bench. Furniture must independently support the correct figure’s body weight.';
+ }).join('\n');
+ return p+'\nV9.8.4 AUTHORITATIVE GAZE AND FURNITURE OVERRIDE — apply after all generic gaze phrases; do not infer that merely facing the facade means reading the first line.\n'+detail+'\nSCENE QUALITY: Four large lines on a single uninterrupted authentic facade; preserve real architecture and safe public access. No visible lamps, flags, extra signage, or religious symbols. This text is an instruction, not proof of automatic image verification.';
+};
+render();
