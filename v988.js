@@ -26,6 +26,13 @@ const V988previousRender=render;
 render=function(){
  V988previousRender();
  const root=document.getElementById('content');if(!root)return;
+ const posterNote=root.querySelector('[data-bds987-poster-note]');
+ if(posterNote&&!posterNote.value.trim()){
+  const defaultAction=BDS987posterDefault();
+  posterNote.value=defaultAction;
+  BDS987.posterAction=defaultAction;
+  BDS987save();
+ }
  if(tab==='text'){const sub=root.querySelector('.bds986-subnav');root.innerHTML=BDS987textUI().split('<section class="panel"><h2>FASSADENFINDER')[0]+V988facades()+V988scenes()+BDS987editorUI();if(sub)root.prepend(sub)}
  if(tab==='cast'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+'</section>'+(V988.focus==='main'?V941main():V941figures())+(V988.focus==='main'?'<details class="v94details"><summary>Nebenfiguren hinzufügen und verwalten</summary>'+V941figures()+'</details>':'')+(state.opa==='Ja'?'<details class="v94details"><summary>Opa-Regie</summary>'+castTab()+'</details>':'');if(sub)root.prepend(sub)}
  if(tab==='poses'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>POSEN · KOMPAKT</h2>'+V988figurePicker()+V969figureControls(V988.focus)+'</section><details class="v94details"><summary>Weitere Posen und Gruppenoptionen</summary>'+poseTab()+'</details>';if(sub)root.prepend(sub)}
