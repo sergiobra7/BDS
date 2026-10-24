@@ -40,6 +40,18 @@ document.addEventListener('click',e=>{
 });
 const BDS986_oldValidate=V972validate;
 V972validate=function(s){if(s?.version==='9.8.6'){if(!s.settings||typeof s.settings!=='object'||!s.v941||!Array.isArray(s.v941.figures)||JSON.stringify(s).length>12000000)throw Error('Ungültiger V9.8.6 Projektstand');return s;}return BDS986_oldValidate(s);};
+// Rehydrate the wall director after importing storage. Older restore paths update
+// localStorage but leave the in-memory V963 object stale until a full page reload.
+const BDS986_oldRestore=V972restore;
+V972restore=function(snapshot){
+ const before=structuredClone(V963);
+ try{
+  BDS986_oldRestore(snapshot);
+  const raw=localStorage.getItem(V963KEY);
+  if(raw){const parsed=JSON.parse(raw);if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))throw Error('Ungültige Fassadeneinstellungen im Backup');V963={...V963default,...parsed};}
+  render();
+ }catch(err){V963=before;throw err;}
+};
 const BDS986_oldReadZip=V972readZip;
 V972readZip=function(buffer){
  const entries=BDS986_oldReadZip(buffer);
@@ -57,6 +69,7 @@ V970export=async function(){
  snapshot.version='9.8.6';
  entries.push(['PROJECT_SNAPSHOT_V9.8.6.json',JSON.stringify(snapshot,null,2)]);
  entries.push(['PROJECT_SNAPSHOT_V9.7.3.json',JSON.stringify(snapshot,null,2)]);
+ entries.push(['BACKUP_HINWEIS.txt','BIR.DUVARSESI V9.8.6: Einstellungen, Texte und Projekte im JSON-Snapshot. Hochgeladene Referenzbilder aus lokalem Browser-/IndexedDB-Speicher sind NICHT enthalten und muessen separat gesichert werden.']);
  const blob=V970zip(entries),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS 9.8.6.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);
 };
 render();
