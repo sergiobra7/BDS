@@ -120,4 +120,20 @@ document.addEventListener('click',e=>{
  }
 });
 
+
+/* Final UI continuity: stable section identity, not the position of a triangle menu. */
+const V988finalRender=render;
+render=function(){
+ const root=document.getElementById('content');
+ const prevTab=tab,opened=new Map();
+ root?.querySelectorAll('details').forEach(d=>{if(d.open){const title=d.querySelector(':scope > summary')?.textContent?.trim();if(title)opened.set(title,true)}});
+ const x=window.scrollX,y=window.scrollY;
+ V988finalRender();
+ if(tab===prevTab)document.getElementById('content')?.querySelectorAll('details').forEach(d=>{
+  const title=d.querySelector(':scope > summary')?.textContent?.trim();
+  if(title&&opened.has(title))d.open=true;
+ });
+ window.scrollTo(x,y);requestAnimationFrame(()=>window.scrollTo(x,y));
+};
+
 render();
