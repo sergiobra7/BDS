@@ -1,6 +1,9 @@
 /* BIR.DUVARSESI V9.8.5 - additive CLEAN STUDIO, no storage reset */
 'use strict';
 const BDS985_KEY='bds-v985';
+// Apply defaults only to fresh configuration; never overwrite saved project choices.
+if(!localStorage.getItem(V941KEY)){V941.fontChoice='T705';V941save();}
+if(!localStorage.getItem(V963KEY)){V963.wallPreset='DIN CONDENSED BLACK';V963.wallFinish='BLACK INDUSTRIAL BRICK · soot-black matte brick with visible joints';V963.signAlign='Zentriert';V963save();}
 let BDS985={idea:'',makeSign:true};
 try{BDS985={...BDS985,...JSON.parse(localStorage.getItem(BDS985_KEY)||'{}')}}catch(_){}
 function BDS985save(){try{localStorage.setItem(BDS985_KEY,JSON.stringify(BDS985))}catch(_){}}
@@ -56,7 +59,7 @@ prompt=function(){
  'MODE: '+(s.mode==='Bild bearbeiten'?'Edit the supplied original photograph. Preserve all unrelated details.':'Create a new photograph.')+
  ' SCENE: '+scene+'; location '+city+'. Preserve real architecture, safe public access and genuine foreground-to-facade depth.',
  'WALL: '+(V941.wallOn?'ON':'OFF')+'. BLACK INDUSTRIAL BRICK default: authentic soot-black matte industrial brickwork, visible joints, no lamps or floodlights. Use selected facade override when explicitly set. Wall typography DIN CONDENSED BLACK default, bold matte red, left-aligned lines within a centered text block. Do not center individual wall lines.',
- 'WALL FONT CONTROLS: '+(V963.wallPreset||V941.fontChoice||'DIN Condensed Black')+'; '+V941.fontWeight+'; tracking '+V941.fontSpacing+'; line spacing '+V941.fontLineSpacing+'; selected finish '+(V963.wallFinish||s.facadeTexture)+'.',
+ 'WALL FONT CONTROLS: '+(V941.fontChoice==='T705'?'DIN CONDENSED BLACK':(V963.wallPreset||V941.fontChoice||'DIN CONDENSED BLACK'))+'; '+V941.fontWeight+'; tracking '+V941.fontSpacing+'; line spacing '+V941.fontLineSpacing+'; selected finish '+(V963.wallFinish||s.facadeTexture)+'.',
  'BEGIN EXACT WALL TEXT',s.wall||'','END EXACT WALL TEXT',
  'COMPOSITION: '+profile+'. Real open-space separation; maintain plausible architectural scale and selected scene. Camera '+s.camera+'; '+s.lens+' mm; camera distance '+s.distance+' m; '+s.time+'; '+s.weather+'. Honor explicit camera locks.',
  'GAZE DIRECTOR — NON-NEGOTIABLE: Every active figure fixes BOTH pupils on the geometric CENTER of the FIRST RED WALL TEXT LINE: '+(g.first||'[MISSING FIRST LINE]')+'. Never gaze vaguely at the wall, into empty space, toward the camera, or toward another line. From each figure’s own eye position, rotate eyes, skull, neck and, if needed, shoulders and torso anatomically. No extreme neck twist. If close proximity makes this impossible, MOVE THE FIGURE FARTHER AWAY from the facade on physically available safe public ground; preserve architecture and genuine depth. Reframe camera if necessary. Do not invent accessible ground, expand a narrow roof, or break original-photo locks. If no viable viewpoint exists, flag the conflict rather than force impossible anatomy.',
