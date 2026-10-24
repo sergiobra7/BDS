@@ -2,8 +2,8 @@
 'use strict';
 const BDS985_KEY='bds-v985';
 // Apply defaults only to fresh configuration; never overwrite saved project choices.
-if(!localStorage.getItem(V941KEY)){V941.fontChoice='T705';V941save();}
-if(!localStorage.getItem(V963KEY)){V963.wallPreset='DIN CONDENSED BLACK';V963.wallFinish='BLACK INDUSTRIAL BRICK · soot-black matte brick with visible joints';V963.signAlign='Zentriert';V963save();}
+if(!localStorage.getItem('bds-v985-font-default-applied') && V941.fontChoice===V941default.fontChoice){V941.fontChoice='T705';V941save();try{localStorage.setItem('bds-v985-font-default-applied','1')}catch(_){}}
+if(!localStorage.getItem('bds-v985-wall-default-applied')){if(V963.wallPreset===V963default.wallPreset)V963.wallPreset='DIN CONDENSED BLACK';if(V963.wallFinish===V963default.wallFinish)V963.wallFinish='BLACK INDUSTRIAL BRICK · soot-black matte brick with visible joints';V963.signAlign='Zentriert';V963save();try{localStorage.setItem('bds-v985-wall-default-applied','1')}catch(_){}}
 let BDS985={idea:'',makeSign:true};
 try{BDS985={...BDS985,...JSON.parse(localStorage.getItem(BDS985_KEY)||'{}')}}catch(_){}
 function BDS985save(){try{localStorage.setItem(BDS985_KEY,JSON.stringify(BDS985))}catch(_){}}
@@ -23,7 +23,7 @@ render=function(){
  const x=document.querySelector('#v979Export h2');if(x)x.textContent='MASTER-PROMPT · V9.8.5';
  const root=document.getElementById('content');if(!root)return;
  // Legacy gaze controls are intentionally hidden: gaze always targets the first red line.
- root.querySelectorAll('[data-bds-gaze],[data-v979-gaze],[data-v979-precision]').forEach(el=>{const label=el.previousElementSibling;if(label&&label.matches('label'))label.hidden=true;el.hidden=true});
+ root.querySelectorAll('[data-bds-gaze],[data-v979-gaze],[data-v979-precision],[data-v941-key="mainGaze"],[data-v941-key="gaze"]').forEach(el=>{const label=el.previousElementSibling;if(label&&label.matches('label'))label.hidden=true;el.hidden=true});
  if(tab==='text'){
   const panel=document.createElement('section');panel.className='panel';panel.id='bds985Creator';
   panel.innerHTML='<h2>TEXT CREATOR · V9.8.5</h2><p class="hint">Geschichte auf Deutsch oder Türkisch eingeben. Wandtext und optional Plakattext separat erstellen und übernehmen.</p>'+
@@ -58,7 +58,7 @@ prompt=function(){
  const lines=['BİR.DUVARSESİ V9.8.5 — CLEAN MASTER','OUTPUT: Exactly ONE native '+s.format+' ultra-photorealistic documentary photograph; natural anatomy, real optics, never CGI.',
  'MODE: '+(s.mode==='Bild bearbeiten'?'Edit the supplied original photograph. Preserve all unrelated details.':'Create a new photograph.')+
  ' SCENE: '+scene+'; location '+city+'. Preserve real architecture, safe public access and genuine foreground-to-facade depth.',
- 'WALL: '+(V941.wallOn?'ON':'OFF')+'. BLACK INDUSTRIAL BRICK default: authentic soot-black matte industrial brickwork, visible joints, no lamps or floodlights. Use selected facade override when explicitly set. Wall typography DIN CONDENSED BLACK default, bold matte red, left-aligned lines within a centered text block. Do not center individual wall lines.',
+ 'WALL: '+(V941.wallOn?'ON':'OFF')+'. Selected finish: '+(V963.wallFinish||s.facadeTexture)+'. If BLACK INDUSTRIAL BRICK, use soot-black matte brick with visible joints. No lamps or floodlights. Wall typography selected font '+(V941.fontChoice==='T705'?'DIN CONDENSED BLACK':V941.fontChoice)+', bold matte red, left-aligned lines within a centered text block. Do not center individual wall lines.',
  'WALL FONT CONTROLS: '+(V941.fontChoice==='T705'?'DIN CONDENSED BLACK':(V963.wallPreset||V941.fontChoice||'DIN CONDENSED BLACK'))+'; '+V941.fontWeight+'; tracking '+V941.fontSpacing+'; line spacing '+V941.fontLineSpacing+'; selected finish '+(V963.wallFinish||s.facadeTexture)+'.',
  'BEGIN EXACT WALL TEXT',s.wall||'','END EXACT WALL TEXT',
  'COMPOSITION: '+profile+'. Real open-space separation; maintain plausible architectural scale and selected scene. Camera '+s.camera+'; '+g.geo.lens+' mm; camera distance '+s.distance+' m; '+s.time+'; '+s.weather+'. Honor explicit camera locks.',
@@ -71,7 +71,7 @@ prompt=function(){
   lines.push('FIGURE '+f.id+' ('+f.name+'): '+(f.id==='main'?'Ponytail bearded man; preserve supplied face identity if reference is attached.':'Age '+(meta?.age||'selected')+'; clothing '+(meta?.clothes||'selected')+'; preserve supplied identity if available.')+' POSE: '+pose+'. Eyes, head, neck and torso obey the ONE gaze target above. Preserve own independent chair/bench and natural limb support; never merge furniture or hands.');
  });
  lines.push('REFERENCES: '+(s.personRef==='Ja'?'PERSON PHOTO identity lock; ':'')+(s.locationRef==='Ja'?'LOCATION PHOTO architecture lock; ':'')+(s.mode==='Bild bearbeiten'||s.originalRef==='Ja'?'ORIGINAL PHOTO must be attached and protected; ':'')+'Do not invent references.');
- if(V941.signOn)lines.push('PLACARD: one physical stable sign; '+s.signMode+'; '+s.signMaterial+'; '+s.signColor+'; selected placement '+(V964.signPlacement||'foreground')+'; DIN CONDENSED BLACK default; center each line of placard text.','BEGIN EXACT PLACARD TEXT',s.signTextMode==='Ohne Text'?'':(s.signText||'').trim()|| (s.signTextMode==='Wandtext übernehmen'?s.wall:''),'END EXACT PLACARD TEXT');
+ if(V941.signOn)lines.push('PLACARD: one physical stable sign; '+(s.signMode==='Kein Plakat'?'active user-selected placard':s.signMode)+'; '+s.signMaterial+'; '+s.signColor+'; selected placement '+(V964.signPlacement||'foreground')+'; DIN CONDENSED BLACK default; center each line of placard text.','BEGIN EXACT PLACARD TEXT',s.signTextMode==='Ohne Text'?'':(s.signText||'').trim()|| (s.signTextMode==='Wandtext übernehmen'?s.wall:''),'END EXACT PLACARD TEXT');
  else lines.push('PLACARD: DISABLED. No placard.');
  lines.push('QUALITY GATE: Preserve exact Turkish letters and line breaks; physically separate foreground figures and facade; first-line gaze for every figure; natural neck/torso; individual pose and furniture; no streetlights, wall-mounted lamps, flags, religious buildings or symbols, extra signage, or merged anatomy. If the selected scene cannot support the geometry, do not silently invent a solution. This prompt cannot verify the generated image.');
  return lines.join('\n');
