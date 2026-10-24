@@ -69,6 +69,6 @@ prompt=function(){
   lines.push('FIGURE ID '+f.id+' ('+f.name+'): POSE: '+pose+'; GAZE: '+gaze+'. Anatomically realistic head and neck rotation, separate hands and forearms, secure footing. No pointing fingers. Other figures must keep their own instructions.');
  }
  lines.push('PRIORITY: These figure-specific instructions supersede any generic group pose or conflicting earlier posture/gaze descriptions. Preserve scene, camera, manual distances, original Turkish texts and all other selections.');
- return p+'\\n'+lines.join('\\n');
+ return p+'\n'+lines.join('\n');
 };
 render();
