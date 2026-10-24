@@ -1,0 +1,1 @@
+V9.7.5: UI-Reihenfolge direkt unter Wandtext: 1 WO? (5 Szenen) -> 2 WIE? (11 Editorial-Kompositionen) -> 3 WIE WEIT? (REALISM FIRST). Keine Funktionen entfernt. Bestehende heuristische Geometrie und historischer Master-Prompt unverändert; keine neue Realismus-Engine. Statischer Syntax-/Archivtest, kein iPhone-Browsertest.

@@ -1,0 +1,1 @@
+V9.8.1: modern ZIP/JSON import capture, transactional rollback including custom poses and local storage, updated service worker and complete ZIP export. Reference photos are not embedded. Browser/iPhone end-to-end verification not performed.

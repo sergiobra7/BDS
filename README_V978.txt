@@ -1,0 +1,1 @@
+BIR.DUVARSESI V9.7.8: automatic camera-to-wall distance estimated by architecture and figure distances; independent manual camera and figure controls; backup version compatibility 9.6.9–9.7.8; refreshed offline cache. Photos must be attached separately. Estimates are not measured geometry.

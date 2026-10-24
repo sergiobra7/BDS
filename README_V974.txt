@@ -1,0 +1,1 @@
+V9.7.4: UI workflow reorganized under wall text: REALISM FIRST -> WO? scene recommendations -> WIE? editorial compositions. Existing scene, pose and persistence code retained. Geometry remains heuristic; no physical image measurement. The legacy prompt stack is NOT yet replaced by a clean core; do not claim otherwise. Test in browser before replacing deployment.

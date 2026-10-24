@@ -1,0 +1,1 @@
+V9.6.8: Korrektur von V9.6.7. Pose-Metrik dynamisch, Hauptfigur fixiert auf Mann mit Zopf per Upload, neue Nebenfiguren speichern gewähltes Foto als Blob in IndexedDB, Export bietet Foto-Downloads, aktualisierte Cache-Version. Bilder müssen separat beim Bildgenerator angehängt werden; Textprompt kann keine Bilddatei übertragen. Browser-/iPhone-Tests erforderlich.

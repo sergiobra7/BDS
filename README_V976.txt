@@ -1,0 +1,1 @@
+BIR.DUVARSESI V9.7.6 CLEAN CORE. One active prompt; director order WO -> WIE -> WIE WEIT; geometry estimates and relative rooftop elevation; full source ZIP backup. Uploaded reference photos are not bundled. Browser/iPhone functional tests still required.

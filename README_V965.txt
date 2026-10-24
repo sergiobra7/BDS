@@ -1,0 +1,1 @@
+BİR.DUVARSESİ V9.6.5 — Cloudflare Pages. QA-Panel im Export-Reiter. Browser-Speicherung eigener Posen mit JSON-Backup. Foto-Referenzen müssen beim externen Bildgenerator separat angehängt werden. iPhone-Safari-Abnahme nach Deployment erforderlich.

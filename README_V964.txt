@@ -1,0 +1,1 @@
+BİR.DUVARSESİ V9.6.4 — Cloudflare Pages Direct Upload. ZIP entpacken oder hochladen. Originale V9.6.3-Daten bleiben erhalten. Eigene Posen im Browser lokal gespeichert, JSON-Export zur Sicherung nutzen. Hochgeladene Foto-Referenzen müssen beim Bildgenerator separat angehängt werden.

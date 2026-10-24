@@ -1,0 +1,1 @@
+BİR.DUVARSESİ V9.6.7 — universal figure posture/pose, 50 extra poses, custom figure names, optional reference photo, main ponytail identity via original upload. Browser tests required before production release.
