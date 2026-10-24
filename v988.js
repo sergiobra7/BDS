@@ -27,6 +27,13 @@ render=function(){
  V988previousRender();
  const root=document.getElementById('content');if(!root)return;
  const posterNote=root.querySelector('[data-bds987-poster-note]');
+ if(posterNote){
+  const value=String(BDS987.posterAction||'').trim();
+  const outdated=/^Der Mantelmann hält das Plakat mit einer Hand sicher seitlich am Rand/.test(value);
+  if(!value||outdated){BDS987.posterAction=BDS987posterDefault();BDS987save();}
+  posterNote.value=BDS987.posterAction;
+  posterNote.removeAttribute('placeholder');
+ }
  if(posterNote&&!posterNote.value.trim()){
   const defaultAction=BDS987posterDefault();
   posterNote.value=defaultAction;
