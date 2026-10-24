@@ -33,6 +33,9 @@ jobs:
         run: |
           test -f v9823.js
           cp v9823.js _site/v9823.js
+          test -f v985.js
+          cp v985.js _site/v985.js
+          cp index.html _site/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
