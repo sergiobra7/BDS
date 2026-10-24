@@ -33,11 +33,21 @@ function V988ensureLibrary(){
 }
 V988ensureLibrary();
 function V988figurePicker(){
- return '<label class="label">Figurenbibliothek · Figur auswählen und aktivieren</label><div class="v988-figure-list">'+BDS987figures().map(f=>'<div class="v988-figure-entry" style="display:flex;align-items:center;gap:10px;margin:7px 0"><input type="checkbox" aria-label="'+escapeHTML(f.label)+' aktivieren" data-v988-enable="'+escapeHTML(f.id)+'" '+(f.enabled?'checked':'')+'><button type="button" class="btn" data-v988-pick="'+escapeHTML(f.id)+'" style="flex:1;text-align:left;'+(V988.focus===f.id?'border-color:#ed3656;':'')+'">'+escapeHTML(f.label)+'</button></div>').join('')+'</div>';
+ const figures=BDS987figures();
+ const active=figures.filter(f=>f.enabled);
+ if(!active.some(f=>f.id===V988.focus)){V988.focus=active[0]?.id||'main';}
+ const tabs=active.map(f=>'<button type="button" class="btn" data-v988-pick="'+escapeHTML(f.id)+'" style="flex:1 1 42%;min-width:130px;'+(V988.focus===f.id?'border-color:#ed3656;background:#46242d;':'')+'">'+escapeHTML(f.label)+'</button>').join('');
+ const options=figures.filter(f=>!f.enabled).map(f=>'<button type="button" class="btn" data-v988-add="'+escapeHTML(f.id)+'" style="display:block;width:100%;margin:7px 0;text-align:left">+ '+escapeHTML(f.label)+'</button>').join('');
+ return '<div class="v988-active-tabs"><strong>Aktive Figuren · eigene Reiter</strong><div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">'+(tabs||'<p class="hint">Noch keine aktive Figur.</p>')+'</div></div><details class="v94details" id="v988AddLibrary"><summary><b>+ FIGUR HINZUFÜGEN · BIBLIOTHEK ÖFFNEN</b></summary><p class="hint">Figur auswählen, um sie als eigenen Reiter hinzuzufügen.</p>'+ (options||'<p class="hint">Alle Figuren bereits hinzugefügt.</p>')+'</details>';
 }
-document.addEventListener('change',e=>{const id=e.target?.dataset?.v988Enable;if(!id)return;if(id==='main')V941.mainEnabled=e.target.checked;else{const f=V941.figures.find(x=>String(x.id)===id);if(f)f.enabled=e.target.checked;}V941save();render();});
-
-document.addEventListener('click',e=>{const b=e.target.closest('[data-v988-pick]');if(!b)return;V988.focus=b.dataset.v988Pick;if(V988.focus==='main')V941.mainEnabled=true;else{const fig=V941.figures.find(x=>String(x.id)===V988.focus);if(fig)fig.enabled=true;}V941save();V988save();render();});
+document.addEventListener('click',e=>{
+ const pick=e.target.closest('[data-v988-pick]');
+ if(pick){V988.focus=pick.dataset.v988Pick;V988save();render();return;}
+ const add=e.target.closest('[data-v988-add]');
+ if(add){const id=add.dataset.v988Add;if(id==='main')V941.mainEnabled=true;else{const f=V941.figures.find(x=>String(x.id)===id);if(f)f.enabled=true;}V988.focus=id;V941save();V988save();render();return;}
+ const remove=e.target.closest('[data-v988-remove]');
+ if(remove){const id=remove.dataset.v988Remove;if(id==='main')V941.mainEnabled=false;else{const f=V941.figures.find(x=>String(x.id)===id);if(f)f.enabled=false;}V988.focus='main';V941save();V988save();render();}
+});
 const V988previousRender=render;
 render=function(){
  V988previousRender();
@@ -46,7 +56,7 @@ render=function(){
  if(posterNote){posterNote.value=BDS987posterEffective();posterNote.readOnly=!BDS987.posterManual;posterNote.removeAttribute('placeholder');}
 
  if(tab==='text'){const sub=root.querySelector('.bds986-subnav');root.innerHTML=BDS987textUI().split('<section class="panel"><h2>FASSADENFINDER')[0]+V988facades()+V988scenes()+BDS987editorUI();if(sub)root.prepend(sub)}
- if(tab==='cast'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+V988figurePhoto()+'<p class="hint">Hier werden ausschließlich die Figuren aus der bestehenden Figurenbibliothek angezeigt.</p></section>'+(V988.focus==='main'?V941main():V941figHTML(V941.figures.find(f=>String(f.id)===V988.focus)||V941.figures[0]))+(state.opa==='Ja'?'<details class="v94details"><summary>Opa-Regie</summary>'+castTab()+'</details>':'');if(sub)root.prepend(sub);root.querySelectorAll('input[data-v941-upload]').forEach(el=>{const wrap=el.closest('.v941ref');if(wrap&&wrap.id!=='v988PhotoPanel')wrap.remove();else el.remove()})}
+ if(tab==='cast'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+(BDS987figures().some(f=>f.id===V988.focus&&f.enabled)?'<div style="margin-top:16px"><button class="btn" data-v988-remove="'+escapeHTML(V988.focus)+'">Figur aus aktiven Reitern entfernen</button></div>'+V988figurePhoto():'')+'</section>'+(V988.focus==='main'?V941main():V941figHTML(V941.figures.find(f=>String(f.id)===V988.focus)||V941.figures[0]))+(state.opa==='Ja'?'<details class="v94details"><summary>Opa-Regie</summary>'+castTab()+'</details>':'');if(sub)root.prepend(sub);root.querySelectorAll('input[data-v941-upload]').forEach(el=>{const wrap=el.closest('.v941ref');if(wrap&&wrap.id!=='v988PhotoPanel')wrap.remove();else el.remove()})}
  if(tab==='poses'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>POSEN · KOMPAKT</h2>'+V988figurePicker()+V969figureControls(V988.focus)+'</section><details class="v94details"><summary>Weitere Posen und Gruppenoptionen</summary>'+poseTab()+'</details>';if(sub)root.prepend(sub)}
  if(tab==='studio')root.querySelector('#bds987Editorial')?.remove();
  document.title='BİR.DUVARSESİ V9.8.8';
