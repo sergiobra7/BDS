@@ -19,7 +19,7 @@ function V988scenes(){
  V96.proposals=Array.from({length:Math.min(3,pool.length)},(_,i)=>pool[(V988.scenePage*3+i)%pool.length]);
  return '<section class="panel"><h2>SMART SCENE DIRECTOR PRO</h2><p class="hint">'+escapeHTML(a.topic)+' · '+pool.length+' Szenenideen</p><button class="btn primary" data-v988="scenes">3 NEUE SZENENIDEEN</button>'+V96.proposals.map((s,i)=>'<div class="item"><strong>'+escapeHTML(s.name)+'</strong><p class="hint">'+escapeHTML(s.city)+' · '+escapeHTML(s.pose)+'</p><button class="btn" data-v96="apply" data-i="'+i+'">Szene + Kamera übernehmen</button><button class="small" data-v96="scene" data-i="'+i+'">Nur Szene</button></div>').join('')+'</section>';
 }
-function V988figurePhoto(){const id=String(V988.focus||'main');const f=V941.figures.find(x=>String(x.id)===id);const name=id==='main'?'Mann mit Zopf':f?.type;if(!name)return '';return '<div class="v941ref"><strong>Eigenes Figurenfoto hochladen · '+escapeHTML(name)+'</strong><input type="file" accept="image/*" data-v941-upload="'+escapeHTML(id)+'"><small>'+(id==='main'?V941.mainReference||'Noch kein Foto':f.reference||'Noch kein Foto')+'</small></div>'}
+function V988figurePhoto(){const id=String(V988.focus||'main');const f=V941.figures.find(x=>String(x.id)===id);const name=id==='main'?'Mann mit Zopf':f?.type;if(!name)return '';const active=V988.photoPrompt?.[id]!==false;return '<div class="v941ref" id="v988PhotoPanel"><strong>Figurenfoto · '+escapeHTML(name)+'</strong><label class="v9823-toggle"><input type="checkbox" data-v988-photo-prompt="'+escapeHTML(id)+'" '+(active?'checked':'')+'> Upload-Foto im Master-Prompt als Identitätsreferenz verwenden</label><label class="label">Eigenes Figurenfoto hochladen</label><input type="file" accept="image/*" data-v941-upload="'+escapeHTML(id)+'"><small>'+(id==='main'?V941.mainReference||'Noch kein Foto':f.reference||'Noch kein Foto')+'</small></div>'}
 function V988figurePicker(){
  return '<label class="label">Figur auswählen</label><select data-v988-figure>'+BDS987figures().map(f=>'<option value="'+escapeHTML(f.id)+'" '+(V988.focus===f.id?'selected':'')+'>'+escapeHTML(f.label)+'</option>').join('')+'</select>';
 }
@@ -234,10 +234,14 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('click',e=>{if(e.target.closest('[data-v988-toggle]')){V988.manualOpen=!V988.manualOpen;render();}},true);
 document.addEventListener('click',e=>{if(e.target.closest('[data-v988-more]')){V988.manualVisible+=5;V988.manualOpen=true;V988save();render();}if(e.target.closest('#v988ManualFinder [data-set="scene"]'))V988.manualOpen=false;},true);
+V988.photoPrompt=V988.photoPrompt||{};
+document.addEventListener('change',e=>{const id=e.target?.dataset?.v988PhotoPrompt;if(!id)return;V988.photoPrompt[id]=e.target.checked;V988save();});
+const V988photoPromptBase=prompt;prompt=function(){let p=V988photoPromptBase();const refs=[{id:'main',name:'Mann mit Zopf',file:V941.mainReference},...V941.figures.filter(f=>f.enabled!==false).map(f=>({id:String(f.id),name:f.type,file:f.reference}))];return p+'\nFIGURE UPLOAD IDENTITY DIRECTOR: '+refs.map(f=>f.name+': '+(V988.photoPrompt[f.id]===false?'Do not use uploaded photo for identity':f.file?'Use separately attached original photo '+f.file+' as exact identity reference':'Upload reference enabled but no photo selected; do not invent identity photo')).join('; ');};
 const V988manualRender=render;
 render=function(){
  V988manualRender();
  const root=document.getElementById('content');if(!root)return;
+ if(tab==='cast'){const panel=root.querySelector('section.panel');if(panel&&!panel.querySelector('#v988PhotoPanel'))panel.insertAdjacentHTML('beforeend',V988figurePhoto());}
  if(tab==='text'){
   const headings=[...root.querySelectorAll('h2')];
   const poster=headings.find(h=>h.textContent.trim()==='PLAKAT')?.closest('section.panel');
