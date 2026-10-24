@@ -37,7 +37,7 @@ function V988figurePicker(){
 }
 document.addEventListener('change',e=>{const id=e.target?.dataset?.v988Enable;if(!id)return;if(id==='main')V941.mainEnabled=e.target.checked;else{const f=V941.figures.find(x=>String(x.id)===id);if(f)f.enabled=e.target.checked;}V941save();render();});
 
-document.addEventListener('click',e=>{const b=e.target.closest('[data-v988-pick]');if(!b)return;V988.focus=b.dataset.v988Pick;V988save();render();});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-v988-pick]');if(!b)return;V988.focus=b.dataset.v988Pick;if(V988.focus==='main')V941.mainEnabled=true;else{const fig=V941.figures.find(x=>String(x.id)===V988.focus);if(fig)fig.enabled=true;}V941save();V988save();render();});
 const V988previousRender=render;
 render=function(){
  V988previousRender();
@@ -257,6 +257,7 @@ render=function(){
  V988manualRender();
  const root=document.getElementById('content');if(!root)return;
  if(tab==='cast'){const panel=root.querySelector('section.panel');if(panel&&!panel.querySelector('#v988PhotoPanel'))panel.insertAdjacentHTML('beforeend',V988figurePhoto());}
+ if(tab==='text'){const existing=root.querySelector('#bds987Editorial');if(existing)existing.outerHTML=BDS987editorUI();}
  if(tab==='text'){
   const headings=[...root.querySelectorAll('h2')];
   const poster=headings.find(h=>h.textContent.trim()==='PLAKAT')?.closest('section.panel');
