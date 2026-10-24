@@ -76,4 +76,38 @@ const BDS987oldRestore=V972restore;
 V972restore=function(snapshot){BDS987oldRestore(snapshot);try{const stored=JSON.parse(localStorage.getItem(BDS987_KEY)||'null');if(stored&&typeof stored==='object')BDS987={...BDS987,...stored,notes:stored.notes||{}}}catch(_){}render()};
 const BDS987oldSnapshot=V970snapshot;
 V970snapshot=function(){const snapshot=BDS987oldSnapshot();snapshot.storage=snapshot.storage||{};snapshot.storage[BDS987_KEY]=JSON.stringify(BDS987);return snapshot};
+
+/* Global accordion continuity: preserve every open <details>, viewport and input focus
+   across legacy render() calls triggered by select, checkbox, range or text edits. */
+const BDS987rawRender=render;
+render=function(){
+ const root=document.getElementById('content');
+ const opened=[];
+ if(root)root.querySelectorAll('details').forEach((d,i)=>{if(d.open)opened.push(i)});
+ const x=window.scrollX,y=window.scrollY;
+ const active=document.activeElement;
+ let focusKey=null,selection=null;
+ if(active&&root&&root.contains(active)){
+  const all=[...root.querySelectorAll('input,select,textarea,button')];
+  focusKey=all.indexOf(active);
+  if(active instanceof HTMLTextAreaElement||active instanceof HTMLInputElement&&['text','search'].includes(active.type)){
+   try{selection=[active.selectionStart,active.selectionEnd]}catch(_){}
+  }
+ }
+ BDS987rawRender();
+ const nextRoot=document.getElementById('content');
+ if(nextRoot){
+  const details=nextRoot.querySelectorAll('details');
+  opened.forEach(i=>{if(details[i])details[i].open=true});
+  if(focusKey!==null&&focusKey>=0){
+   const target=nextRoot.querySelectorAll('input,select,textarea,button')[focusKey];
+   if(target){
+    try{target.focus({preventScroll:true});if(selection&&typeof target.setSelectionRange==='function')target.setSelectionRange(...selection)}catch(_){}
+   }
+  }
+ }
+ window.scrollTo(x,y);
+ requestAnimationFrame(()=>window.scrollTo(x,y));
+};
+
 render();
