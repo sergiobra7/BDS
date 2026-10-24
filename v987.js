@@ -69,4 +69,11 @@ prompt=function(){
  }
  return result;
 };
+
+const BDS987oldValidate=V972validate;
+V972validate=function(s){if(s?.version==='9.8.7'){if(!s.settings||!s.v941||!Array.isArray(s.v941.figures)||JSON.stringify(s).length>12000000)throw Error('Ungültiger V9.8.7 Projektstand');return s}return BDS987oldValidate(s)};
+const BDS987oldRestore=V972restore;
+V972restore=function(snapshot){BDS987oldRestore(snapshot);try{const stored=JSON.parse(localStorage.getItem(BDS987_KEY)||'null');if(stored&&typeof stored==='object')BDS987={...BDS987,...stored,notes:stored.notes||{}}}catch(_){}render()};
+const BDS987oldSnapshot=V970snapshot;
+V970snapshot=function(){const snapshot=BDS987oldSnapshot();snapshot.storage=snapshot.storage||{};snapshot.storage[BDS987_KEY]=JSON.stringify(BDS987);return snapshot};
 render();
