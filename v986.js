@@ -18,7 +18,7 @@ render=function(){
  const metrics=document.querySelector('.metrics');if(metrics){const n=metrics.querySelector('div:first-child b');if(n&&Array.isArray(DATA.scenes))n.textContent=DATA.scenes.length;}
  const root=document.getElementById('content'),nav=document.getElementById('tabs');if(!root||!nav)return;
  // The V9.8.5 creator was a prompt copier, not a working generator: remove it entirely.
- root.querySelector('#bds985Creator')?.remove();
+ // No AI creator is mounted in the current release.
  BDS986_activeGroup=BDS986_GROUP_FOR[tab]||BDS986_activeGroup;
  nav.classList.add('bds986-mainnav');
  nav.innerHTML=BDS986_GROUPS.map(g=>'<button type="button" data-bds986-group="'+g.id+'" class="'+(g.id===BDS986_activeGroup?'active':'')+'">'+g.name+'</button>').join('');
@@ -51,7 +51,7 @@ V970export=async function(){
  const names=['index.html','styles.css','data.js','app.js','v94.js','v941.js','v942.js','v96scenes.js','v96.js','v961.js','v962.js','v963.js','v964.js','v965.js','v966.js','v967.js','v968.js','v969.js','v970.js','v972.js','v973.js','v974.js','v976.js','v977.js','v978.js','v979.js','v980.js','v981.js','v982.js','v9823.js','v985.js','v986.js','sw.js','manifest.webmanifest','icon-192.png','icon-512.png'];
  const entries=[];
  for(const name of names){const response=await fetch('./'+name,{cache:'no-store'});if(!response.ok)throw Error('Datei fehlt: '+name);entries.push([name,new Uint8Array(await response.arrayBuffer())]);}
- const snapshot=V970snapshot();delete snapshot.v985;
+ const snapshot=V970snapshot(); // retain legacy state for lossless migration of older backups
  entries.push(['PROJECT_SNAPSHOT_V9.8.6.json',JSON.stringify(snapshot,null,2)]);
  entries.push(['PROJECT_SNAPSHOT_V9.7.3.json',JSON.stringify(snapshot,null,2)]);
  const blob=V970zip(entries),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS 9.8.6.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);
