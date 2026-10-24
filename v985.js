@@ -10,9 +10,9 @@ function BDS985save(){try{localStorage.setItem(BDS985_KEY,JSON.stringify(BDS985)
 function BDS985first(){return String(state.wall||'').split('\n').find(x=>x.trim())||''}
 function BDS985geometry(){
  const first=BDS985first(),geo=V976geometry();
- const eye=1.6,wallHeight=5; // estimates only: never claim measured facade geometry
+ const eye=Number(geo.eye)||1.6,wallHeight=Number(geo.h)||5; // scene estimates, not measured coordinates
  const current=Math.max(1,Number(geo.main?.distance)||Number(state.distance)||5);
- const safe=Math.max(current,(wallHeight-eye)/Math.tan(30*Math.PI/180));
+ const safe=Math.max(current,Math.abs(wallHeight-eye)/Math.tan((Number(geo.tilt)||24)*Math.PI/180));
  return {first,geo,current,safe,angle:Math.atan2(wallHeight-eye,current)*180/Math.PI};
 }
 const BDS985previousRender=render;
@@ -36,7 +36,7 @@ render=function(){
  if(tab==='export'){
   const g=BDS985geometry(),p=document.createElement('section');p.className='panel';
   p.innerHTML='<h2>GAZE DIRECTOR · ERSTE ZEILE</h2><p class="hint">Alle aktiven Figuren fixieren ausschließlich die Mitte der ersten roten Wandtextzeile. Bei zu steilem Blickwinkel mehr Abstand erzeugen. Anatomie hat Vorrang vor der gewählten Distanz.</p>'+
-   '<p class="hint">Orientierungsrechnung (keine Bildmessung): Augenhöhe 1,6 m; erste Zeile 5 m; geschätzter Hauptfiguren-Abstand '+g.current.toFixed(1)+' m; Aufwärtswinkel '+g.angle.toFixed(1)+'°. Empfohlener Mindestabstand für höchstens 30°: '+g.safe.toFixed(1)+' m.</p>'+
+   '<p class="hint">Orientierungsrechnung (keine Bildmessung): Augenhöhe '+g.geo.eye+' m; erste Zeile geschätzt '+g.geo.h+' m; Hauptfiguren-Abstand '+g.current.toFixed(1)+' m; Aufwärtswinkel '+g.angle.toFixed(1)+'°. Empfohlener Abstand für höchstens '+g.geo.tilt+'°: '+g.safe.toFixed(1)+' m.</p>'+
    (!g.first?'<p class="warn">Wandtext fehlt: Blickziel nicht bestimmbar.</p>':'')+
    (!V941.wallOn?'<p class="warn">Wandtext deaktiviert: Blickregel erfordert sichtbare erste Zeile.</p>':'');
   root.insertBefore(p,root.firstChild);
@@ -61,9 +61,9 @@ prompt=function(){
  'WALL: '+(V941.wallOn?'ON':'OFF')+'. BLACK INDUSTRIAL BRICK default: authentic soot-black matte industrial brickwork, visible joints, no lamps or floodlights. Use selected facade override when explicitly set. Wall typography DIN CONDENSED BLACK default, bold matte red, left-aligned lines within a centered text block. Do not center individual wall lines.',
  'WALL FONT CONTROLS: '+(V941.fontChoice==='T705'?'DIN CONDENSED BLACK':(V963.wallPreset||V941.fontChoice||'DIN CONDENSED BLACK'))+'; '+V941.fontWeight+'; tracking '+V941.fontSpacing+'; line spacing '+V941.fontLineSpacing+'; selected finish '+(V963.wallFinish||s.facadeTexture)+'.',
  'BEGIN EXACT WALL TEXT',s.wall||'','END EXACT WALL TEXT',
- 'COMPOSITION: '+profile+'. Real open-space separation; maintain plausible architectural scale and selected scene. Camera '+s.camera+'; '+s.lens+' mm; camera distance '+s.distance+' m; '+s.time+'; '+s.weather+'. Honor explicit camera locks.',
+ 'COMPOSITION: '+profile+'. Real open-space separation; maintain plausible architectural scale and selected scene. Camera '+s.camera+'; '+g.geo.lens+' mm; camera distance '+s.distance+' m; '+s.time+'; '+s.weather+'. Honor explicit camera locks.',
  'GAZE DIRECTOR — NON-NEGOTIABLE: Every active figure fixes BOTH pupils on the geometric CENTER of the FIRST RED WALL TEXT LINE: '+(g.first||'[MISSING FIRST LINE]')+'. Never gaze vaguely at the wall, into empty space, toward the camera, or toward another line. From each figure’s own eye position, rotate eyes, skull, neck and, if needed, shoulders and torso anatomically. No extreme neck twist. If close proximity makes this impossible, MOVE THE FIGURE FARTHER AWAY from the facade on physically available safe public ground; preserve architecture and genuine depth. Reframe camera if necessary. Do not invent accessible ground, expand a narrow roof, or break original-photo locks. If no viable viewpoint exists, flag the conflict rather than force impossible anatomy.',
- 'DISTANCE PLANNING (illustrative estimates, not measured coordinates): eye height 1.6 m, first-line center 5 m; use enough figure-to-wall distance for a comfortable elevation angle, typically <=30 degrees; estimated minimum '+g.safe.toFixed(1)+' m for main figure. Independently adjust each figure based on its own actual eye position.',
+ 'DISTANCE PLANNING (illustrative estimates, not measured coordinates): eye height '+g.geo.eye+' m, first-line center '+g.geo.h+' m; use enough distance for a comfortable elevation angle, at most '+g.geo.tilt+' degrees; estimated minimum '+g.safe.toFixed(1)+' m for main figure. Independently adjust each figure based on its own actual eye position.',
  'FIGURES:'];
  figures.forEach(f=>{
   const v=V979selected(f.id),meta=V941.figures.find(x=>x.id===f.id);
