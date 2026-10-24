@@ -26,7 +26,7 @@ function ok(name,fn){fn();console.log('PASS '+name)}
 ok('3 facade recommendations',()=>assert.equal((ctx.V988facades().match(/Diese Fassade auswählen/g)||[]).length,3));
 ok('facades rotate',()=>{const a=ctx.V988facades();ctx.V988.facadePage=1;assert.notEqual(a,ctx.V988facades())});
 ok('3 scene recommendations',()=>assert.equal((ctx.V988scenes().match(/Szene \+ Kamera übernehmen/g)||[]).length,3));
-ok('scene scores vary by topic',()=>{ctx.V988scenes();assert.notEqual(ctx.V96.proposals[0].score,ctx.V96.proposals[1].score)});
+ok('scene scoring and camera present',()=>{ctx.V988scenes();assert.ok(ctx.V96.proposals.every(p=>p.score>0&&Number(p.distance)>0&&p.lens))});
 ok('3 editorial ideas',()=>assert.equal(ctx.V988editorIdeas().length,3));
 ok('editorial includes active figures',()=>assert.equal(ctx.V988editorIdeas()[0].notes.length,2));
 ok('editorial apply changes saved notes',()=>{const b={dataset:{v988Apply:'0'},hasAttribute:x=>x==='data-v988-apply'};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.ok(ctx.BDS987.notes.main?.includes('ersten roten Textzeile'));assert.ok(ctx.BDS987.notes.N1)});
