@@ -193,15 +193,18 @@ function V988manualResults(){
  const term=V988.manualSearch.trim().toLocaleLowerCase('de');
  return V94matches().filter(x=>x.lim[0]>=lines&&x.lim[2]>=chars&&(V988.manualShape==='Auto'||x.shape===V988.manualShape)&&(!term||x.name.toLocaleLowerCase('de').includes(term)||String(DATA.cities[x.i]||'').toLocaleLowerCase('de').includes(term)));
 }
+V988.manualVisible=Math.max(5,Number(V988.manualVisible)||5);
+V988.manualOpen=false;
 function V988manualFinder(){
  const items=V988manualResults();
- return '<section class="panel" id="v988ManualFinder"><h2>MANUELLER FASSADENFINDER</h2><p class="hint">Nach Zeilenzahl, längster Textzeile und Fassadenform filtern. Nur Fassaden mit ausreichender hinterlegter Kapazität erscheinen. Die Auswahl aktiviert MANUELL und deaktiviert die beiden Directors.</p>'+
+ const visible=items.slice(0,Math.max(5,Number(V988.manualVisible)||5));
+ return '<details class="panel" id="v988ManualFinder" '+(V988.manualOpen?'open':'')+'><summary style="font-size:1.15rem;font-weight:750;cursor:pointer;padding:8px 0">MANUELLER FASSADENFINDER</summary><p class="hint">Nach Zeilenzahl, längster Textzeile und Fassadenform filtern. Nur Fassaden mit ausreichender hinterlegter Kapazität erscheinen. Die Auswahl aktiviert MANUELL und deaktiviert die beiden Directors.</p>'+
  '<label class="label">Benötigte Textzeilen</label><input type="number" min="1" max="20" data-v988-manual="lines" value="'+V988.manualLines+'">'+
  '<label class="label">Zeichen in der längsten Zeile (optional)</label><input type="number" min="0" max="300" data-v988-manual="chars" value="'+V988.manualChars+'">'+
  '<label class="label">Fassadenformat</label><select data-v988-manual="shape">'+['Auto','WIDE XXL','MEGA XXL','BALANCED XXL','VERTICAL XXL'].map(x=>'<option '+(V988.manualShape===x?'selected':'')+'>'+x+'</option>').join('')+'</select>'+
  '<label class="label">Ort / Fassade suchen (optional)</label><input data-v988-manual="search" value="'+escapeHTML(V988.manualSearch)+'" placeholder="Ort oder Fassadenname">'+
  '<p class="hint">'+items.length+' passende Fassaden / Orte · nach Eignung sortiert</p>'+
- (items.length?items.map(x=>'<div class="item"><strong>'+escapeHTML(x.name)+'</strong><p class="hint">'+escapeHTML(String(DATA.cities[x.i]||''))+' · '+escapeHTML(x.shape)+' • '+x.lim[0]+' Zeilen • bis '+x.lim[2]+' Zeichen/Zeile</p><p class="hint">'+x.score+' Punkte</p><button class="btn" data-set="scene" data-val="'+(x.i+1)+'">Diesen Ort manuell auswählen</button></div>').join(''):'<p class="warn">Keine Fassade erfüllt diese Anforderungen. Filter anpassen.</p>')+'</section>';
+ (items.length?visible.map(x=>'<div class="item"><strong>'+escapeHTML(x.name)+'</strong><p class="hint">'+escapeHTML(String(DATA.cities[x.i]||''))+' · '+escapeHTML(x.shape)+' • '+x.lim[0]+' Zeilen • bis '+x.lim[2]+' Zeichen/Zeile</p><p class="hint">'+x.score+' Punkte</p><button class="btn" data-set="scene" data-val="'+(x.i+1)+'">Diesen Ort manuell auswählen</button></div>').join('') :'<p class="warn">Keine Fassade erfüllt diese Anforderungen. Filter anpassen.</p>')+(items.length>visible.length?'<button class="btn" data-v988-more="1">5 WEITERE ANZEIGEN</button>':'')+'</details>';
 }
 function V988manualStatus(){
  return '<div class="panel"><strong>AKTIVE SZENENQUELLE: '+(V988.activeDirector==='facade'?'FASSADENFINDER':V988.activeDirector==='smart'?'SMART SCENE DIRECTOR PRO':'MANUELL')+'</strong><p class="hint">Immer die letzte ausdrücklich gewählte Szene zählt. Die anderen Quellen sind inaktiv; ihre Vorschläge bleiben weiterhin sichtbar.</p></div>';
@@ -222,8 +225,11 @@ document.addEventListener('change',e=>{
  if(k==='chars')V988.manualChars=Math.max(0,Math.min(300,Number(el.value)||0));
  if(k==='shape')V988.manualShape=el.value;
  if(k==='search')V988.manualSearch=el.value;
+ V988.manualVisible=5;
  V988save();render();
 });
+document.addEventListener('toggle',e=>{if(e.target?.id==='v988ManualFinder'){V988.manualOpen=e.target.open;}},true);
+document.addEventListener('click',e=>{if(e.target.closest('[data-v988-more]')){V988.manualVisible+=5;V988.manualOpen=true;V988save();render();}if(e.target.closest('#v988ManualFinder [data-set="scene"]'))V988.manualOpen=false;},true);
 const V988manualRender=render;
 render=function(){
  V988manualRender();
