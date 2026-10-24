@@ -7,16 +7,16 @@ function V988save(){localStorage.setItem(V988KEY,JSON.stringify(V988))}
 function V988facades(){
  const signature=state.wall+'|'+state.facadeShape+'|'+state.lineFilter;
  if(signature!==V988.facadeText){V988.facadeText=signature;V988.facadePage=0;V988save()}
- const all=V94matches().filter(x=>state.facadeShape==='Auto'||x.shape===state.facadeShape);
+ const all=V94matches().filter(x=>(state.facadeShape==='Auto'||x.shape===state.facadeShape)&&(state.lineFilter==='Auto'||x.lim[0]>=Number(state.lineFilter)));
  const pool=all.length?all:V94matches();
- const page=pool.slice((V988.facadePage%Math.max(1,Math.ceil(pool.length/3)))*3,(V988.facadePage%Math.max(1,Math.ceil(pool.length/3)))*3+3);
+ const page=Array.from({length:Math.min(3,pool.length)},(_,i)=>pool[(V988.facadePage*3+i)%pool.length]);
  return '<section class="panel"><h2>FASSADENFINDER</h2><p class="hint">'+pool.length+' passende Fassaden · 3 je Durchlauf</p><button class="btn primary" data-v988="facades">3 NEUE FASSADEN ANZEIGEN</button>'+page.map(x=>'<div class="item"><strong>'+escapeHTML(x.name)+'</strong><p class="hint">'+x.score+' Punkte</p><button class="btn" data-set="scene" data-val="'+(x.i+1)+'">Diese Fassade auswählen</button></div>').join('')+'</section>';
 }
 function V988scenes(){
  if(V988.sceneText!==state.wall){V988.sceneText=state.wall;V988.scenePage=0;V988save()}
  const a=V96analyse(state.wall);
  const pool=V96SCENES.map((s,i)=>({...s,idx:56+i,score:90,reason:'Architektur und Bildkomposition passend zum Wandtext',lens:'35',distance:50,angle:7,pose:a.action}));
- V96.proposals=pool.slice(V988.scenePage*3,V988.scenePage*3+3);
+ V96.proposals=Array.from({length:Math.min(3,pool.length)},(_,i)=>pool[(V988.scenePage*3+i)%pool.length]);
  return '<section class="panel"><h2>SMART SCENE DIRECTOR PRO</h2><p class="hint">'+escapeHTML(a.topic)+' · '+pool.length+' Szenenideen</p><button class="btn primary" data-v988="scenes">3 NEUE SZENENIDEEN</button>'+V96.proposals.map((s,i)=>'<div class="item"><strong>'+escapeHTML(s.name)+'</strong><p class="hint">'+escapeHTML(s.city)+' · '+escapeHTML(s.pose)+'</p><button class="btn" data-v96="apply" data-i="'+i+'">Szene + Kamera übernehmen</button><button class="small" data-v96="scene" data-i="'+i+'">Nur Szene</button></div>').join('')+'</section>';
 }
 function V988figurePicker(){
@@ -35,12 +35,15 @@ render=function(){
 };
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-v988]');if(!b)return;
- if(b.dataset.v988==='facades'){const n=V94matches().filter(x=>state.facadeShape==='Auto'||x.shape===state.facadeShape).length||V94matches().length;V988.facadePage=(V988.facadePage+1)%Math.max(1,Math.ceil(n/3));V988save();render()}
+ if(b.dataset.v988==='facades'){const n=V94matches().filter(x=>(state.facadeShape==='Auto'||x.shape===state.facadeShape)&&(state.lineFilter==='Auto'||x.lim[0]>=Number(state.lineFilter))).length||V94matches().length;V988.facadePage=(V988.facadePage+1)%Math.max(1,Math.ceil(n/3));V988save();render()}
  if(b.dataset.v988==='scenes'){V988.scenePage=(V988.scenePage+1)%Math.max(1,Math.ceil(V96SCENES.length/3));V988save();render()}
 });
 document.addEventListener('change',e=>{if(e.target.matches('[data-v988-figure]')){V988.focus=e.target.value;V988save();render()}});
 const V988oldSnapshot=V970snapshot;
 V970snapshot=function(){const s=V988oldSnapshot();s.storage=s.storage||{};s.storage[V988KEY]=JSON.stringify(V988);return s};
+
+const V988oldRestore=V972restore;
+V972restore=function(s){V988oldRestore(s);try{const saved=JSON.parse(localStorage.getItem(V988KEY)||'null');if(saved&&typeof saved==='object')V988={...V988,...saved}}catch(_){}render()};
 const V988oldValidate=V972validate;
 V972validate=function(s){if(s?.version==='9.8.8'){if(!s.settings||!s.v941||!Array.isArray(s.v941.figures))throw Error('Ungültiger Projektstand');return s}return V988oldValidate(s)};
 const V988oldPrompt=prompt;
