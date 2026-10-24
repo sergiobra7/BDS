@@ -38,8 +38,8 @@ function V988figurePicker(){
  const active=figures.filter(f=>f.enabled);
  if(!active.some(f=>f.id===V988.focus))V988.focus=active[0]?.id||'main';
  const tabs=active.map(f=>'<button type="button" class="btn" data-v988-pick="'+escapeHTML(f.id)+'" style="flex:1 1 42%;min-width:130px;'+(V988.focus===f.id?'border-color:#ed3656;background:#46242d;':'')+'">'+escapeHTML(f.label)+'</button>').join('');
- const available=figures.filter(f=>!f.enabled);
- return '<div class="v988-active-tabs"><strong>Hinzugefügte Figuren · eigene Reiter</strong><div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">'+(tabs||'<p class="hint">Noch keine Figur hinzugefügt.</p>')+'</div></div><label class="label" for="v988AddSelect">+ FIGUR HINZUFÜGEN</label><select id="v988AddSelect" data-v988-add-select style="width:100%;max-width:100%;min-height:48px"><option value="">Figurenbibliothek öffnen …</option>'+available.map(f=>'<option value="'+escapeHTML(f.id)+'">'+escapeHTML(f.label)+'</option>').join('')+'</select>'+(available.length?'':'<p class="hint">Alle Figuren sind bereits hinzugefügt.</p>');
+ const available=figures.filter(f=>f.id!=='main');
+ return '<div class="v988-active-tabs"><strong>Hinzugefügte Figuren · eigene Reiter</strong><div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">'+(tabs||'<p class="hint">Noch keine Figur hinzugefügt.</p>')+'</div></div><label class="label" for="v988AddSelect">+ FIGUR HINZUFÜGEN</label><select id="v988AddSelect" data-v988-add-select style="width:100%;max-width:100%;min-height:48px"><option value="">Figurenbibliothek öffnen …</option>'+available.map(f=>'<option value="'+escapeHTML(f.id)+'">'+escapeHTML(f.label)+(f.enabled?' (bereits hinzugefügt)':'')+'</option>').join('')+'</select>'+(available.length?'':'<p class="hint">Alle Figuren sind bereits hinzugefügt.</p>');
 }
 document.addEventListener('change',e=>{
  const select=e.target.closest('[data-v988-add-select]');
