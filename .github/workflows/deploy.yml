@@ -22,6 +22,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Automated JavaScript syntax and integration checks
+        run: |
+          for f in app.js v94.js v941.js v96.js v966.js v969.js v974.js v986.js v987.js v988.js; do
+            test -f "$f" || exit 1
+            node --check "$f" || exit 1
+          done
+          node -e "const fs=require('fs'),a=fs.readFileSync('v988.js','utf8'),h=fs.readFileSync('index.html','utf8');for(const s of ['3 NEUE FASSADEN ANZEIGEN','3 NEUE SZENENIDEEN','SMART SCENE DIRECTOR PRO','BDS987editorUI()','FIGURENBIBLIOTHEK','POSEN · KOMPAKT'])if(!a.includes(s))throw Error('Missing '+s);if(!h.includes('v988.js'))throw Error('V988 not loaded');console.log('Static V9.8.8 checks passed')"
       - name: Extract latest BDS ZIP
         run: |
           ZIP=$(find . -maxdepth 1 -type f -iname 'BDS*.zip' -printf '%f\n' | sort -V | tail -n 1)
