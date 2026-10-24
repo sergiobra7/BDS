@@ -62,4 +62,62 @@ render=function(){
  requestAnimationFrame(()=>window.scrollTo(x,y));
 };
 
+
+/* Functional fixes: actionable editorial suggestions and topic-scored scene options. */
+V988.editorPage=Number(V988.editorPage)||0;
+function V988active(){return BDS987figures().filter(f=>f.enabled&&(f.id==='main'?BDS987.main!==false:BDS987[f.id]===true))}
+const V988ACTIONS=[
+ ['Stille Erkenntnis','Rückwärts auf einem Stuhl sitzen, Unterarme getrennt auf der Lehne','Seitlich auf einer Bank sitzen, Hände auf den Knien'],
+ ['Öffentliche Spannung','Aufrecht auf dem gegenüberliegenden Gehweg stehen, offene Hand seitlich','Mit Abstand stehen, eine Hand am Mantel'],
+ ['Enttäuschtes Vertrauen','Auf einer Bank sitzen, leicht vorgebeugt, Hände locker verschränkt','Auf einer separaten Sitzfläche nachdenklich sitzen'],
+ ['Schweigende Begegnung','Langsam gehen und vor der Wand in der Ferne innehalten','An einem sicheren Geländer lehnen'],
+ ['Distanz und Würde','Aufrecht stehen, Arme locker seitlich','Auf einem Stuhl rückwärts sitzen, Hände getrennt'],
+ ['Nachdenkliche Pause','Mit einer Tasse auf einer öffentlichen Bank sitzen','Neben einer Bank stehen, Hände ruhig'],
+ ['Generationen','An einem öffentlichen Geländer stehen, Oberkörper leicht vorgeneigt','Auf einer Bank sitzen, Blick zur Wand'],
+ ['Widerspruch','Vor einem Café auf einem Stuhl sitzen, kein Zeigefinger','Einige Meter entfernt stehen, offene Hand seitlich'],
+ ['Ungesagte Worte','Auf Treppenstufen sitzen, Ellbogen getrennt auf den Oberschenkeln','An einer niedrigen Mauer lehnen'],
+ ['Selbstachtung','Aufrecht stehen, Schultern entspannt','Seitlich auf einem Stuhl sitzen, Hände sichtbar'],
+ ['Letzter Blick','Im Gehen anhalten, Kopf zur Wand drehen','Mit Abstand auf dem gegenüberliegenden Gehweg stehen'],
+ ['Gemeinsame Stille','Mit Abstand auf einer Bank sitzen, Hände sichtbar','Auf derselben Bank mit Abstand sitzen, Arme locker']
+];
+function V988editorIdeas(){
+ const topic=V96analyse(state.wall).topic,scene=DATA.scenes[state.scene-1]||'öffentlicher Raum';
+ return Array.from({length:3},(_,i)=>{
+  const p=V988ACTIONS[(V988.editorPage*3+i)%V988ACTIONS.length];
+  const notes=V988active().map((f,j)=>({id:f.id,label:f.label,action:j===0?p[1]:p[2]}));
+  return {title:p[0],notes,context:'Thema: '+topic+'. Szene: '+scene+'. Sicherer öffentlicher Standort mit Abstand zur Textfassade. Kopf und Augen zur Mitte der ersten roten Textzeile. Keine Wandlampen, Flaggen oder religiösen Gebäude.'};
+ });
+}
+function V988editorUI(){
+ return '<section class="panel" id="v988EditorialSuggestions"><h2>EDITORIAL IMPACT PRO · 3 HANDLUNGSVORSCHLÄGE</h2><p class="hint">Figuren und Wandtext berücksichtigt. Erst „Übernehmen“ ändert deine Regie.</p><button class="btn primary" data-v988="editor">3 NEUE HANDLUNGSVORSCHLÄGE</button>'+
+ V988editorIdeas().map((v,i)=>'<div class="item"><strong>'+escapeHTML(v.title)+'</strong><p>'+escapeHTML(v.notes.map(n=>n.label+': '+n.action).join('; '))+'</p><p class="hint">'+escapeHTML(v.context)+'</p><button class="btn" data-v988-apply="'+i+'">DIESE HANDLUNG ÜBERNEHMEN</button></div>').join('')+'</section>'+BDS987editorUI();
+}
+V988scenes=function(){
+ if(V988.sceneText!==state.wall){V988.sceneText=state.wall;V988.scenePage=0;V988save()}
+ const a=V96analyse(state.wall);
+ const pool=V96SCENES.map((s,i)=>({...s,idx:56+i,score:Math.max(1,94-(a.kinds.includes(s.kind)?a.kinds.indexOf(s.kind)*6:21)),reason:s.kind==='hafen'?'Monumentale Fassade und Hafen-Tiefenstaffelung':s.kind==='dach'?'Sichere Dachterrasse gegenüber der Wand':'Öffentlicher Vordergrund mit freiem Blick auf die Textfassade',lens:a.longest>30?'50':s.kind==='hafen'?'28':s.kind==='stadt'?'40':'35',distance:s.kind==='stadt'?65:s.kind==='hafen'?55:s.kind==='dach'?35:45,angle:s.kind==='hafen'?7:10,pose:a.action})).sort((x,y)=>y.score-x.score||x.idx-y.idx);
+ V96.proposals=Array.from({length:Math.min(3,pool.length)},(_,i)=>pool[(V988.scenePage*3+i)%pool.length]);
+ return '<section class="panel"><h2>SMART SCENE DIRECTOR PRO</h2><p class="hint">'+escapeHTML(a.topic)+' · '+pool.length+' Szenenideen</p><button class="btn primary" data-v988="scenes">3 NEUE SZENENIDEEN</button>'+
+ V96.proposals.map((s,i)=>'<div class="item"><strong>'+escapeHTML(s.name)+'</strong><p class="hint">'+escapeHTML(s.city)+' · '+s.score+' Punkte · '+escapeHTML(s.reason)+'</p><p class="hint">Kamera '+s.lens+' mm · '+s.distance+' m · '+s.angle+'° · '+escapeHTML(s.pose)+'</p><button class="btn" data-v96="apply" data-i="'+i+'">Szene + Kamera übernehmen</button><button class="small" data-v96="scene" data-i="'+i+'">Nur Szene</button></div>').join('')+'</section>';
+};
+const V988renderBeforeFix=render;
+render=function(){
+ V988renderBeforeFix();
+ const root=document.getElementById('content');if(!root)return;
+ if(tab==='text'){const sub=root.querySelector('.bds986-subnav');root.innerHTML=BDS987textUI().split('<section class="panel"><h2>FASSADENFINDER')[0]+V988facades()+V988scenes()+V988editorUI();if(sub)root.prepend(sub)}
+ if(tab==='cast'&&V988.focus!=='main'){
+  const f=V941.figures.find(x=>String(x.id)===V988.focus);
+  if(f){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+'</section>'+V941figHTML(f)+'<details class="v94details"><summary>Weitere Nebenfiguren hinzufügen</summary>'+V941figures()+'</details>';if(sub)root.prepend(sub)}
+ }
+};
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-v988="editor"],[data-v988-apply]');if(!b)return;
+ if(b.dataset.v988==='editor'){V988.editorPage=(V988.editorPage+1)%4;V988save();render();return}
+ if(b.hasAttribute('data-v988-apply')){
+  const idea=V988editorIdeas()[Number(b.dataset.v988Apply)];if(!idea)return;
+  for(const n of idea.notes)BDS987.notes[n.id]=n.action+'. '+idea.context;
+  BDS987save();render();toast('Handlungsvorschlag übernommen');
+ }
+});
+
 render();
