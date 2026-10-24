@@ -62,14 +62,14 @@ V972readZip=function(buffer){
  return entries;
 };
 V970export=async function(){
- const names=['index.html','styles.css','data.js','app.js','v94.js','v941.js','v942.js','v96scenes.js','v96.js','v961.js','v962.js','v963.js','v964.js','v965.js','v966.js','v967.js','v968.js','v969.js','v970.js','v972.js','v973.js','v974.js','v976.js','v977.js','v978.js','v979.js','v980.js','v981.js','v982.js','v9823.js','v985.js','v986.js','v987.js','sw.js','manifest.webmanifest','icon-192.png','icon-512.png'];
+ const names=['index.html','styles.css','data.js','app.js','v94.js','v941.js','v942.js','v96scenes.js','v96.js','v961.js','v962.js','v963.js','v964.js','v965.js','v966.js','v967.js','v968.js','v969.js','v970.js','v972.js','v973.js','v974.js','v976.js','v977.js','v978.js','v979.js','v980.js','v981.js','v982.js','v9823.js','v985.js','v986.js','v987.js','v988.js','sw.js','manifest.webmanifest','icon-192.png','icon-512.png'];
  const entries=[];
  for(const name of names){const response=await fetch('./'+name,{cache:'no-store'});if(!response.ok)throw Error('Datei fehlt: '+name);entries.push([name,new Uint8Array(await response.arrayBuffer())]);}
  const snapshot=V970snapshot(); // retain legacy state for lossless migration of older backups
- snapshot.version='9.8.7';
- entries.push(['PROJECT_SNAPSHOT_V9.8.7.json',JSON.stringify(snapshot,null,2)]);
+ snapshot.version='9.8.8';
+ entries.push(['PROJECT_SNAPSHOT_V9.8.8.json',JSON.stringify(snapshot,null,2)]);
  entries.push(['PROJECT_SNAPSHOT_V9.7.3.json',JSON.stringify(snapshot,null,2)]);
- entries.push(['BACKUP_HINWEIS.txt','BIR.DUVARSESI V9.8.7: Einstellungen, Texte und Projekte im JSON-Snapshot. Hochgeladene Referenzbilder aus lokalem Browser-/IndexedDB-Speicher sind NICHT enthalten und muessen separat gesichert werden.']);
- const blob=V970zip(entries),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS 9.8.7.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);
+ entries.push(['BACKUP_HINWEIS.txt','BIR.DUVARSESI V9.8.8: Einstellungen, Texte und Projekte im JSON-Snapshot. Hochgeladene Referenzbilder aus lokalem Browser-/IndexedDB-Speicher sind NICHT enthalten und muessen separat gesichert werden.']);
+ const blob=V970zip(entries),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS 9.8.8.zip';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),15000);
 };
 render();
