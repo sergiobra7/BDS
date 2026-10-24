@@ -154,3 +154,8 @@ prompt=function(){
  return p+'\n'+out.join('\n');
 };
 render();
+
+/* Release label V9.8.3; keep existing state and project data unchanged. */
+const BDS983render=render;
+render=function(){BDS983render();document.title='BİR.DUVARSESİ V9.8.3';const h=document.querySelector('header small');if(h)h.textContent='PREMIUM STUDIO · V9.8.3';const x=document.querySelector('#v979Export h2');if(x)x.textContent=x.textContent.replace(/V9\.8\.2\.4/g,'V9.8.3');};
+render();
