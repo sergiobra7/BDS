@@ -20,6 +20,17 @@ function V988scenes(){
  return '<section class="panel"><h2>SMART SCENE DIRECTOR PRO</h2><p class="hint">'+escapeHTML(a.topic)+' · '+pool.length+' Szenenideen</p><button class="btn primary" data-v988="scenes">3 NEUE SZENENIDEEN</button>'+V96.proposals.map((s,i)=>'<div class="item"><strong>'+escapeHTML(s.name)+'</strong><p class="hint">'+escapeHTML(s.city)+' · '+escapeHTML(s.pose)+'</p><button class="btn" data-v96="apply" data-i="'+i+'">Szene + Kamera übernehmen</button><button class="small" data-v96="scene" data-i="'+i+'">Nur Szene</button></div>').join('')+'</section>';
 }
 function V988figurePhoto(){const id=String(V988.focus||'main');const f=V941.figures.find(x=>String(x.id)===id);const name=id==='main'?'Mann mit Zopf':f?.type;if(!name)return '';const active=V988.photoPrompt?.[id]!==false;return '<div class="v941ref" id="v988PhotoPanel"><strong>Figurenfoto · '+escapeHTML(name)+'</strong><label class="v9823-toggle"><input type="checkbox" data-v988-photo-prompt="'+escapeHTML(id)+'" '+(active?'checked':'')+'> Upload-Foto im Master-Prompt als Identitätsreferenz verwenden</label><label class="label">Eigenes Figurenfoto hochladen</label><input type="file" accept="image/*" data-v941-upload="'+escapeHTML(id)+'"><small>'+(id==='main'?V941.mainReference||'Noch kein Foto':f.reference||'Noch kein Foto')+'</small></div>'}
+const V988officialJobs=['Alevitischer Dede','Anatolischer Dorf-Opa','Anatolische Großmutter','Älterer Arbeiter','Pensionierter Lehrer','Straßenhändler','Älterer Fischer','Traditioneller Handwerker','Älterer Familienvater','Ältere Marktfrau'];
+function V988ensureLibrary(){
+ let changed=false;
+ for(const type of V988officialJobs){
+  if(V941.figures.some(f=>f.type===type))continue;
+  const fig=V941newFigure(type);fig.enabled=false;
+  V941.figures.push(fig);changed=true;
+ }
+ if(changed)V941save();
+}
+V988ensureLibrary();
 function V988figurePicker(){
  return '<label class="label">Figur auswählen</label><select data-v988-figure>'+BDS987figures().map(f=>'<option value="'+escapeHTML(f.id)+'" '+(V988.focus===f.id?'selected':'')+'>'+escapeHTML(f.label)+'</option>').join('')+'</select>';
 }
@@ -31,7 +42,7 @@ render=function(){
  if(posterNote){posterNote.value=BDS987posterEffective();posterNote.readOnly=!BDS987.posterManual;posterNote.removeAttribute('placeholder');}
 
  if(tab==='text'){const sub=root.querySelector('.bds986-subnav');root.innerHTML=BDS987textUI().split('<section class="panel"><h2>FASSADENFINDER')[0]+V988facades()+V988scenes()+BDS987editorUI();if(sub)root.prepend(sub)}
- if(tab==='cast'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+V988figurePhoto()+'<p class="hint">Hier werden ausschließlich die Figuren aus der bestehenden Figurenbibliothek angezeigt.</p></section>'+(V988.focus==='main'?V941main():V941figures())+(V988.focus==='main'?'<details class="v94details"><summary>Nebenfiguren hinzufügen und verwalten</summary>'+V941figures()+'</details>':'')+(state.opa==='Ja'?'<details class="v94details"><summary>Opa-Regie</summary>'+castTab()+'</details>':'');if(sub)root.prepend(sub)}
+ if(tab==='cast'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+V988figurePhoto()+'<p class="hint">Hier werden ausschließlich die Figuren aus der bestehenden Figurenbibliothek angezeigt.</p></section>'+(V988.focus==='main'?V941main():V941figHTML(V941.figures.find(f=>String(f.id)===V988.focus)||V941.figures[0]))+(state.opa==='Ja'?'<details class="v94details"><summary>Opa-Regie</summary>'+castTab()+'</details>':'');if(sub)root.prepend(sub)}
  if(tab==='poses'){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>POSEN · KOMPAKT</h2>'+V988figurePicker()+V969figureControls(V988.focus)+'</section><details class="v94details"><summary>Weitere Posen und Gruppenoptionen</summary>'+poseTab()+'</details>';if(sub)root.prepend(sub)}
  if(tab==='studio')root.querySelector('#bds987Editorial')?.remove();
  document.title='BİR.DUVARSESİ V9.8.8';
@@ -111,7 +122,7 @@ render=function(){
  if(tab==='text'){const sub=root.querySelector('.bds986-subnav');root.innerHTML=BDS987textUI().split('<section class="panel"><h2>FASSADENFINDER')[0]+V988facades()+V988scenes()+V988editorUI();if(sub)root.prepend(sub)}
  if(tab==='cast'&&V988.focus!=='main'){
   const f=V941.figures.find(x=>String(x.id)===V988.focus);
-  if(f){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+V988figurePhoto()+'</section>'+V941figHTML(f)+'<details class="v94details"><summary>Weitere Nebenfiguren hinzufügen</summary>'+V941figures()+'</details>';if(sub)root.prepend(sub)}
+  if(f){const sub=root.querySelector('.bds986-subnav');root.innerHTML='<section class="panel"><h2>FIGURENBIBLIOTHEK</h2>'+V988figurePicker()+V988figurePhoto()+'</section>'+V941figHTML(f);if(sub)root.prepend(sub)}
  }
 };
 document.addEventListener('click',e=>{
