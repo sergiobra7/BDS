@@ -18,3 +18,13 @@ header{padding-top:max(16px,env(safe-area-inset-top))}nav#tabs{overflow-x:auto;w
 .v96director{border:1px solid #555b66;border-radius:14px;padding:14px;margin:16px 0;background:#181b21}.v96head{display:flex;align-items:center;justify-content:space-between;gap:8px}.v96head strong{font-size:13px}.v96summary,.v96card{border:1px solid #414753;border-radius:12px;padding:12px;margin-top:12px}.v96summary small,.v96card small{display:block;opacity:.75;margin-top:5px}.v96card p{font-size:13px;line-height:1.45}.v96card button{margin:4px 5px 4px 0}.v96director .btn{margin-top:10px}
 /* V9.8.2.3: iOS safe-area, nonoverlapping navigation */
 header{position:relative;top:auto;z-index:1;min-height:0;flex-wrap:wrap;padding:calc(14px + env(safe-area-inset-top)) 14px 12px;align-items:flex-start}header>div{min-width:0;flex:1 1 160px}header h1{font-size:clamp(17px,5vw,21px);overflow-wrap:anywhere}header #saveProject{flex:0 0 auto;max-width:100%;white-space:normal}nav#tabs{position:relative!important;top:auto!important;z-index:2;display:flex;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;max-width:100%;white-space:nowrap}nav#tabs button{flex:0 0 auto}.v9823-toggle{display:flex;align-items:center;gap:12px;padding:12px;margin:10px 0;background:#26272d;border:1px solid #555660;border-radius:10px;font-weight:700}.v9823-toggle input{width:22px;height:22px;flex:none}main{min-width:0}#content{min-width:0}
+
+/* V9.8.6 iPhone Clean Studio: five primary workflow areas + projects */
+nav#tabs.bds986-mainnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;overflow:visible;white-space:normal;padding:12px 0;background:transparent}
+nav#tabs.bds986-mainnav button{min-width:0;white-space:normal;overflow-wrap:anywhere;min-height:48px;text-align:center;padding:10px 7px;border:1px solid #454751;border-radius:12px;background:#22252b;font-size:12px;font-weight:750;letter-spacing:.02em}
+nav#tabs.bds986-mainnav button.active{border-color:#e45866;background:#4b222b;color:#fff}
+.bds986-subnav{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 14px}
+.bds986-subnav button{flex:1 1 auto;min-height:42px;padding:9px 12px;border:1px solid #464952;border-radius:10px;background:#22252b;color:#f1f1f4;font-weight:650}
+.bds986-subnav button.active{border-color:#e45866;background:#4b222b}
+.bds986-note{font-size:13px;line-height:1.45;color:#c5c8cf;background:#1e2229;border:1px solid #373c46;padding:12px;border-radius:12px;margin:0 0 14px}
+@media(min-width:620px){nav#tabs.bds986-mainnav{grid-template-columns:repeat(3,minmax(0,1fr))}}
