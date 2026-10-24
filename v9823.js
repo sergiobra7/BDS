@@ -1,4 +1,4 @@
-/* V9.8.2.3 figure visibility and recommendation gates */
+/* V9.8.2.4 figure visibility and recommendation gates */
 'use strict';
 const V9823render=render;
 render=function(){V9823render();const root=document.getElementById('content');if(!root)return;
