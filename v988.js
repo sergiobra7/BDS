@@ -138,12 +138,15 @@ render=function(){
 
 
 /* A recommendation is not active until its select/apply button is clicked. */
-V988.activeDirector=['facade','smart'].includes(V988.activeDirector)?V988.activeDirector:null;
+V988.activeDirector=['facade','smart','manual'].includes(V988.activeDirector)?V988.activeDirector:null;
 function V988activateDirector(which){V988.activeDirector=which;V988save()}
 document.addEventListener('click',e=>{
  const b=e.target.closest('button');if(!b)return;
- if(b.matches('[data-set="scene"]')&&b.closest('#v988FacadeSection'))V988activateDirector('facade');
- if(['apply','scene'].includes(b.dataset.v96)&&b.closest('#v988SmartSection'))V988activateDirector('smart');
+ if(b.matches('[data-set="scene"]')){
+  if(b.closest('#v988FacadeSection'))V988activateDirector('facade');
+  else V988activateDirector('manual');
+ }
+ if(['apply','scene'].includes(b.dataset.v96))V988activateDirector('smart');
 },true);
 const V988directorPreviousRender=render;
 render=function(){
@@ -156,6 +159,25 @@ render=function(){
   section.id=id;section.dataset.directorActive=String(V988.activeDirector===mode);
   section.style.opacity=V988.activeDirector&&V988.activeDirector!==mode?'0.65':'1';
   h.textContent=heading+(V988.activeDirector===mode?' · AKTIV':V988.activeDirector?' · INAKTIV':'');
+ }
+};
+
+/* Manual selection has priority over both automatic directors. */
+const V988manualPreviousRender=render;
+render=function(){
+ V988manualPreviousRender();
+ const root=document.getElementById('content');if(!root)return;
+ if(tab==='scenes'){
+  const heading=root.querySelector('h2');
+  if(heading)heading.textContent=heading.textContent.replace(/ · AKTIV| · INAKTIV/g,'')+(V988.activeDirector==='manual'?' · AKTIV':'');
+ }
+ if(tab==='text'&&V988.activeDirector==='manual'){
+  for(const id of ['v988FacadeSection','v988SmartSection']){
+   const section=document.getElementById(id);if(!section)continue;
+   section.style.opacity='0.65';
+   const h=section.querySelector('h2');
+   if(h&&!h.textContent.includes('INAKTIV'))h.textContent+=' · INAKTIV';
+  }
  }
 };
 
