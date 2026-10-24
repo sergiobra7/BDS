@@ -33,8 +33,10 @@ function V988ensureLibrary(){
 }
 V988ensureLibrary();
 function V988figurePicker(){
- return '<label class="label">Figur auswählen · offizielle Bibliothek</label><div class="v988-figure-list">'+BDS987figures().map(f=>'<button type="button" class="btn" data-v988-pick="'+escapeHTML(f.id)+'" style="display:block;width:100%;margin:6px 0;text-align:left;'+(V988.focus===f.id?'border-color:#ed3656;':'')+'">'+(V988.focus===f.id?'✓ ':'')+escapeHTML(f.label)+(f.enabled?' · aktiv':' · inaktiv')+'</button>').join('')+'</div>';
+ return '<label class="label">Figurenbibliothek · Figur auswählen und aktivieren</label><div class="v988-figure-list">'+BDS987figures().map(f=>'<div class="v988-figure-entry" style="display:flex;align-items:center;gap:10px;margin:7px 0"><input type="checkbox" aria-label="'+escapeHTML(f.label)+' aktivieren" data-v988-enable="'+escapeHTML(f.id)+'" '+(f.enabled?'checked':'')+'><button type="button" class="btn" data-v988-pick="'+escapeHTML(f.id)+'" style="flex:1;text-align:left;'+(V988.focus===f.id?'border-color:#ed3656;':'')+'">'+escapeHTML(f.label)+'</button></div>').join('')+'</div>';
 }
+document.addEventListener('change',e=>{const id=e.target?.dataset?.v988Enable;if(!id)return;if(id==='main')V941.mainEnabled=e.target.checked;else{const f=V941.figures.find(x=>String(x.id)===id);if(f)f.enabled=e.target.checked;}V941save();render();});
+
 document.addEventListener('click',e=>{const b=e.target.closest('[data-v988-pick]');if(!b)return;V988.focus=b.dataset.v988Pick;V988save();render();});
 const V988previousRender=render;
 render=function(){
