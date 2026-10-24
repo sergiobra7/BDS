@@ -181,4 +181,62 @@ render=function(){
  }
 };
 
+
+/* Last explicit scene selection wins across manual, facade finder and Smart Director. */
+V988.manualLines=Number(V988.manualLines)||4;
+V988.manualChars=Number(V988.manualChars)||0;
+V988.manualShape=V988.manualShape||'Auto';
+V988.manualSearch=V988.manualSearch||'';
+function V988manualResults(){
+ const lines=Math.max(1,Math.min(20,Number(V988.manualLines)||1));
+ const chars=Math.max(0,Math.min(300,Number(V988.manualChars)||0));
+ const term=V988.manualSearch.trim().toLocaleLowerCase('de');
+ return V94matches().filter(x=>x.lim[0]>=lines&&x.lim[2]>=chars&&(V988.manualShape==='Auto'||x.shape===V988.manualShape)&&(!term||x.name.toLocaleLowerCase('de').includes(term)||String(DATA.cities[x.i]||'').toLocaleLowerCase('de').includes(term)));
+}
+function V988manualFinder(){
+ const items=V988manualResults();
+ return '<section class="panel" id="v988ManualFinder"><h2>MANUELLER FASSADENFINDER</h2><p class="hint">Nach Zeilenzahl, längster Textzeile und Fassadenform filtern. Nur Fassaden mit ausreichender hinterlegter Kapazität erscheinen. Die Auswahl aktiviert MANUELL und deaktiviert die beiden Directors.</p>'+
+ '<label class="label">Benötigte Textzeilen</label><input type="number" min="1" max="20" data-v988-manual="lines" value="'+V988.manualLines+'">'+
+ '<label class="label">Zeichen in der längsten Zeile (optional)</label><input type="number" min="0" max="300" data-v988-manual="chars" value="'+V988.manualChars+'">'+
+ '<label class="label">Fassadenformat</label><select data-v988-manual="shape">'+['Auto','WIDE XXL','MEGA XXL','BALANCED XXL','VERTICAL XXL'].map(x=>'<option '+(V988.manualShape===x?'selected':'')+'>'+x+'</option>').join('')+'</select>'+
+ '<label class="label">Ort / Fassade suchen (optional)</label><input data-v988-manual="search" value="'+escapeHTML(V988.manualSearch)+'" placeholder="Ort oder Fassadenname">'+
+ '<p class="hint">'+items.length+' passende Fassaden / Orte · nach Eignung sortiert</p>'+
+ (items.length?items.map(x=>'<div class="item"><strong>'+escapeHTML(x.name)+'</strong><p class="hint">'+escapeHTML(String(DATA.cities[x.i]||''))+' · '+escapeHTML(x.shape)+' • '+x.lim[0]+' Zeilen • bis '+x.lim[2]+' Zeichen/Zeile</p><p class="hint">'+x.score+' Punkte</p><button class="btn" data-set="scene" data-val="'+(x.i+1)+'">Diesen Ort manuell auswählen</button></div>').join(''):'<p class="warn">Keine Fassade erfüllt diese Anforderungen. Filter anpassen.</p>')+'</section>';
+}
+function V988manualStatus(){
+ return '<div class="panel"><strong>AKTIVE SZENENQUELLE: '+(V988.activeDirector==='facade'?'FASSADENFINDER':V988.activeDirector==='smart'?'SMART SCENE DIRECTOR PRO':'MANUELL')+'</strong><p class="hint">Immer die letzte ausdrücklich gewählte Szene zählt. Die anderen Quellen sind inaktiv; ihre Vorschläge bleiben weiterhin sichtbar.</p></div>';
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-set="scene"],[data-v96="apply"],[data-v96="scene"]');
+ if(!b)return;
+ if(b.matches('[data-set="scene"]')){
+  V988activateDirector(b.closest('#v988FacadeSection')?'facade':'manual');
+ }else if(b.dataset.v96==='apply'||b.dataset.v96==='scene'){
+  V988activateDirector('smart');
+ }
+},true);
+document.addEventListener('change',e=>{
+ const el=e.target;if(!el.matches('[data-v988-manual]'))return;
+ const k=el.dataset.v988Manual;
+ if(k==='lines')V988.manualLines=Math.max(1,Math.min(20,Number(el.value)||1));
+ if(k==='chars')V988.manualChars=Math.max(0,Math.min(300,Number(el.value)||0));
+ if(k==='shape')V988.manualShape=el.value;
+ if(k==='search')V988.manualSearch=el.value;
+ V988save();render();
+});
+const V988manualRender=render;
+render=function(){
+ V988manualRender();
+ const root=document.getElementById('content');if(!root)return;
+ if(tab==='text'){
+  const first=root.querySelector('#v988FacadeSection');
+  if(first)first.insertAdjacentHTML('beforebegin',V988manualStatus());
+ }
+ if(tab==='scenes'){
+  const sub=root.querySelector('.bds986-subnav');
+  root.insertAdjacentHTML('afterbegin',V988manualStatus()+V988manualFinder());
+  if(sub&&sub.parentElement===root)root.prepend(sub);
+ }
+};
+
 render();
