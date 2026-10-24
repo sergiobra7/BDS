@@ -29,6 +29,10 @@ jobs:
           mkdir -p _site
           unzip -q "$ZIP" -d _site
           test -f _site/index.html || { echo "index.html not found"; exit 1; }
+      - name: Apply updated figure director from repository
+        run: |
+          test -f v9823.js
+          cp v9823.js _site/v9823.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
