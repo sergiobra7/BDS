@@ -76,4 +76,9 @@ prompt=function(){
  lines.push('QUALITY GATE: Preserve exact Turkish letters and line breaks; physically separate foreground figures and facade; first-line gaze for every figure; natural neck/torso; individual pose and furniture; no streetlights, wall-mounted lamps, flags, religious buildings or symbols, extra signage, or merged anatomy. If the selected scene cannot support the geometry, do not silently invent a solution. This prompt cannot verify the generated image.');
  return lines.join('\n');
 };
+const BDS985oldSnapshot=V970snapshot;
+V970snapshot=function(){return {...BDS985oldSnapshot(),v985:{...BDS985}}};
+const BDS985oldExport=V970export;
+V970export=async function(){toast('V9.8.5: Vollständigen Export vorbereiten');return BDS985oldExport()};
+
 render();
