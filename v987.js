@@ -1,7 +1,7 @@
 /* BİR.DUVARSESİ V9.8.7 – consolidated interaction director overlay. */
 'use strict';
 const BDS987_KEY='bds-v987-editorial';
-let BDS987={main:true,poster:false,notes:{},posterAction:''};
+let BDS987={main:true,poster:false,notes:{},posterAction:'',wallFinish:'Standard'};
 try{const saved=JSON.parse(localStorage.getItem(BDS987_KEY)||'null');if(saved&&typeof saved==='object')BDS987={...BDS987,...saved,notes:saved.notes||{}}}catch(_){}
 function BDS987save(){localStorage.setItem(BDS987_KEY,JSON.stringify(BDS987))}
 const BDS987_GROUPS=[
@@ -15,10 +15,11 @@ const BDS987_GROUPS=[
 BDS986_GROUPS.splice(0,BDS986_GROUPS.length,...BDS987_GROUPS);
 for(const key of Object.keys(BDS986_GROUP_FOR))delete BDS986_GROUP_FOR[key];
 for(const group of BDS987_GROUPS)for(const [id] of group.tabs)BDS986_GROUP_FOR[id]=group.id;
+if(!V941fontOptions.some(x=>x[0]==='T706'))V941fontOptions.push(['T706','MONUMENTAL CONDENSED'],['T707','INDUSTRIAL HEAVY']);
 tab='text';BDS986_activeGroup='text';
 function BDS987textUI(){
- const wall='<section class="panel"><h2>WANDTEXT</h2>'+V941check('Wandtext aktivieren','wallOn',V941.wallOn)+(V941.wallOn?'<label class="label">Wandtext – exakte Zeilen</label><textarea data-key="wall" rows="7">'+escapeHTML(state.wall)+'</textarea>'+V941select('Schriftart','fontChoice',V941fontOptions,V941.fontChoice)+V941select('Schriftstärke','fontWeight',['Maximal fett','Fett','Extra fett'],V941.fontWeight)+V941select('Buchstabenabstand','fontSpacing',['Sehr eng','Eng','Normal'],V941.fontSpacing)+V941select('Zeilenabstand','fontLineSpacing',['Sehr eng','Eng','Normal'],V941.fontLineSpacing)+V941select('Schriftwirkung','textEffect',['Mattrot','Leuchtrot ohne Leuchten oder Strahler'],V941.textEffect)+V941select('Textdominanz','textDominance',['XXL','XXXL','MAXIMUM'],V941.textDominance):'<p class="hint">Wandtext deaktiviert; Text bleibt gespeichert.</p>')+'</section>';
- const poster='<section class="panel"><h2>PLAKAT</h2>'+V941check('Plakattext aktivieren','signOn',V941.signOn)+(V941.signOn?'<label class="label">Plakattext – exakte Zeilen</label><textarea data-key="signText" rows="5">'+escapeHTML(state.signText)+'</textarea><details class="v94details"><summary>Plakatmaterial, Größe, Befestigung und weitere Einstellungen</summary>'+V941sign()+'</details>':'<p class="hint">Plakat deaktiviert; Text und Einstellungen bleiben gespeichert.</p>')+'</section>';
+ const wall='<section class="panel"><h2>WANDTEXT</h2>'+V941check('Wandtext aktivieren','wallOn',V941.wallOn)+(V941.wallOn?'<label class="label">Wandtext – exakte Zeilen</label><textarea data-key="wall" rows="7">'+escapeHTML(state.wall)+'</textarea>'+V941select('Schriftart','fontChoice',V941fontOptions,V941.fontChoice)+'<label class="label">Wandtyp</label><select data-bds987-wall><option value="Standard" '+(BDS987.wallFinish==='Standard'?'selected':'')+'>Bisheriger Wandtyp</option><option value="Historic Black Brick" '+(BDS987.wallFinish==='Historic Black Brick'?'selected':'')+'>Historic Black Brick</option><option value="Forge Black Brick" '+(BDS987.wallFinish==='Forge Black Brick'?'selected':'')+'>Forge Black Brick</option></select>'+V941select('Schriftstärke','fontWeight',['Maximal fett','Fett','Extra fett'],V941.fontWeight)+V941select('Buchstabenabstand','fontSpacing',['Sehr eng','Eng','Normal'],V941.fontSpacing)+V941select('Zeilenabstand','fontLineSpacing',['Sehr eng','Eng','Normal'],V941.fontLineSpacing)+V941select('Schriftwirkung','textEffect',['Mattrot','Leuchtrot ohne Leuchten oder Strahler'],V941.textEffect)+V941select('Textdominanz','textDominance',['XXL','XXXL','MAXIMUM'],V941.textDominance):'<p class="hint">Wandtext deaktiviert; Text bleibt gespeichert.</p>')+'</section>';
+ const poster='<section class="panel"><h2>PLAKAT</h2>'+V941check('Plakattext aktivieren','signOn',V941.signOn)+(V941.signOn?'<label class="label">Plakattext – exakte Zeilen</label><textarea data-key="signText" rows="5">'+escapeHTML(state.signText)+'</textarea><details class="v94details"><summary>Plakatmaterial, Größe, Befestigung und weitere Einstellungen</summary>'+V941originalSign()+'</details>':'<p class="hint">Plakat deaktiviert; Text und Einstellungen bleiben gespeichert.</p>')+'</section>';
  const finder='<section class="panel"><h2>FASSADENFINDER</h2><p class="hint">Passende Fassaden zum aktuellen Wandtext. Empfehlungen nach Textänderungen erneut prüfen.</p>'+V94recommendations()+'<details class="v94details"><summary>Vollständiger Text-Checker und Fassadenanalyse</summary>'+V941oldTextTab()+'</details></section>';
  return wall+poster+finder;
 }
@@ -44,7 +45,8 @@ render=function(){
 };
 document.addEventListener('change',e=>{
  const el=e.target;
- if(el.matches('[data-bds987-figure]')){BDS987[el.dataset.bds987Figure]=el.checked;BDS987save();render()}
+ if(el.matches('[data-bds987-wall]')){BDS987.wallFinish=el.value;BDS987save();render()}
+ else if(el.matches('[data-bds987-figure]')){BDS987[el.dataset.bds987Figure]=el.checked;BDS987save();render()}
  else if(el.matches('[data-bds987-poster]')){BDS987.poster=el.checked;BDS987save();render()}
 });
 document.addEventListener('input',e=>{
@@ -55,6 +57,8 @@ document.addEventListener('input',e=>{
 const BDS987previousPrompt=prompt;
 prompt=function(){
  let result=BDS987previousPrompt();
+ if(BDS987.wallFinish!=='Standard')result+='\nWALL MATERIAL OVERRIDE: '+BDS987.wallFinish+'. Authentic matte deep-black brick, real mortar joints, no wall-mounted lights or facade spotlights.\n';
+ if(V941.fontChoice==='T706'||V941.fontChoice==='T707')result+='\nTYPOGRAPHY REFERENCE: '+(V941.fontChoice==='T706'?'MONUMENTAL CONDENSED, extremely bold condensed uppercase':'INDUSTRIAL HEAVY, massive bold industrial uppercase')+'. Preserve original Turkish letters, line breaks and matte red pigment.\n';
  const active=BDS987figures().filter(f=>f.enabled&&(f.id==='main'?BDS987.main!==false:BDS987[f.id]===true));
  const instructions=active.map(f=>({label:f.label,note:String(BDS987.notes[f.id]||'').trim()})).filter(x=>x.note);
  if(instructions.length||BDS987.poster&&V941.signOn&&BDS987.posterAction.trim()){
