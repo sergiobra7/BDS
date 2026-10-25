@@ -44,17 +44,27 @@ document.addEventListener('keyup',e=>{if(isEditor(e.target))capture(e.target)},t
 document.addEventListener('pointerup',e=>{if(isEditor(e.target))capture(e.target)},true);
 document.addEventListener('scroll',e=>{if(isEditor(e.target))capture(e.target)},true);
 document.addEventListener('compositionend',e=>{if(isEditor(e.target))capture(e.target)},true);
-// The app rebuilds the tab DOM on several actions. Preserve editor state across that rebuild.
+// Keep the native iOS textarea mounted while the user edits or pastes.
+// Other modules call render() on input; replacing #content destroys the selection.
 if(typeof render==='function'){
- const oldRender=render;
+ const previousRender=render;
+ let pending=false;
  render=function(){
-  const focused=document.activeElement;
-  if(isEditor(focused))capture(focused);
-  const result=oldRender.apply(this,arguments);
-  // Do not restore selection or scroll after text entry; Safari owns caret positioning.
-  requestAnimationFrame(syncVersion);
+  const editor=document.activeElement;
+  if(editor instanceof HTMLTextAreaElement && editor.isConnected && document.getElementById('content')?.contains(editor)){
+   pending=true;
+   syncVersion();
+   return;
+  }
+  pending=false;
+  const result=previousRender.apply(this,arguments);
   syncVersion();
   return result;
  };
+ document.addEventListener('focusout',e=>{
+  if(e.target instanceof HTMLTextAreaElement && pending){
+   queueMicrotask(()=>{if(!(document.activeElement instanceof HTMLTextAreaElement))render();});
+  }
+ },true);
 }
 })();
