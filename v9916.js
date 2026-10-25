@@ -1,7 +1,20 @@
 /* BIR.DUVARSESI V9.9.16 — live figure-name and poster-action preview for all 130 Editorial presets */
 (function(){
 'use strict';
-function people(){try{return BDS987figures().filter(f=>f.enabled)}catch(_){return []}}
+function people(){
+ try{
+  // The cast library (V941.figures) is authoritative, not the legacy editorial toggle.
+  const main=V941.mainEnabled!==false?[{id:'main',label:'Mann mit Zopf',enabled:true}]:[];
+  const extra=(Array.isArray(V941.figures)?V941.figures:[]).filter(f=>f&&f.enabled!==false).map((f,i)=>({id:String(f.id),label:String(f.type||'Figur')+' · '+String(f.id),enabled:true}));
+  const result=[...main,...extra];
+  if(result.length>1)return result;
+  // Recover persisted figure selection if another legacy overlay holds a stale in-memory array.
+  const stored=JSON.parse(localStorage.getItem('bds-v941-configuration')||'{}');
+  const saved=Array.isArray(stored.figures)?stored.figures:[];
+  for(const f of saved){if(f&&f.enabled!==false&&!result.some(x=>x.id===String(f.id)))result.push({id:String(f.id),label:String(f.type||'Figur')+' · '+String(f.id),enabled:true})}
+  return result;
+ }catch(_){return BDS987figures().filter(f=>f.enabled)}
+}
 function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function signOn(){return String(state.signMode||'Kein Plakat')!=='Kein Plakat'&&V941.signOn!==false}
 function poseFor(r,i){return i===0?r.action:i===1?r.secondary:'Ruhig mit eigenem sicheren Abstand stehen oder sitzen, ohne Textüberdeckung'}
