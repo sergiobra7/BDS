@@ -39,8 +39,8 @@ function addQuick(){
   camera.innerHTML='<h2>KAMERA · SCHNELLZUGRIFF</h2><p class="hint">Gleiche Werte wie unter 04 BILDREGIE → Kamera.</p>'+
   select('format','Bildformat',['9:16','4:5'])+
   select('time','Tageszeit',['Morgen','Nachmittag','Dämmerung','Nacht','Mitternacht – 00:00','Innenraum'])+
-  segment('lens','Brennweite (mm)',['24','28','35','50'])+
-  input('distance','Kameraabstand (Meter)','number');
+  input('lens','Brennweite (mm)','number')+
+  input('distance','Kameraabstand (Meter)','number')+'<button type="button" class="btn primary" id="v999Refresh">AKTUALISIEREN</button>';
   root.appendChild(camera);
   const panel=document.createElement('section');
   panel.className='panel';panel.id='v989PromptPanel';
