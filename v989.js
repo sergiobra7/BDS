@@ -7,6 +7,8 @@ const mark='bds-v989-defaults';
 defaults.wall=WALL;defaults.signText=SIGN;defaults.signTextMode='Eigener Plakattext';
 V941default.wallOn=true;V941default.signOn=true;
 if(!localStorage.getItem(mark)){
+ const fresh=!localStorage.getItem(V941KEY);
+ if(fresh){V941.wallOn=true;V941.signOn=true;V941save();}
  if(!state.wall||state.wall.startsWith(OLD))state.wall=WALL;
  if(!state.signText){state.signText=SIGN;state.signTextMode='Eigener Plakattext';}
  localStorage.setItem(KEY,JSON.stringify(state));
