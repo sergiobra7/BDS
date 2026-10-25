@@ -36,9 +36,9 @@ document.addEventListener('beforeinput',e=>{if(isEditor(e.target))capture(e.targ
 document.addEventListener('input',e=>{
  if(!isEditor(e.target))return;
  const el=e.target,k=key(el),prior=snapshots.get(k);
- snapshots.set(k,{start:el.selectionStart,end:el.selectionEnd,direction:el.selectionDirection,top:prior?prior.top:el.scrollTop,left:prior?prior.left:el.scrollLeft,value:el.value,focused:true});
+ snapshots.set(k,{start:el.selectionStart,end:el.selectionEnd,direction:el.selectionDirection,top:el.scrollTop,left:prior?prior.left:el.scrollLeft,value:el.value,focused:true});
  activeKey=k;
- requestAnimationFrame(()=>{if(document.activeElement===el){const s=snapshots.get(k);if(s){el.scrollTop=s.top;el.scrollLeft=s.left}}});
+ // Native Safari caret and viewport remain untouched after text input or paste.
 },true);
 document.addEventListener('keyup',e=>{if(isEditor(e.target))capture(e.target)},true);
 document.addEventListener('pointerup',e=>{if(isEditor(e.target))capture(e.target)},true);
@@ -51,7 +51,8 @@ if(typeof render==='function'){
   const focused=document.activeElement;
   if(isEditor(focused))capture(focused);
   const result=oldRender.apply(this,arguments);
-  requestAnimationFrame(()=>{restore();syncVersion();});
+  // Do not restore selection or scroll after text entry; Safari owns caret positioning.
+  requestAnimationFrame(syncVersion);
   syncVersion();
   return result;
  };
