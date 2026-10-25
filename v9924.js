@@ -34,7 +34,7 @@ function unifyGaze(source){
  const wall=String(state.wall||'').split(/\r?\n/).map(x=>x.trim()).find(Boolean)||'';
  const first=wall.split(/\s+/)[0]||'FIRST WORD';
  s=s.replace(/\n{3,}/g,'\n\n').trimEnd();
- return s+'\n\n=== SINGLE GLOBAL GAZE COMMAND — ONLY GAZE AUTHORITY ===\nEvery ACTIVE figure, independently of pose, poster and body orientation, must fix BOTH EYES on the SAME exact FIRST WORD of the FIRST red wall-text line: "'+first.replace(/"/g,'')+'". Determine the word’s actual spatial position from EACH figure’s own location, then turn head, neck, chin and eyes anatomically toward it (left/up or right/up as geometrically required). Sitting, standing and placard placement must not redirect gaze. Do not look at line center, other words, the camera, the sky or another person. Preserve the selected camera and poses.\n=== END SINGLE GAZE COMMAND ===\n';
+ return s+'\n\n=== SINGLE GLOBAL GAZE COMMAND — ONLY GAZE AUTHORITY ===\nEvery ACTIVE figure, must fix BOTH EYES on the SAME exact FIRST WORD of the FIRST red wall-text line: "'+first.replace(/"/g,'')+'". Determine the word’s actual spatial position from EACH figure’s own location, then turn head, neck, chin and eyes anatomically toward it (left/up or right/up as geometrically required). Sitting, standing and placard placement must not redirect gaze. Do not look at line center, other words, the camera, the sky or another person. Preserve the selected camera and poses.\n=== END SINGLE GAZE COMMAND ===\n';
 }
 prompt=function(){return unifyGaze(prior.apply(this,arguments))};
 globalThis.BDS_SINGLE_GAZE_924=unifyGaze;
