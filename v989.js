@@ -81,5 +81,8 @@ document.addEventListener('click',async function(e){
  }
  if(id==='v989Safari')window.open('https://sergiobra7.github.io/BDS/','_blank','noopener');
 },true);
+const versionLabel=document.querySelector('header small');
+if(versionLabel)versionLabel.textContent='PREMIUM STUDIO · V9.8.9';
+document.title='BİR.DUVARSESİ V9.8.9';
 render();
 })();
