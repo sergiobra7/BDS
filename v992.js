@@ -138,6 +138,37 @@ document.addEventListener('change',function(e){
  if(e.target.matches('[data-v992-auto-white]')){S.autoWhite=e.target.checked;save();render()}
  if(e.target.matches('[data-v941-key="signOn"]')&&e.target.checked){BDS987.poster=true;BDS987save()}
 },true);
+/* Native live word-color refresh: update only chips, preserve editor focus. */
+let wordColorFrame=0;
+function refreshWordColorChips(){
+ wordColorFrame=0;
+ const panel=document.getElementById('v992Colors');
+ if(!panel)return;
+ const old=panel.querySelector('div[style*="background"]');
+ if(!old)return;
+ const fresh=document.createElement('div');
+ fresh.innerHTML=colorsUI();
+ const next=fresh.querySelector('#v992Colors div[style*="background"]');
+ if(!next)return;
+ old.replaceChildren(...Array.from(next.childNodes));
+}
+function requestWordColorRefresh(){
+ if(wordColorFrame)return;
+ wordColorFrame=requestAnimationFrame(refreshWordColorChips);
+}
+document.addEventListener('input',function(event){
+ const el=event.target;
+ if(!el||!el.matches)return;
+ if(el.matches('textarea[data-key="signText"],textarea[data-key="wall"],input[data-key="signText"],[data-v941-key="signText"]')){
+  if(el.dataset.key==='signText'||el.dataset.v941Key==='signText')state.signText=el.value;
+  if(el.dataset.key==='wall')state.wall=el.value;
+  requestWordColorRefresh();
+ }
+},true);
+document.addEventListener('change',function(event){
+ if(event.target?.matches?.('[data-key="signTextMode"],[data-v992-auto-white]'))requestWordColorRefresh();
+},true);
+globalThis.BDS992_refreshWordColors=requestWordColorRefresh;
 globalThis.BDS992_liveColorsHTML=colorsUI;
 render();
 })();
