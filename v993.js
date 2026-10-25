@@ -2,6 +2,8 @@
 (function(){
 'use strict';
 const snapshots=new Map();
+function syncVersion(){const h=document.querySelector('header small');if(h)h.textContent='PREMIUM STUDIO · V9.9.3';document.title='BİR.DUVARSESİ V9.9.3';}
+syncVersion();
 let activeKey=null;
 const isEditor=el=>el instanceof HTMLTextAreaElement;
 function key(el){return el.dataset.key||el.dataset.v941Key||el.id||el.name||('textarea:'+Array.from(document.querySelectorAll('textarea')).indexOf(el))}
@@ -45,7 +47,8 @@ if(typeof render==='function'){
   const focused=document.activeElement;
   if(isEditor(focused))capture(focused);
   const result=oldRender.apply(this,arguments);
-  requestAnimationFrame(restore);
+  requestAnimationFrame(()=>{restore();syncVersion();});
+  syncVersion();
   return result;
  };
 }
