@@ -109,14 +109,14 @@ const V988ACTIONS=[
  ['Stille Erkenntnis','Rückwärts auf einem Stuhl sitzen, Unterarme getrennt auf der Lehne','Seitlich auf einer Bank sitzen, Hände auf den Knien'],
  ['Öffentliche Spannung','Aufrecht auf dem gegenüberliegenden Gehweg stehen, offene Hand seitlich','Mit Abstand stehen, eine Hand am Mantel'],
  ['Enttäuschtes Vertrauen','Auf einer Bank sitzen, leicht vorgebeugt, Hände locker verschränkt','Auf einer separaten Sitzfläche nachdenklich sitzen'],
- ['Schweigende Begegnung','Langsam gehen und vor der Wand in der Ferne innehalten','An einem sicheren Geländer lehnen'],
+ ['Schweigende Begegnung','Ruhig und unbewegt vor der entfernten Wand stehen, Kopf zur ersten Textzeile gedreht','An einem sicheren Geländer lehnen'],
  ['Distanz und Würde','Aufrecht stehen, Arme locker seitlich','Auf einem Stuhl rückwärts sitzen, Hände getrennt'],
  ['Nachdenkliche Pause','Mit einer Tasse auf einer öffentlichen Bank sitzen','Neben einer Bank stehen, Hände ruhig'],
  ['Generationen','An einem öffentlichen Geländer stehen, Oberkörper leicht vorgeneigt','Auf einer Bank sitzen, Blick zur Wand'],
  ['Widerspruch','Vor einem Café auf einem Stuhl sitzen, kein Zeigefinger','Einige Meter entfernt stehen, offene Hand seitlich'],
  ['Ungesagte Worte','Auf Treppenstufen sitzen, Ellbogen getrennt auf den Oberschenkeln','An einer niedrigen Mauer lehnen'],
  ['Selbstachtung','Aufrecht stehen, Schultern entspannt','Seitlich auf einem Stuhl sitzen, Hände sichtbar'],
- ['Letzter Blick','Im Gehen anhalten, Kopf zur Wand drehen','Mit Abstand auf dem gegenüberliegenden Gehweg stehen'],
+ ['Letzter Blick','In stabiler Position verharren, Kopf und Hals zur ersten Textzeile drehen','Mit Abstand auf dem gegenüberliegenden Gehweg stehen'],
  ['Gemeinsame Stille','Mit Abstand auf einer Bank sitzen, Hände sichtbar','Auf derselben Bank mit Abstand sitzen, Arme locker']
 ];
 function V988editorIdeas(){
