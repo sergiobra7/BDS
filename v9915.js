@@ -7,7 +7,7 @@ let ui={category:'ALLE',page:0,selected:0};
 try{const v=JSON.parse(localStorage.getItem(STORE)||'null');if(v&&typeof v==='object')ui={...ui,...v}}catch(_){}
 const save=()=>{try{localStorage.setItem(STORE,JSON.stringify(ui))}catch(_){}};
 const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function active(){try{return BDS987figures().filter(f=>f.enabled&&(f.id==='main'?BDS987.main!==false:BDS987[f.id]===true))}catch(_){return []}}
+function active(){try{return BDS987figures().filter(f=>f.enabled)}catch(_){return []}}
 function hasPoster(){return String(state.signMode||'Kein Plakat')!=='Kein Plakat'}
 function isVillage(){
  const names=active().map(f=>f.label).join(' ').toLocaleLowerCase('tr');
