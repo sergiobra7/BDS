@@ -8,7 +8,7 @@ try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&typeof s
 const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));V988.v992Revision=(V988.v992Revision||0)+1;};
 const safe=x=>escapeHTML(String(x==null?'':x));
 const active=()=>BDS987figures().filter(x=>x.enabled);
-const place=()=>{try{const d=info();return String(d?.name||d?.title||d?.scene||d?.location||d?.city||'Szene '+state.scene)}catch(_){return 'Szene '+state.scene}};
+const place=()=>{const n=String(state.scene??'');const index=Number(state.scene)-1;const direct=Array.isArray(DATA.scenes)?DATA.scenes[index]:null;const numbered=typeof V96SCENES!=='undefined'&&Array.isArray(V96SCENES)?V96SCENES.find(x=>String(x.number)===n):null;const name=direct||numbered?.name||'';return n+(name?' · '+name:' · Szenenname nicht im Katalog');};
 const figures=()=>active().map(x=>x.label);
 const note=f=>{try{return BDS987effectiveFigureNote(f)||''}catch(_){return ''}};
 const allNotes=()=>active().map(f=>note(f)).filter(Boolean).join(' ');
