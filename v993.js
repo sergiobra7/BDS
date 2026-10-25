@@ -45,6 +45,40 @@ document.addEventListener('pointerup',e=>{if(isEditor(e.target))capture(e.target
 document.addEventListener('scroll',e=>{if(isEditor(e.target))capture(e.target)},true);
 document.addEventListener('compositionend',e=>{if(isEditor(e.target))capture(e.target)},true);
 
+
+// Consistent placard activation and shared lettering style.
+(function(){
+ const styleKey='bds-shared-letter-style';
+ const stored=localStorage.getItem(styleKey);
+ if(stored){state.wallLetterStyle=stored;state.signLetterStyle=stored;}
+ else if(state.wallLetterStyle==='XXL Blockschrift' && state.signLetterStyle==='XXL Blockschrift'){
+  state.wallLetterStyle='Condensed Bold';state.signLetterStyle='Condensed Bold';
+ }
+ if(V941.signOn && state.signMode==='Kein Plakat')state.signMode='Seitlich gehalten';
+ function saveShared(){
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}
+ }
+ saveShared();
+ document.addEventListener('change',function(e){
+  const el=e.target,k=el.dataset?.key;
+  if(k==='wallLetterStyle'||k==='signLetterStyle'){
+   state.wallLetterStyle=el.value;
+   state.signLetterStyle=el.value;
+   try{localStorage.setItem(styleKey,el.value);}catch(_){}
+   saveShared();
+  }
+  if(k==='signMode' && V941.signOn && el.value==='Kein Plakat'){
+   state.signMode='Seitlich gehalten';
+   el.value='Seitlich gehalten';
+   saveShared();
+  }
+  if(el.dataset?.v941Key==='signOn' && el.checked){
+   if(state.signMode==='Kein Plakat')state.signMode='Seitlich gehalten';
+   saveShared();
+  }
+ },true);
+})();
+
 // Shared editor guard for all writable state-bound textareas.
 // Preserve the proven wall fix: persist values without invoking legacy
 // delegated handlers that can replace a focused editor during paste.
