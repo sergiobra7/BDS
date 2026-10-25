@@ -45,22 +45,20 @@ document.addEventListener('pointerup',e=>{if(isEditor(e.target))capture(e.target
 document.addEventListener('scroll',e=>{if(isEditor(e.target))capture(e.target)},true);
 document.addEventListener('compositionend',e=>{if(isEditor(e.target))capture(e.target)},true);
 
-// WALL-ONLY iOS paste guard: prevent delegated legacy input/change handlers
-// from re-rendering the active wall editor. Persist the text without a redraw.
-document.addEventListener('input',function(e){
+// Shared editor guard for all writable state-bound textareas.
+// Preserve the proven wall fix: persist values without invoking legacy
+// delegated handlers that can replace a focused editor during paste.
+function persistNativeEditor(e){
  const el=e.target;
- if(!(el instanceof HTMLTextAreaElement)||el.dataset.key!=='wall')return;
+ if(!(el instanceof HTMLTextAreaElement)||el.readOnly||el.disabled)return;
+ const k=el.dataset.key;
+ if(!k)return;
  e.stopImmediatePropagation();
- state.wall=el.value;
+ state[k]=el.value;
  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}
-},true);
-document.addEventListener('change',function(e){
- const el=e.target;
- if(!(el instanceof HTMLTextAreaElement)||el.dataset.key!=='wall')return;
- e.stopImmediatePropagation();
- state.wall=el.value;
- try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}
-},true);
+}
+document.addEventListener('input',persistNativeEditor,true);
+document.addEventListener('change',persistNativeEditor,true);
 
 // Keep the native iOS textarea mounted while the user edits or pastes.
 // Other modules call render() on input; replacing #content destroys the selection.
