@@ -80,7 +80,7 @@ document.addEventListener('click',e=>{
  const index=b.dataset.set==='scene'?Number(b.dataset.val)-1:Number(V96.proposals?.[Number(b.dataset.i)]?.idx)-1;
  if(!Number.isInteger(index)||index<0)return;
  if(C.selection===source+':'+(index+1)){
-  C.selection=null;C.source='';save();if(typeof V988!=='undefined'){V988.activeDirector='manual';V988save()}queueMicrotask(decorate);return;
+  e.stopImmediatePropagation();C.selection=null;C.source='';save();if(typeof V988!=='undefined'){V988.activeDirector='manual';V988save()}queueMicrotask(decorate);return;
  }
  const p=source==='smart'?V96.proposals?.[Number(b.dataset.i)]:null;
  applyScene(index,source,p?{lens:p.lens,distance:p.distance}:null);
