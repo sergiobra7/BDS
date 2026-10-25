@@ -1,4 +1,4 @@
-/* BIR.DUVARSESI V9.9.6 — non-destructive live poster text preview.
+/* BIR.DUVARSESI V9.9.7 — window-capture live poster preview repair.
    Updates only the preview nodes while an iOS textarea is focused. */
 (function(){
 'use strict';
@@ -56,18 +56,20 @@ render=function(){
  mount();
  return result;
 };
-document.addEventListener('input',function(e){
+window.addEventListener('input',function(e){
  const el=e.target;
  if(!(el instanceof HTMLTextAreaElement))return;
  if(el.dataset.key==='signText'||(el.dataset.key==='wall'&&state.signTextMode==='Wandtext übernehmen')){
   state[el.dataset.key]=el.value;
+  // Window capture precedes V9.9.3 document capture stopImmediatePropagation.
+  // Never rerender the focused editor; update preview and prompt independently.
   sync();
  }
 },true);
-document.addEventListener('change',function(e){
+window.addEventListener('change',function(e){
  if(e.target.matches('[data-key="signTextMode"],[data-v992-auto-white]'))queueMicrotask(sync);
 },true);
-document.addEventListener('click',function(e){
+window.addEventListener('click',function(e){
  if(e.target.closest('[data-v992-white],[data-v992-red],[data-v992-word]'))queueMicrotask(sync);
 },false);
 mount();
