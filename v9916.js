@@ -1,7 +1,7 @@
 /* BIR.DUVARSESI V9.9.16 — live figure-name and poster-action preview for all 130 Editorial presets */
 (function(){
 'use strict';
-function people(){try{return BDS987figures().filter(f=>f.enabled&&(f.id==='main'?BDS987.main!==false:BDS987[f.id]===true))}catch(_){return []}}
+function people(){try{return BDS987figures().filter(f=>f.enabled)}catch(_){return []}}
 function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function signOn(){return String(state.signMode||'Kein Plakat')!=='Kein Plakat'&&V941.signOn!==false}
 function poseFor(r,i){return i===0?r.action:i===1?r.secondary:'Ruhig mit eigenem sicheren Abstand stehen oder sitzen, ohne Textüberdeckung'}
