@@ -14,6 +14,22 @@ if(!localStorage.getItem(mark)){
  localStorage.setItem(KEY,JSON.stringify(state));
  localStorage.setItem(mark,'1');
 }
+// One-time migration for installations where V9.8.9 marked itself complete
+// without actually applying the user's requested default texts.
+// Preserve the prior values separately so the change is reversible.
+const fixMark='bds-v989-text-defaults-fixed-1';
+if(!localStorage.getItem(fixMark)){
+ const oldValues={wall:state.wall,signText:state.signText,signTextMode:state.signTextMode,wallOn:V941.wallOn,signOn:V941.signOn};
+ localStorage.setItem('bds-v989-previous-text-values',JSON.stringify(oldValues));
+ state.wall=WALL;
+ state.signText=SIGN;
+ state.signTextMode='Eigener Plakattext';
+ V941.wallOn=true;
+ V941.signOn=true;
+ localStorage.setItem(KEY,JSON.stringify(state));
+ V941save();
+ localStorage.setItem(fixMark,'1');
+}
 function addQuick(){
  const root=document.getElementById('content');
  if(!root)return;
