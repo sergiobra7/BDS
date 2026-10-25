@@ -2,8 +2,12 @@
 (function(){
 'use strict';
 const snapshots=new Map();
-function syncVersion(){const h=document.querySelector('header small');if(h)h.textContent='PREMIUM STUDIO · V9.9.3';document.title='BİR.DUVARSESİ V9.9.3';}
+function syncVersion(){const v=globalThis.BDS_VERSION||'9.9.4';const h=document.querySelector('header small');if(h&&h.textContent!=='PREMIUM STUDIO · V'+v)h.textContent='PREMIUM STUDIO · V'+v;if(document.title!=='BİR.DUVARSESİ V'+v)document.title='BİR.DUVARSESİ V'+v;}
 syncVersion();
+// Legacy modules can rewrite the header during rerender; correct it without changing their behavior.
+const versionObserver=new MutationObserver(syncVersion);
+const badge=document.querySelector('header small');if(badge)versionObserver.observe(badge,{childList:true,characterData:true,subtree:true});
+const titleNode=document.querySelector('head title');if(titleNode)versionObserver.observe(titleNode,{childList:true,characterData:true,subtree:true});
 let activeKey=null;
 const isEditor=el=>el instanceof HTMLTextAreaElement;
 function key(el){return el.dataset.key||el.dataset.v941Key||el.id||el.name||('textarea:'+Array.from(document.querySelectorAll('textarea')).indexOf(el))}
