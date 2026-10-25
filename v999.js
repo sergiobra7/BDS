@@ -9,7 +9,7 @@ const number=(x,f)=>Number.isFinite(Number(x))&&Number(x)>0?Number(x):f;
 function recommendation(index){
  const name=String(DATA.scenes[index]||'').toLowerCase();
  const city=String(DATA.cities[index]||'').toLowerCase();
- const limits=DATA.limits[index]||[4,8,40];
+ const limits=DATA.limits?.[index]||[4,8,40];
  const tall=/hochhaus|wolkenkratzer|turm|tower|skyscraper|stadion|arena|gigant|mega|monument|silo|terminal|speicher|fabrik|industrie|werft|hafen|logistik|block/.test(name);
  const roof=/dach|roof|terrasse|skyline|vogel|drohne|luftaufnahme/.test(name);
  const narrow=/gasse|tunnel|metro|unterführung|passage|schlucht/.test(name);
@@ -40,7 +40,7 @@ function decorate(){
   const labels=[...quick.querySelectorAll('label')];
   const lensLabel=labels.find(x=>x.textContent.includes('Brennweite'));
   if(lensLabel){
-   let input=quick.querySelector('#v999Lens');
+   let input=quick.querySelector('[data-key="lens"]')||quick.querySelector('#v999Lens');
    if(!input){input=document.createElement('input');input.id='v999Lens';input.type='number';input.min='10';input.max='400';input.step='1';lensLabel.insertAdjacentElement('afterend',input)}
    input.value=state.lens;
   }
@@ -61,7 +61,7 @@ function decorate(){
    if(!line){line=document.createElement('p');line.className='hint v999-camera';card.insertBefore(line,b)}
    const lens=number(rec.lens,35),distance=number(rec.distance,50);
    line.textContent='KAMERA · '+lens+' mm · '+distance+' m · '+(distance<25?'NAH':distance<50?'MITTEL':distance<80?'WEIT':'SEHR WEIT');
-   const selected=C.selection===source+':'+(index+1);
+   const selected=C.selection===source+':'+(index+1)||(!C.selection&&V988.activeDirector===source&&Number(state.scene)===index+1);
    card.style.background=selected?'#671b22':'';
    card.style.border=selected?'2px solid #ef4444':'';
    card.style.borderRadius=selected?'10px':'';
@@ -73,7 +73,7 @@ const prior=render;
 render=function(){const x=prior.apply(this,arguments);decorate();return x};
 document.addEventListener('click',e=>{
  const b=e.target.closest('button');if(!b)return;
- if(b.id==='v999Refresh'){e.stopImmediatePropagation();const l=document.getElementById('v999Lens');const d=document.querySelector('#v989Quick [data-key="distance"]');if(l){state.lens=String(number(l.value,35));C.manualLens=true}if(d){state.distance=String(number(d.value,50));C.manualDistance=true}save();localStorage.setItem(KEY,JSON.stringify(state));decorate();return}
+ if(b.id==='v999Refresh'){e.stopImmediatePropagation();const l=document.querySelector('#v989Quick [data-key="lens"]')||document.getElementById('v999Lens');const d=document.querySelector('#v989Quick [data-key="distance"]');if(l){state.lens=String(number(l.value,35));C.manualLens=true}if(d){state.distance=String(number(d.value,50));C.manualDistance=true}save();localStorage.setItem(KEY,JSON.stringify(state));decorate();return}
  const source=b.closest('#v988ManualFinder')?'manual':b.closest('#v988FacadeSection')?'facade':b.closest('#v988SmartSection')?'smart':null;
  if(!source)return;
  if(b.dataset.set!=='scene'&&b.dataset.v96!=='apply'&&b.dataset.v96!=='scene')return;
@@ -88,7 +88,7 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('input',e=>{
  const el=e.target;
- if(el.id==='v999Lens'){const n=Number(el.value);if(n>0){state.lens=String(n);C.manualLens=true;save();localStorage.setItem(KEY,JSON.stringify(state))}}
+ if(el.id==='v999Lens'||el.matches('#v989Quick [data-key="lens"]')){const n=Number(el.value);if(n>0){state.lens=String(n);C.manualLens=true;save();localStorage.setItem(KEY,JSON.stringify(state))}}
  if(el.matches('#v989Quick [data-key="distance"]')){const n=Number(el.value);if(n>0){state.distance=String(n);C.manualDistance=true;save();localStorage.setItem(KEY,JSON.stringify(state))}}
 },true);
 decorate();
