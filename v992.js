@@ -138,5 +138,6 @@ document.addEventListener('change',function(e){
  if(e.target.matches('[data-v992-auto-white]')){S.autoWhite=e.target.checked;save();render()}
  if(e.target.matches('[data-v941-key="signOn"]')&&e.target.checked){BDS987.poster=true;BDS987save()}
 },true);
+globalThis.BDS992_liveColorsHTML=colorsUI;
 render();
 })();
