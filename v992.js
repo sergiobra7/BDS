@@ -5,7 +5,7 @@ const KEY='bds-v992-director';
 const initial={mode:'suggest',round:0,selected:-1,autoWhite:false,white:{},red:{},signSnapshot:'',posterInitialized:false};
 let S={...initial};
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&typeof saved==='object')S={...S,...saved}}catch(_){}
-const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));V988.v992Revision=(V988.v992Revision||0)+1;};
 const safe=x=>escapeHTML(String(x==null?'':x));
 const active=()=>BDS987figures().filter(x=>x.enabled);
 const place=()=>{try{const d=info();return String(d?.name||d?.title||d?.scene||d?.location||d?.city||'Szene '+state.scene)}catch(_){return 'Szene '+state.scene}};
@@ -73,6 +73,7 @@ function editorialUI(){
  return '<section class="panel" id="v992Editorial"><h2>EDITORIAL IMPACT PRO · 10 EMPFEHLUNGEN</h2><p class="hint">Statische Posen und zur Szene passende Plakathaltungen. Auswahl manuell oder automatisch.</p><label class="label">Betriebsart</label><select data-v992-mode><option value="auto" '+(S.mode==='auto'?'selected':'')+'>AUTO · beste Kombination übernehmen</option><option value="suggest" '+(S.mode==='suggest'?'selected':'')+'>VORSCHLÄGE · selbst wählen</option><option value="manual" '+(S.mode==='manual'?'selected':'')+'>MANUELL · bestehende Pose beibehalten</option></select><button type="button" class="btn primary" data-v992-next>10 NEUE VORSCHLÄGE</button><p class="hint">Runde '+(S.round+1)+' · 60 variierte Kombinationen im Pool, danach erneute Durchmischung.</p>'+list.map((x,i)=>'<div class="item" style="margin:8px 0;padding:9px;border:1px solid '+(selected?.id===x.id?'#d44':'#444')+';border-radius:8px"><b>'+(i+1)+'. '+safe(x.p[0])+'</b><p class="hint">'+safe(x.p[1])+' · '+safe(x.stance)+'</p><p class="hint">Plakat: '+safe(x.p[3])+'</p><p class="hint">Bezug: '+safe(x.p[4])+'</p><button type="button" class="btn" data-v992-pick="'+x.id+'">DIESE KOMBINATION ÜBERNEHMEN</button></div>').join('')+'</section>';
 }
 if(V941.signOn&&!S.posterInitialized){BDS987.poster=true;S.posterInitialized=true;BDS987save();save()}
+V988.v992Revision=(V988.v992Revision||0)+1;
 const previousPrompt=prompt;
 prompt=function(){
  const c=chosen();
