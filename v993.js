@@ -77,6 +77,7 @@ document.addEventListener('compositionend',e=>{if(isEditor(e.target))capture(e.t
    saveShared();
   }
  },true);
+ if(typeof render==='function')render();
 })();
 
 // Shared editor guard for all writable state-bound textareas.
