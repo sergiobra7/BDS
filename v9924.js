@@ -5,7 +5,7 @@ const prior=prompt;
 function unifyGaze(source){
  let s=String(source);
  // Delete dedicated, competing gaze paragraphs and line-level instructions.
- s=s.replace(/^GAZE DIRECTOR — NON-NEGOTIABLE:[^\n]*(?:\n(?![A-Z][A-Z0-9 _/—–-]{5,}:|\n)[^\n]*)*/gm,'');
+ s=s.replace(/^GAZE DIRECTOR — NON-NEGOTIABLE:[^\\n]*/gm,'');
  s=s.replace(/^DISTANCE PLANNING[^\n]*/gm,'');
  s=s.replace(/^GLOBAL GAZE(?: LOCK)?:[^\n]*/gm,'');
  s=s.replace(/^GAZE DIRECTOR[^\n]*/gm,'');
