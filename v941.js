@@ -3,7 +3,7 @@
 const V941KEY='bds-v941-configuration';
 const V941default={wallOn:true,signOn:false,mainSource:'Mann mit Zopf',mainPosition:'Automatisch passend zur Szene',mainGaze:'Zur Wand',mainOrientation:'Automatisch',mainScale:'Automatisch',mainReference:'',mainEnabled:true,fontChoice:'T701',fontWeight:'Maximal fett',fontSpacing:'Eng',fontLineSpacing:'Eng',textEffect:'Mattrot',textDominance:'MAXIMUM',figures:[],figureCounter:1};
 let V941={...V941default};try{V941={...V941,...JSON.parse(localStorage.getItem(V941KEY)||'{}')}}catch(e){}
-const V941fontOptions=[['T701','ANTON-Stil'],['T702','IMPACT-Stil'],['T703','ANATOLIAN MONUMENTAL BOLD (Bildgenerator-Stil)'],['T706','OSWALD HEAVY'],['T704','BEBAS NEUE BOLD'],['T705','DIN CONDENSED BLACK']];
+const V941fontOptions=[['T701','ANTON-Stil'],['T702','IMPACT-Stil'],['T703','ANATOLIAN MONUMENTAL BOLD (Bildgenerator-Stil)'],['T708','OSWALD HEAVY'],['T704','BEBAS NEUE BOLD'],['T705','DIN CONDENSED BLACK']];
 const V941positions=['Automatisch passend zur Szene','Links im Vordergrund','Rechts im Vordergrund','Mitte','Im Mittelgrund','Gegenüberliegender Gehweg','Frei nach Komposition'];
 const V941gazes=['Zur Wand','Zur Kamera','Zur Hauptfigur','Zur Nebenfigur','Automatisch passend zur Szene'];
 const V941extraFigures=["Alevitischer Dede","Anatolischer Dorf-Opa","Anatolische Großmutter","Älterer Arbeiter","Pensionierter Lehrer","Straßenhändler","Älterer Fischer","Traditioneller Handwerker","Älterer Familienvater","Ältere Marktfrau"];
