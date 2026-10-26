@@ -25,7 +25,7 @@ function config(){
  const gazes={"Zur Wand":"wall","Zur Kamera":"camera","Zur Hauptfigur":"camera","Zur Nebenfigur":"camera"};
  base.figures[0].gaze=gazes[v.mainGaze]||"auto";
  base.figures[0].enabled=v.mainEnabled!==false;
- if(!historical&&Array.isArray(v.figures))for(const [i,f] of v.figures.entries())base.figures.push({
+ if(!historical&&window.BDS10AllowExtraFigures===true&&Array.isArray(v.figures))for(const [i,f] of v.figures.entries())base.figures.push({
  id:String(f.id||"extra"+i),name:String(f.type||f.name||"Nebenfigur"),
  enabled:f.enabled!==false,pose:String(f.pose||"Aufrecht stehen"),
  position:String(f.position||"Automatisch"),gaze:gazes[f.gaze]||"auto",
@@ -36,6 +36,9 @@ function config(){
 function run(){
  const out=window.BDS10.generate(config());
  if(!out.ok){alert("V10: "+out.errors.join("\n"));return}
+ let preview=document.getElementById('bds10-prompt-preview');
+ if(!preview){preview=document.createElement('textarea');preview.id='bds10-prompt-preview';preview.readOnly=true;preview.style.cssText='width:100%;min-height:220px;margin:12px 0;color:#fff;background:#18191c;border:2px solid #ff9800;padding:12px;box-sizing:border-box';document.getElementById('bds10-export')?.after(preview)}
+ preview.value=out.prompt;
  const blob=new Blob([out.prompt],{type:"text/plain;charset=utf-8"});
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="BDS-V10-master-prompt.txt";
  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
@@ -404,7 +407,7 @@ function install(){
  if(content&&!document.getElementById("bds10-facade-finder")&&anchor)content.appendChild(facadeFinderPanel());
  if(!anchor||document.getElementById("bds10-export"))return;
  const btn=document.createElement("button");btn.id="bds10-export";btn.className="btn primary";
- btn.type="button";btn.textContent="V10 Engine · Master-Prompt als TXT";
+ btn.type="button";btn.textContent="V10 CLEAN · Master-Prompt erzeugen (ohne Mantelmann/Director)";
  btn.addEventListener("click",run);anchor.insertAdjacentElement("afterend",btn);
 }
 try{window.BDS10StreetProfile=localStorage.getItem("bds10-street-profile")||""}catch(e){window.BDS10StreetProfile=""}
