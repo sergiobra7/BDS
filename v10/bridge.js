@@ -54,11 +54,15 @@ function facadeFinderPanel(){
  const box=document.createElement("section");box.id="bds10-facade-finder";box.style.cssText="margin:18px 0;padding:14px;border:1px solid #555;border-radius:12px";
  box.innerHTML='<h3>V10 · XXL-Fassadenfinder</h3><p class="hint">Testgebäude: extrem breit oder gigantisch hoch. Kameraeinstellungen bleiben unverändert.</p>'+GIANT_FACADES.map((f,i)=>'<button class="btn" type="button" data-giant-facade="'+i+'" style="display:block;width:100%;margin:8px 0;text-align:left">'+f.name+'<br><small>'+f.size+'</small></button>').join('');
  box.addEventListener("click",e=>{const btn=e.target.closest("[data-giant-facade]");if(!btn)return;const f=GIANT_FACADES[Number(btn.dataset.giantFacade)];if(!f)return;
+  box.querySelectorAll('[data-giant-facade]').forEach(b=>{const active=b===btn;b.style.setProperty('border',active?'3px solid #ff9800':'1px solid #555','important');b.style.setProperty('background',active?'#513014':'','important');b.style.setProperty('box-shadow',active?'0 0 0 2px rgba(255,152,0,.25)':'none','important');b.setAttribute('aria-pressed',String(active))});
   if(typeof state!=="undefined"){state.location=f.scene;state.sceneName=f.scene;}
   window.BDS10SelectedFacade=f;
   const msg=document.getElementById("bds10-facade-status");if(msg)msg.textContent="Aktiv: "+f.name+" · Nur V10-Prompt, Kamera bleibt gesperrt.";
  });
- const status=document.createElement("p");status.id="bds10-facade-status";status.className="hint";box.appendChild(status);return box;
+ const status=document.createElement("p");status.id="bds10-facade-status";status.className="hint";box.appendChild(status);
+ const selected=GIANT_FACADES.findIndex(f=>f.name===window.BDS10SelectedFacade?.name);
+ if(selected>=0){const b=box.querySelector('[data-giant-facade="'+selected+'"]');if(b){b.style.setProperty('border','3px solid #ff9800','important');b.style.setProperty('background','#513014','important');b.setAttribute('aria-pressed','true');status.textContent='Aktiv: '+GIANT_FACADES[selected].name}}
+ return box;
 }
 
 
