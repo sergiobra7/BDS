@@ -8,5 +8,7 @@
  base.poster.hand="Links";console.assert(b.generate(base).ok,"accept held placard with left hand");
  base.poster.hand="Rechts";console.assert(b.generate(base).ok,"accept held placard with right hand");
  base.poster.mode="Freistehend";base.poster.hand="Keine";console.assert(b.generate(base).ok,"accept freestanding placard without hand");
+ base.figures[0].pose="Hände in Manteltaschen";base.poster.mode="Gehalten";base.poster.hand="Links";console.assert(!b.generate(base).ok,"reject poster held with hands in pockets");
+ base.figures[0].pose="Ruhig stehend, Hände locker";console.assert(b.generate(base).ok,"allow held poster with free hands");
  console.log("BDS V10 engine smoke tests finished");
 })();
