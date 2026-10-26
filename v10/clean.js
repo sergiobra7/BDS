@@ -1,0 +1,36 @@
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const facades=[
+['EXTREM BREIT · Schwarze Industrie-Brandwand','80–120 m breit · 25–45 m hoch','Extrem breite schwarze Industrie-Brandwand jenseits einer breiten öffentlichen Straße.'],
+['EXTREM BREIT · Metropolen-Gebäudeblock','70–110 m breit · 35–65 m hoch','Monumentaler schwarzer Metropolen-Gebäudeblock an einer belebten Kreuzung.'],
+['GIGANTISCH HOCH · Schwarze Hochhaus-Brandwand','35–55 m breit · 100–160 m hoch','Gigantische schwarze Hochhaus-Brandwand gegenüber einer breiten Straße.'],
+['GIGANTISCH HOCH · Monolithischer Stadtturm','40–65 m breit · 120–190 m hoch','Monolithischer schwarzer Stadtturm mit ununterbrochener Schriftfassade.']];
+const key='bds10-clean-settings';
+let model={wall:'',poster:'',facade:0,street:'',format:'9:16',time:'Nacht',lens:35,distance:55,perspective:'Low Angle',enabled:true,pose:'Still und fest stehen, Arme seitlich',position:'Linker Vordergrund',gaze:'Zur Wand',reference:''};
+try{model={...model,...JSON.parse(localStorage.getItem(key)||'{}')}}catch(e){}
+const save=()=>{try{localStorage.setItem(key,JSON.stringify(model))}catch(e){}};
+function field(label,id,type='text'){return '<label>'+label+'<input id="'+id+'" type="'+type+'"></label>'}
+function select(label,id,opts){return '<label>'+label+'<select id="'+id+'">'+opts.map(x=>'<option value="'+x+'">'+x+'</option>').join('')+'</select></label>'}
+function render(){
+ $('content').innerHTML=`
+ <section class="card"><h2>01 · TEXTE</h2><label>XXL-Wandtext<textarea id="wall" rows="9" placeholder="Türkischen Wandtext eingeben"></textarea></label><label>Plakattext (optional)<textarea id="poster" rows="4"></textarea></label></section>
+ <section class="card"><h2>02 · KAMERA · SCHNELLZUGRIFF</h2>${select('Bildformat','format',['9:16','4:5','1:1','16:9'])}${select('Tageszeit','time',['Nacht','Nachmittag','Morgen','Abend','Tag'])}${select('Perspektive','perspective',['Low Angle','Eye Level','High Angle'])}${field('Brennweite (mm)','lens','number')}${field('Kameraabstand (Meter)','distance','number')}</section>
+ <button id="xxl-toggle" class="red">XXL-FASSADENFINDER ÖFFNEN</button>
+ <section id="xxl-panel" class="card" hidden><h2>03 · XXL-FASSADENFINDER</h2><div id="facades"></div>${select('Straßenperspektive','street',['Standard','DUYGUKAPISI V7.0 · ORIGINAL STREET PERSPECTIVE'])}</section>
+ <section class="card" id="live"><h2>AKTUELLE SZENE · LIVE</h2><div id="scene-summary"></div></section>
+ <section class="card"><h2>04 · HAUPTFIGUR · MANN MIT ZOPF</h2><label><input id="enabled" type="checkbox"> Hauptfigur aktiv</label>${select('Pose','pose',['Still und fest stehen, Arme seitlich','Auf stabiler Bank sitzen, Unterarme auf den Knien','Auf niedrigem Hocker sitzen','Ruhig aufrecht stehen','Mit verschränkten Armen stehen','An Geländer lehnen','Auf einer Treppenstufe sitzen','Seitlich zur Wand stehen','Hände in Manteltaschen','Auf einer Bank sitzen, aufrecht'])}${select('Position','position',['Linker Vordergrund','Mittlerer Vordergrund','Rechter Vordergrund','Gegenüberliegender Gehweg links'])}${select('Blickrichtung','gaze',['Zur Wand','Zur Kamera','Zur Straße'])}${field('Referenzfoto (optionale Beschreibung)','reference')}</section>
+ <section class="card"><h2>MASTER-PROMPT · LIVE</h2><button id="make" class="red">MASTER-PROMPT ERZEUGEN</button><textarea id="output" rows="17" readonly></textarea><button id="copy">PROMPT KOPIEREN</button><button id="download">ALS TXT SPEICHERN</button><p id="status" role="status"></p></section>`;
+ $('facades').innerHTML=facades.map((f,i)=>'<button class="facade" data-facade="'+i+'">'+f[0]+'<small>'+f[1]+'</small></button>').join('');
+ for(const k of Object.keys(model)){let el=$(k);if(!el)continue;if(el.type==='checkbox')el.checked=!!model[k];else el.value=k==='street'?(model.street||'Standard'):model[k]}
+ const update=()=>{save();$('scene-summary').textContent=facades[model.facade][0]+' · Schwarzer Backstein · '+model.perspective+' · '+model.lens+' mm · '+model.distance+' m · '+model.time;document.querySelectorAll('[data-facade]').forEach(b=>b.classList.toggle('chosen',+b.dataset.facade===model.facade))};
+ $('content').addEventListener('input',e=>{let k=e.target.id;if(k in model){model[k]=e.target.type==='checkbox'?e.target.checked:e.target.type==='number'?Number(e.target.value):e.target.value;update()}});
+ $('content').addEventListener('change',e=>{let k=e.target.id;if(k in model){model[k]=e.target.type==='checkbox'?e.target.checked:e.target.value;update()}});
+ $('facades').addEventListener('click',e=>{let b=e.target.closest('[data-facade]');if(!b)return;model.facade=+b.dataset.facade;update()});
+ $('xxl-toggle').addEventListener('click',()=>{let p=$('xxl-panel');p.hidden=!p.hidden;$('xxl-toggle').textContent=p.hidden?'XXL-FASSADENFINDER ÖFFNEN':'XXL-FASSADENFINDER SCHLIESSEN'});
+ $('make').addEventListener('click',()=>{const c=JSON.parse(JSON.stringify(window.BDS10.DEFAULTS));c.scene=facades[model.facade][2];c.facade='Schwarzer Backstein';c.wall.text=model.wall;c.wall.enabled=true;c.wall.dominance=90;c.poster.text=model.poster;c.poster.enabled=!!model.poster.trim();c.time=model.time;c.camera.format=model.format;c.camera.lens=model.lens;c.camera.distance=model.distance;c.camera.perspective=model.perspective;c.figures[0].enabled=model.enabled;c.figures[0].pose=model.pose;c.figures[0].position=model.position;c.figures[0].gaze=model.gaze==='Zur Kamera'?'camera':model.gaze==='Zur Straße'?'street':'wall';if(model.street.startsWith('DUYGUKAPISI')){c.scene+=' Breite urbane Straßenkreuzung, gegenüberliegender öffentlicher Gehweg, Mann mit Zopf links im Vordergrund, lebendiger Straßenalltag und physisch glaubwürdige Distanz zur monumentalen Schriftfassade.';c.camera.lens=28;c.camera.distance=30;c.camera.format='9:16';c.camera.perspective='Urban Wide Establishing Shot · Eye Level';c.time='Nachmittag'}const result=window.BDS10.generate(c);$('output').value=result.ok?result.prompt:result.errors.join('\n');$('status').textContent=result.ok?'Prompt erfolgreich erzeugt':'Bitte Wandtext und Eingaben prüfen'});
+ $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('output').value);$('status').textContent='Kopiert'}catch(e){$('output').select();$('status').textContent='Text markieren und kopieren'}});
+ $('download').addEventListener('click',()=>{const blob=new Blob([$('output').value],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS-V10-master-prompt.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+ update();
+}
+document.addEventListener('DOMContentLoaded',render);
+})();
