@@ -90,6 +90,37 @@ function installMainPose(){
 }
 
 
+
+function simplifyMainCharacter(){
+ const root=document.getElementById('content');if(!root)return;
+ const heading=Array.from(root.querySelectorAll('h2')).find(h=>/Hauptfigur.*unabhängige Steuerung/i.test(h.textContent));
+ const panel=heading&&heading.closest('.panel');if(!panel)return;
+ if(heading.textContent!=='Hauptfigur · Mann mit Zopf')heading.textContent='Hauptfigur · Mann mit Zopf';
+ // Keep one primary pose selector. Legacy pose library stays in code, but not in this V10 view.
+ for(const details of panel.querySelectorAll('details')){
+  if(/Alle bisherigen Hauptfigur-Posen/i.test(details.querySelector('summary')?.textContent||'')&&details.style.display!=='none')details.style.display='none';
+ }
+ for(const note of panel.querySelectorAll('p.ok')){
+  if(/Posensammlung|Pose und Blick/i.test(note.textContent||'')&&note.style.display!=='none')note.style.display='none';
+ }
+ // Keep character, pose, position and gaze immediately visible; put secondary settings into one disclosure.
+ let advanced=panel.querySelector('#bds10-main-advanced');
+ if(!advanced){
+  advanced=document.createElement('details');advanced.id='bds10-main-advanced';advanced.className='v94details';
+  const summary=document.createElement('summary');summary.textContent='Weitere Einstellungen · Foto, Ausrichtung & Abstand';
+  advanced.appendChild(summary);panel.appendChild(advanced);
+ }
+ const nodes=Array.from(panel.children);
+ for(const node of nodes){
+  if(node===advanced||node.id==='bds10-main-pose'||node.tagName==='H2')continue;
+  if(node.classList.contains('v941ref')){if(node.parentElement!==advanced)advanced.appendChild(node);continue}
+  if(node.tagName==='LABEL'){
+   const txt=(node.textContent||'').trim();
+   if(/Körperausrichtung|Größe & Abstand/i.test(txt)&&node.parentElement!==advanced)advanced.appendChild(node);
+  }
+ }
+}
+
 function removeDirectorImpactUI(){
  const root=document.getElementById('content');if(!root)return;
  for(const el of root.querySelectorAll('section, .panel, .v96director')){
@@ -106,6 +137,7 @@ function removeDirectorImpactUI(){
 function install(){
  removeDirectorImpactUI();
  installMainPose();
+ simplifyMainCharacter();
 
  const anchor=document.getElementById("downloadPrompt");
  const content=document.getElementById("content");
