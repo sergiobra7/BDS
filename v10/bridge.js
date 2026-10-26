@@ -5,7 +5,7 @@ function config(){
  const base=JSON.parse(JSON.stringify(window.BDS10.DEFAULTS));
  const s=typeof state!=="undefined"?state:{};
  const v=typeof V941!=="undefined"?V941:{};
- base.scene=String(s.location||s.sceneName||(typeof DATA!=="undefined"&&DATA.scenes?DATA.scenes[(Number(s.scene)||1)-1]:"")||"");
+ base.scene=String((window.BDS10SelectedFacade&&window.BDS10SelectedFacade.scene)||s.location||s.sceneName||(typeof DATA!=="undefined"&&DATA.scenes?DATA.scenes[(Number(s.scene)||1)-1]:"")||"");
  base.wall.text=String(s.wall||"");
  base.wall.enabled=v.wallOn!==false;
  base.wall.font=String(v.fontChoice||base.wall.font);
@@ -39,9 +39,30 @@ function run(){
 }
 
 // Director recommendations temporarily disabled for controlled geometry testing.
+
+// Isolated facade finder presets for controlled single-character distance tests.
+const GIANT_FACADES=[
+ {name:"EXTREM BREIT · Schwarze Industrie-Brandwand",shape:"BREIT",size:"80–120 m breit · 25–45 m hoch",scene:"Extrem breite zusammenhängende schwarze Industrie-Brandwand jenseits einer breiten öffentlichen Straße; durchgehende freie XXL-Schriftfläche, sichtbarer Straßenraum, Mann mit Zopf auf gegenüberliegender Gehwegseite links unten."},
+ {name:"EXTREM BREIT · Metropolen-Gebäudeblock",shape:"BREIT",size:"70–110 m breit · 35–65 m hoch",scene:"Gigantischer schwarzer Metropolen-Gebäudeblock an einer breiten Kreuzung; riesige ununterbrochene Seitenfassade für rote XXL-Schrift, Mann mit Zopf links unten auf der anderen Straßenseite."},
+ {name:"GIGANTISCH HOCH · Schwarze Hochhaus-Brandwand",shape:"HOCH",size:"35–55 m breit · 100–160 m hoch",scene:"Gigantisch hohe schwarze Hochhaus-Brandwand jenseits einer mehrspurigen Straße; vollständig zusammenhängende vertikale Schriftfläche, Mann mit Zopf links unten auf der gegenüberliegenden Gehwegseite."},
+ {name:"GIGANTISCH HOCH · Monolithischer Stadtturm",shape:"HOCH",size:"40–65 m breit · 120–190 m hoch",scene:"Monolithischer schwarzer Stadtturm mit gigantisch hoher durchgehender ebener Seitenfassade; breite öffentliche Platzfläche zwischen Gebäude und Mann mit Zopf links unten."}
+];
+function facadeFinderPanel(){
+ const box=document.createElement("section");box.id="bds10-facade-finder";box.style.cssText="margin:18px 0;padding:14px;border:1px solid #555;border-radius:12px";
+ box.innerHTML='<h3>V10 · XXL-Fassadenfinder</h3><p class="hint">Testgebäude: extrem breit oder gigantisch hoch. Kameraeinstellungen bleiben unverändert.</p>'+GIANT_FACADES.map((f,i)=>'<button class="btn" type="button" data-giant-facade="'+i+'" style="display:block;width:100%;margin:8px 0;text-align:left">'+f.name+'<br><small>'+f.size+'</small></button>').join('');
+ box.addEventListener("click",e=>{const btn=e.target.closest("[data-giant-facade]");if(!btn)return;const f=GIANT_FACADES[Number(btn.dataset.giantFacade)];if(!f)return;
+  if(typeof state!=="undefined"){state.location=f.scene;state.sceneName=f.scene;}
+  window.BDS10SelectedFacade=f;
+  const msg=document.getElementById("bds10-facade-status");if(msg)msg.textContent="Aktiv: "+f.name+" · Nur V10-Prompt, Kamera bleibt gesperrt.";
+ });
+ const status=document.createElement("p");status.id="bds10-facade-status";status.className="hint";box.appendChild(status);return box;
+}
+
 function install(){
 
  const anchor=document.getElementById("downloadPrompt");
+ const content=document.getElementById("content");
+ if(content&&!document.getElementById("bds10-facade-finder")&&anchor)content.appendChild(facadeFinderPanel());
  if(!anchor||document.getElementById("bds10-export"))return;
  const btn=document.createElement("button");btn.id="bds10-export";btn.className="btn primary";
  btn.type="button";btn.textContent="V10 Engine · Master-Prompt als TXT";
@@ -51,5 +72,5 @@ document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
  new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
 });
-window.BDS10Bridge={config,run};
+window.BDS10Bridge={config,run,GIANT_FACADES};
 })();
