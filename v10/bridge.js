@@ -283,11 +283,59 @@ function removeLegacyFacadeFinderEverywhere(){
  }
 }
 
+
+function installCleanXXLTab(){
+ const tabs=document.getElementById('tabs'),content=document.getElementById('content');if(!tabs||!content)return;
+ for(const b of tabs.querySelectorAll('button')){
+  if(b.id==='bds10-xxl-tab')continue;
+  if(/fassade|szene|director|regie|impact|studio pro|pose fusion/i.test(b.textContent||''))b.style.display='none';
+ }
+ let button=document.getElementById('bds10-xxl-tab');
+ if(!button){
+  button=document.createElement('button');button.id='bds10-xxl-tab';button.type='button';button.textContent='XXL-Fassaden';
+  tabs.appendChild(button);
+  button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();window.BDS10MainTabOpen=false;window.BDS10XXLTabOpen=true;showCleanXXLTab()},true);
+ }
+ if(window.BDS10XXLTabOpen&&!content.querySelector('#bds10-xxl-screen'))showCleanXXLTab();
+}
+function showCleanXXLTab(){
+ const tabs=document.getElementById('tabs'),content=document.getElementById('content');if(!tabs||!content)return;
+ for(const b of tabs.querySelectorAll('button'))b.classList.toggle('active',b.id==='bds10-xxl-tab');
+ const screen=document.createElement('section');screen.id='bds10-xxl-screen';
+ screen.appendChild(facadeFinderPanel());
+ const wrap=document.createElement('div');wrap.style.margin='18px 0';
+ const label=document.createElement('label');label.className='label';label.textContent='Straßenperspektive';
+ const select=document.createElement('select');select.style.width='100%';
+ for(const [value,title] of [['','Standard'],['duygukapisi-v7','DUYGUKAPISI V7.0 · ORIGINAL STREET PERSPECTIVE']]){
+  const opt=document.createElement('option');opt.value=value;opt.textContent=title;select.appendChild(opt);
+ }
+ select.value=window.BDS10StreetProfile||'';
+ select.addEventListener('change',()=>{window.BDS10StreetProfile=select.value;try{localStorage.setItem('bds10-street-profile',select.value)}catch(e){}});
+ wrap.append(label,select);screen.appendChild(wrap);content.replaceChildren(screen);
+}
+document.addEventListener('click',e=>{
+ if(e.target.closest('#tabs button:not(#bds10-xxl-tab)'))window.BDS10XXLTabOpen=false;
+},true);
+function suppressLegacyDirector(){
+ const root=document.getElementById('content');if(!root)return;
+ const pattern=/manueller fassadenfinder|fassadenfinder\s*[·•:-]\s*inaktiv|aktive szenenquelle|smart.*director|editorial.*impact|regie.*director|511 passende fassaden/i;
+ for(const node of root.querySelectorAll('h2,h3,h4,summary,button,strong')){
+  const title=(node.textContent||'').trim();
+  if(!pattern.test(title)||title.length>150)continue;
+  let panel=node.closest('.panel,details,section');
+  if(!panel||panel===root||panel.id==='bds10-facade-finder'||panel.id==='bds10-xxl-screen')continue;
+  if(panel.style.display!=='none')panel.style.display='none';
+ }
+}
+
 function install(){
  installDedicatedMainTab();
+ installCleanXXLTab();
  replaceMainFigureTab();
  simplifyFacadeScreen();
  enforceOnlyXXLFinder();
+ suppressLegacyDirector();
+ removeLegacyFacadeFinderEverywhere();
  compactAllFigurePanels();
  removeDirectorImpactUI();
  simplifyMainCharacter();
@@ -303,7 +351,9 @@ function install(){
 try{window.BDS10StreetProfile=localStorage.getItem("bds10-street-profile")||""}catch(e){window.BDS10StreetProfile=""}
 document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
- new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
+ new MutationObserver(install).observe(root,{childList:true,subtree:true});
+ const tabs=document.getElementById('tabs');if(tabs)new MutationObserver(install).observe(tabs,{childList:true});
+ install();
 });
 window.BDS10Bridge={config,run,GIANT_FACADES,MAIN_POSES};
 })();
