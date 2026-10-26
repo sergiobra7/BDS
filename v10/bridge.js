@@ -57,6 +57,13 @@ function facadeFinderPanel(){
   box.querySelectorAll('[data-giant-facade]').forEach(b=>{const active=b===btn;b.style.setProperty('border',active?'3px solid #ff9800':'1px solid #555','important');b.style.setProperty('background',active?'#513014':'','important');b.style.setProperty('box-shadow',active?'0 0 0 2px rgba(255,152,0,.25)':'none','important');b.setAttribute('aria-pressed',String(active))});
   if(typeof state!=="undefined"){state.location=f.scene;state.sceneName=f.scene;}
   window.BDS10SelectedFacade=f;
+  box.querySelectorAll('[data-giant-facade]').forEach(option=>{
+   const active=option===btn;
+   option.style.setProperty('border',active?'4px solid #ff9800':'2px solid #484850','important');
+   option.style.setProperty('background-color',active?'#593315':'#29292f','important');
+   option.style.setProperty('box-shadow',active?'0 0 0 2px rgba(255,152,0,.45)':'none','important');
+   option.setAttribute('aria-pressed',String(active));
+  });
   const msg=document.getElementById("bds10-facade-status");if(msg)msg.textContent="Aktiv: "+f.name+" · Nur V10-Prompt, Kamera bleibt gesperrt.";
  });
  const status=document.createElement("p");status.id="bds10-facade-status";status.className="hint";box.appendChild(status);
