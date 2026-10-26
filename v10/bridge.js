@@ -358,20 +358,22 @@ function hardRemoveLegacyCards(){
 
 
 function placeXXLButtonUnderText(){
- const button=document.getElementById('bds10-xxl-direct');
  const tabs=document.getElementById('tabs'),content=document.getElementById('content');
- if(!button||!tabs||!content)return;
+ if(!tabs||!content)return;
  const active=tabs.querySelector('button.active');
- const label=(active?.textContent||'').trim();
- const isText=/^text(e)?$/i.test(label);
- if(isText){
-  if(button.parentElement!==content)content.appendChild(button);
-  button.style.display='block';
- }else{
-  button.style.display='none';
- }
+ const title=(active?.textContent||'').trim();
+ // Legacy releases label this tab "Text", "01 TEXTE", or "Wandtext".
+ const isText=/text/i.test(title)&&!/kontext|texturen/i.test(title);
+ const old=document.getElementById('bds10-xxl-direct');
+ if(old&&old.parentElement!==content)old.remove();
+ if(!isText)return;
+ if(content.querySelector('#bds10-xxl-direct'))return;
+ const button=document.createElement('button');button.id='bds10-xxl-direct';button.type='button';
+ button.textContent='🏢 XXL-FASSADENFINDER ÖFFNEN';
+ button.style.cssText='display:block;width:100%;margin:20px 0;padding:18px;background:#ae2338;color:white;border:2px solid #e0485e;border-radius:12px;font-size:20px;font-weight:800;cursor:pointer';
+ button.addEventListener('click',e=>{e.preventDefault();window.BDS10XXLTabOpen=true;window.BDS10MainTabOpen=false;showCleanXXLTab();document.getElementById('content')?.scrollIntoView({behavior:'smooth',block:'start'});});
+ content.appendChild(button);
 }
-
 function install(){
  installDedicatedMainTab();
  placeXXLButtonUnderText();
