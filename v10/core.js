@@ -7,11 +7,13 @@ const normalize=s=>String(s||"").trim();
 const firstWord=s=>normalize(s).split(/\s+/u)[0]||"";
 const modes=new Set(["wall","camera","street","poster","auto"]);
 function validate(input){
- const x=clone(input);const errors=[];
+ const x=clone(input||{});const errors=[];
  if(!x.camera||!Number.isFinite(Number(x.camera.lens))||Number(x.camera.lens)<=0)errors.push("Ungültige Brennweite");
  if(!x.camera||!Number.isFinite(Number(x.camera.distance))||Number(x.camera.distance)<=0)errors.push("Ungültige Entfernung");
  if(!["9:16","4:5"].includes(x.camera?.format))errors.push("Ungültiges Format");
  if(!Array.isArray(x.figures))errors.push("Figuren fehlen");
+ if(!x.wall||!x.poster||!x.camera)errors.push("Pflichtkonfiguration unvollständig");
+ if(x.wall?.enabled&&(!Number.isFinite(Number(x.wall.dominance))||Number(x.wall.dominance)<1||Number(x.wall.dominance)>100))errors.push("Schriftdominanz muss zwischen 1 und 100 liegen");
  const active=(Array.isArray(x.figures)?x.figures:[]).filter(f=>f.enabled!==false);
  const ids=new Set();for(const f of active){if(!f.id||ids.has(f.id))errors.push("Doppelte/fehlende Figuren-ID");ids.add(f.id)}
  if(x.wall?.enabled&&!firstWord(x.wall.text))errors.push("Wandtext fehlt");
@@ -37,7 +39,7 @@ function gazeTarget(f,x,active){
  const person=active.find(v=>v.id===g);return person&&person.id!==f.id?"person "+person.name+" ["+person.id+"]":"scene-specific natural gaze";
 }
 function generate(input){
- const x=clone(input),{errors,active}=validate(x);
+ const x=clone(input||{}),{errors,active}=validate(x);
  if(errors.length)return {ok:false,errors,prompt:""};
  const lines=["BİR.DUVARSESİ V10 — CLEAN MASTER PROMPT","OUTPUT: Exactly ONE photorealistic editorial photograph. No CGI.","SCENE: "+normalize(x.scene)+". FACADE: "+normalize(x.facade)+". TIME: "+normalize(x.time)+".","CAMERA (IMMUTABLE): "+x.camera.perspective+"; "+x.camera.lens+" mm; "+x.camera.distance+" m; "+x.camera.format+".","PHYSICAL GEOMETRY: Figures stand or sit on a safe publicly accessible foreground separate from the text-bearing facade. Keep authentic scale, depth, perspective and clear sight lines. Do not move manual positions.","NO facade lamps, wall-mounted fixtures, floodlights, flags, invented signage, or moving poses."];
  if(x.wall.enabled)lines.push("WALL: monumental matte red typography, "+x.wall.font+"; dominance "+x.wall.dominance+"%; single planar perspective; preserve every glyph and original line break.","BEGIN EXACT WALL TEXT",normalize(x.wall.text),"END EXACT WALL TEXT");
