@@ -328,6 +328,19 @@ function suppressLegacyDirector(){
  }
 }
 
+
+function pruneLegacyPanels(){
+ const root=document.getElementById('content');if(!root)return;
+ const unwanted=/aktive szenenquelle|kamera\s*[·•:-]\s*schnellzugriff|manueller fassadenfinder|fassadenfinder\s*[·•:-]\s*inaktiv|smart\s*(scene\s*)?director|editorial\s*impact|director|511 passende fassaden|figurenverteilung|v9\.6\.3\s*[·•:-]\s*aktivität/i;
+ for(const heading of root.querySelectorAll('h1,h2,h3,h4,h5,summary,strong,button')){
+  const title=(heading.textContent||'').trim();
+  if(title.length>130||!unwanted.test(title))continue;
+  const card=heading.closest('.panel,details,section,article');
+  if(!card||card===root||card.id==='bds10-facade-finder'||card.id==='bds10-xxl-screen'||card.id==='bds10-only-main')continue;
+  if(card.style.display!=='none')card.style.display='none';
+ }
+}
+
 function install(){
  installDedicatedMainTab();
  installCleanXXLTab();
@@ -335,6 +348,7 @@ function install(){
  simplifyFacadeScreen();
  enforceOnlyXXLFinder();
  suppressLegacyDirector();
+ pruneLegacyPanels();
  removeLegacyFacadeFinderEverywhere();
  compactAllFigurePanels();
  removeDirectorImpactUI();
