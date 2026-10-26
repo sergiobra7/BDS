@@ -12,18 +12,20 @@ function config(){
  base.camera.format=String(s.format||base.camera.format);
  base.camera.lens=Number(s.lens||s.cameraLens||base.camera.lens);
  base.camera.distance=Number(s.distance||s.cameraDistance||base.camera.distance);
- const separation=Number(s.figureToFacadeDistance||0);
+ const historical=window.BDS10StreetProfile==="duygukapisi-v7";
+ if(historical){base.camera.lens=28;base.camera.distance=30;base.camera.perspective="Urban Wide Establishing Shot · natürliche Augenhöhe";base.camera.format="9:16";base.wall.dominance=90;base.time="Nachmittag · leicht bewölkt, trocken";base.scene+=" | DUYGUKAPISI V7.0 ORIGINAL STREET PERSPECTIVE: hohe Metropolenfassade, breit und hoch, 90 Prozent Textausnutzung; gesamte Fassade und lebendiger geschäftiger Straßenalltag sichtbar; schräg gegenüberliegende Straßenecke, natürliche Augenhöhe, Mann mit Zopf klein aber klar erkennbar links im nahen Vordergrund; physisch getrennt durch realistische Straßenbreite; Straßencafé / Çay-Ocağı, Passanten, alltägliche Handlungen, Fahrzeuge und bei passender Szene Kreuzung / Fußgängerüberweg; nur natürlich vorhandenes Licht; erst Wand, dann gegenüberliegender Standort, dann Pose, zuletzt Kopf und Augen; Blickachse zu einem tatsächlichen roten Wort, anatomisch glaubwürdig; keine erfundenen Fassadenlampen.";}
+ const separation=historical?0:Number(s.figureToFacadeDistance||0);
  if(separation>0)base.camera.figureToFacade=separation;
  base.poster.enabled=v.signOn===true;
  base.poster.text=String(s.signTextMode==="Wandtext übernehmen"?s.wall:s.signText||"");
  base.figures[0].name=String(v.mainSource||base.figures[0].name);
  base.figures[0].pose=mainPose();
- base.figures[0].position=String(v.mainPosition||base.figures[0].position);
+ base.figures[0].position=historical?"Links im nahen Vordergrund, schräg gegenüberliegende Straßenecke, klein aber erkennbar":String(v.mainPosition||base.figures[0].position);
  base.figures[0].orientation=String(v.mainOrientation||base.figures[0].orientation);
  const gazes={"Zur Wand":"wall","Zur Kamera":"camera","Zur Hauptfigur":"camera","Zur Nebenfigur":"camera"};
  base.figures[0].gaze=gazes[v.mainGaze]||"auto";
  base.figures[0].enabled=v.mainEnabled!==false;
- if(Array.isArray(v.figures))for(const [i,f] of v.figures.entries())base.figures.push({
+ if(!historical&&Array.isArray(v.figures))for(const [i,f] of v.figures.entries())base.figures.push({
  id:String(f.id||"extra"+i),name:String(f.type||f.name||"Nebenfigur"),
  enabled:f.enabled!==false,pose:String(f.pose||"Aufrecht stehen"),
  position:String(f.position||"Automatisch"),gaze:gazes[f.gaze]||"auto",
@@ -98,6 +100,7 @@ function install(){
  btn.type="button";btn.textContent="V10 Engine · Master-Prompt als TXT";
  btn.addEventListener("click",run);anchor.insertAdjacentElement("afterend",btn);
 }
+try{window.BDS10StreetProfile=localStorage.getItem("bds10-street-profile")||""}catch(e){window.BDS10StreetProfile=""}
 document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
  new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
