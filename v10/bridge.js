@@ -94,31 +94,28 @@ function installMainPose(){
 function simplifyMainCharacter(){
  const root=document.getElementById('content');if(!root)return;
  const heading=Array.from(root.querySelectorAll('h2')).find(h=>/Hauptfigur.*unabhängige Steuerung/i.test(h.textContent));
- const panel=heading&&heading.closest('.panel');if(!panel)return;
- if(heading.textContent!=='Hauptfigur · Mann mit Zopf')heading.textContent='Hauptfigur · Mann mit Zopf';
- // Keep one primary pose selector. Legacy pose library stays in code, but not in this V10 view.
- for(const details of panel.querySelectorAll('details')){
-  if(/Alle bisherigen Hauptfigur-Posen/i.test(details.querySelector('summary')?.textContent||'')&&details.style.display!=='none')details.style.display='none';
+ const panel=heading&&heading.closest('.panel');if(!panel||panel.dataset.bds10Compact==='yes')return;
+ const active=panel.querySelector('[data-v941-key="mainEnabled"]');
+ const position=panel.querySelector('[data-v941-key="mainPosition"]');
+ const gaze=panel.querySelector('[data-v941-key="mainGaze"]');
+ const photo=panel.querySelector('.v941ref');
+ if(!active||!position||!gaze)return;
+ // Replace the entire legacy character panel rather than hiding nested menus.
+ // Existing delegated V941 handlers continue to own the original inputs.
+ const compact=document.createElement('div');compact.className='bds10-compact-main';
+ const h=document.createElement('h2');h.textContent='Hauptfigur · Mann mit Zopf';compact.appendChild(h);
+ const activeLabel=document.createElement('label');activeLabel.className='v9823-toggle';activeLabel.appendChild(active);activeLabel.appendChild(document.createTextNode(' Hauptfigur aktiv'));compact.appendChild(activeLabel);
+ const poseLabel=document.createElement('label');poseLabel.className='label';poseLabel.textContent='Pose · 10 Optionen';compact.appendChild(poseLabel);
+ const poseSelect=document.createElement('select');poseSelect.id='bds10-pose-select';
+ for(const pose of MAIN_POSES){const opt=document.createElement('option');opt.value=pose;opt.textContent=pose;poseSelect.appendChild(opt)}
+ poseSelect.value=MAIN_POSES.includes(mainPose())?mainPose():MAIN_POSES[0];
+ poseSelect.addEventListener('change',()=>{window.BDS10MainPose=poseSelect.value;try{localStorage.setItem(POSE_KEY,poseSelect.value)}catch(e){}});
+ compact.appendChild(poseSelect);
+ for(const [label,select] of [['Position',position],['Blickrichtung',gaze]]){
+  const l=document.createElement('label');l.className='label';l.textContent=label;compact.appendChild(l);compact.appendChild(select);
  }
- for(const note of panel.querySelectorAll('p.ok')){
-  if(/Posensammlung|Pose und Blick/i.test(note.textContent||'')&&note.style.display!=='none')note.style.display='none';
- }
- // Keep character, pose, position and gaze immediately visible; put secondary settings into one disclosure.
- let advanced=panel.querySelector('#bds10-main-advanced');
- if(!advanced){
-  advanced=document.createElement('details');advanced.id='bds10-main-advanced';advanced.className='v94details';
-  const summary=document.createElement('summary');summary.textContent='Weitere Einstellungen · Foto, Ausrichtung & Abstand';
-  advanced.appendChild(summary);panel.appendChild(advanced);
- }
- const nodes=Array.from(panel.children);
- for(const node of nodes){
-  if(node===advanced||node.id==='bds10-main-pose'||node.tagName==='H2')continue;
-  if(node.classList.contains('v941ref')){if(node.parentElement!==advanced)advanced.appendChild(node);continue}
-  if(node.tagName==='LABEL'){
-   const txt=(node.textContent||'').trim();
-   if(/Körperausrichtung|Größe & Abstand/i.test(txt)&&node.parentElement!==advanced)advanced.appendChild(node);
-  }
- }
+ if(photo){const details=document.createElement('details');details.className='v94details';const summary=document.createElement('summary');summary.textContent='Originalfoto (optional)';details.appendChild(summary);details.appendChild(photo);compact.appendChild(details)}
+ panel.replaceChildren(...Array.from(compact.childNodes));panel.dataset.bds10Compact='yes';
 }
 
 function removeDirectorImpactUI(){
@@ -136,7 +133,6 @@ function removeDirectorImpactUI(){
 
 function install(){
  removeDirectorImpactUI();
- installMainPose();
  simplifyMainCharacter();
 
  const anchor=document.getElementById("downloadPrompt");
