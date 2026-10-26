@@ -5,8 +5,8 @@
  assert(b.firstWord("\n  \n  RAHMETLİ AMCAM\nDERDİ Kİ")==="RAHMETLİ","first nonempty wall line");const base=JSON.parse(JSON.stringify(b.DEFAULTS));
  base.wall.text="RAHMETLİ AMCAM\nDERDİ Kİ:";base.figures.push({id:"N1",name:"Mantelmann",enabled:true,pose:"Stehend",position:"Rechter Mittelgrund",orientation:"Automatisch",gaze:"camera"});
  const out=b.generate(base);assert(out.ok,"valid input");assert(out.prompt.includes('FIRST WALL LINE: "RAHMETLİ"'),"first word only");assert(out.prompt.includes("GAZE TARGET=camera lens"),"independent gaze");assert(!out.prompt.includes('SAME exact FIRST WORD'),"no global gaze");
- base.poster={enabled:true,text:"TEST",owner:"main",mode:"Freistehend",hand:"Links"};assert(!b.generate(base).ok,"reject contradictory poster hand");
- base.poster={enabled:true,text:"TEST",owner:"main",mode:"Gehalten",hand:"Keine"};assert(!b.generate(base).ok,"reject held placard without hand");
+ base.poster={enabled:true,text:"TEST",owner:"main",mode:"Freistehend",hand:"Links",colors:{}};assert(!b.generate(base).ok,"reject contradictory poster hand");
+ base.poster={enabled:true,text:"TEST",owner:"main",mode:"Gehalten",hand:"Keine",colors:{}};assert(!b.generate(base).ok,"reject held placard without hand");
  base.poster.hand="Links";assert(b.generate(base).ok,"accept held placard with left hand");
  base.poster.hand="Rechts";assert(b.generate(base).ok,"accept held placard with right hand");
  base.poster.mode="Freistehend";base.poster.hand="Keine";assert(b.generate(base).ok,"accept freestanding placard without hand");
