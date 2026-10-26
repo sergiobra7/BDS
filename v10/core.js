@@ -12,12 +12,19 @@ function validate(input){
  if(!x.camera||!Number.isFinite(Number(x.camera.distance))||Number(x.camera.distance)<=0)errors.push("Ungültige Entfernung");
  if(!["9:16","4:5"].includes(x.camera?.format))errors.push("Ungültiges Format");
  if(!Array.isArray(x.figures))errors.push("Figuren fehlen");
- const active=(x.figures||[]).filter(f=>f.enabled!==false);
+ const active=(Array.isArray(x.figures)?x.figures:[]).filter(f=>f.enabled!==false);
  const ids=new Set();for(const f of active){if(!f.id||ids.has(f.id))errors.push("Doppelte/fehlende Figuren-ID");ids.add(f.id)}
  if(x.wall?.enabled&&!firstWord(x.wall.text))errors.push("Wandtext fehlt");
  if(x.poster?.enabled&&!normalize(x.poster.text))errors.push("Plakattext fehlt");
  if(x.poster?.enabled&&x.poster.owner&&!ids.has(x.poster.owner))errors.push("Plakatbesitzer ist nicht aktiv");
- if(x.poster?.enabled&&x.poster.mode==="Freistehend"&&x.poster.hand!=="Keine")errors.push("Freistehendes Plakat darf keine Haltehand haben");
+ if(x.poster?.enabled&&x.poster.mode==="Gehalten"&&active.some(f=>f.id===x.poster.owner&&/taschen|pockets|verschränkt/i.test(f.pose||"")))errors.push("Gehaltenes Plakat kollidiert mit der gewählten Hand-/Armhaltung des Besitzers");
+ for(const f of active){if(!modes.has(f.gaze)&&!active.some(other=>other.id===f.gaze&&other.id!==f.id))errors.push("Ungültiges Blickziel für "+f.id);}
+ if(active.some(f=>/\b(gehend|laufen|laufend|walking|running)\b/i.test(f.pose||"")))errors.push("Gehende oder laufende Posen sind nicht erlaubt");
+ if(x.poster?.enabled){
+  if(!["Freistehend","Gehalten"].includes(x.poster.mode))errors.push("Ungültiger Plakatmodus");
+  if(x.poster.mode==="Freistehend"&&x.poster.hand!=="Keine")errors.push("Freistehendes Plakat darf keine Haltehand haben");
+  if(x.poster.mode==="Gehalten"&&!["Links","Rechts"].includes(x.poster.hand))errors.push("Gehaltenes Plakat benötigt eine ausdrücklich gewählte Haltehand (Links/Rechts)");
+ }
  return {errors,active};
 }
 function gazeTarget(f,x,active){
