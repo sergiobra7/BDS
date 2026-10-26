@@ -22,6 +22,7 @@ function validate(input){
  if(x.poster?.enabled&&x.poster.mode==="Gehalten"&&active.some(f=>f.id===x.poster.owner&&/taschen|pockets|verschränkt/i.test(f.pose||"")))errors.push("Gehaltenes Plakat kollidiert mit der gewählten Hand-/Armhaltung des Besitzers");
  for(const f of active){if(!modes.has(f.gaze)&&!active.some(other=>other.id===f.gaze&&other.id!==f.id))errors.push("Ungültiges Blickziel für "+f.id);}
  if(active.some(f=>/\b(gehend|laufen|laufend|walking|running)\b/i.test(f.pose||"")))errors.push("Gehende oder laufende Posen sind nicht erlaubt");
+ if(x.poster?.enabled&&(!x.poster.colors||typeof x.poster.colors!=="object"||Array.isArray(x.poster.colors)))errors.push("Ungültige Plakat-Wortfarben");
  if(x.poster?.enabled){
   if(!["Freistehend","Gehalten"].includes(x.poster.mode))errors.push("Ungültiger Plakatmodus");
   if(x.poster.mode==="Freistehend"&&x.poster.hand!=="Keine")errors.push("Freistehendes Plakat darf keine Haltehand haben");
@@ -46,7 +47,7 @@ function generate(input){
  else lines.push("WALL DISABLED: no wall lettering.");
  lines.push("FIGURES: ONLY "+active.length+" enabled figures. Every figure is independently controlled.");
  for(const f of active){const target=gazeTarget(f,x,active);lines.push("FIGURE ["+f.id+"] "+f.name+": POSE="+f.pose+"; POSITION="+f.position+"; BODY ORIENTATION="+f.orientation+"; GAZE TARGET="+target+". Preserve the exact independent pose, limb support and selected placement. For the gaze, calculate the eye-to-target vector from THIS figure's physical position; rotate both eyes, entire head and neck anatomically. Do not force a common head direction. Do not change the pose to solve gaze.");}
- if(x.poster.enabled){lines.push("POSTER: one physical placard only; mode="+x.poster.mode+"; owner="+x.poster.owner+"; hand="+x.poster.hand+". Mode and hand are a single locked decision. Preserve selected owner and legible colors; do not invent alternative hand, stand or holding mode.","BEGIN EXACT POSTER TEXT",normalize(x.poster.text),"END EXACT POSTER TEXT");}
+ if(x.poster.enabled){if(Object.keys(x.poster.colors||{}).length)lines.push("POSTER WORD COLORS (EXACT MANUAL MAP): "+JSON.stringify(x.poster.colors)+". Apply colors only to the specified words; preserve all other lettering.");lines.push("POSTER: one physical placard only; mode="+x.poster.mode+"; owner="+x.poster.owner+"; hand="+x.poster.hand+". Mode and hand are a single locked decision. Preserve selected owner and legible colors; do not invent alternative hand, stand or holding mode.","BEGIN EXACT POSTER TEXT",normalize(x.poster.text),"END EXACT POSTER TEXT");}
  else lines.push("POSTER DISABLED: no placard.");
  lines.push("POSE MIX: "+(x.mix?"ON; only explicit per-figure choices apply.":"OFF; preserve every original individual pose and gaze.") ,"PRIORITY: manual user selections > automatic defaults. No legacy overrides. No alternative camera or poster instructions.","FINAL CHECK: exact text, correct gaze target per figure, independent poses, physically plausible foreground, one consistent poster state, no text collisions.");
  return {ok:true,errors:[],prompt:lines.join("\n")};
