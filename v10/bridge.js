@@ -251,10 +251,32 @@ function simplifyFacadeScreen(){
  }
 }
 
+function enforceOnlyXXLFinder(){
+ const root=document.getElementById('content');
+ if(!root)return;
+ // Remove legacy manual finder and its surrounding card even when nested in a different tab.
+ for(const el of root.querySelectorAll('button,summary,h2,h3')){
+  const t=(el.textContent||'').trim();
+  if(!/MANUELLER FASSADENFINDER/i.test(t)||t.length>100)continue;
+  const card=el.closest('.panel,section,details')||el.parentElement;
+  if(card&&!card.contains(document.getElementById('bds10-facade-finder')))card.style.display='none';
+ }
+ // Hide old 511-facade recommendation cards by their specific heading.
+ for(const el of root.querySelectorAll('h2,h3')){
+  if(!/^FASSADENFINDER\s*[·•-]\s*INAKTIV/i.test((el.textContent||'').trim()))continue;
+  const card=el.closest('.panel,section');if(card)card.style.display='none';
+ }
+ const active=document.querySelector('#tabs button.active');
+ if(active&&/fassade|szene/i.test(active.textContent||'')){
+  const finder=root.querySelector('#bds10-facade-finder');
+  if(finder){finder.style.display='block';if(root.firstElementChild!==finder)root.prepend(finder)}
+ }
+}
 function install(){
  installDedicatedMainTab();
  replaceMainFigureTab();
  simplifyFacadeScreen();
+ enforceOnlyXXLFinder();
  compactAllFigurePanels();
  removeDirectorImpactUI();
  simplifyMainCharacter();
