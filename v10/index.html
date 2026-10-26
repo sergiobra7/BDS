@@ -45,7 +45,7 @@ function sync(){
     const title=document.createElement('h3');title.textContent='V10 · XXL-Fassadenfinder';panel.appendChild(title);
     scenes.forEach(([name,size,scene])=>{
      const choice=document.createElement('button');choice.type='button';choice.className='btn';choice.style.cssText='display:block;width:100%;margin:10px 0;text-align:left;padding:14px';
-     choice.textContent=name+' · '+size;
+     choice.textContent=name+' · '+size;choice.dataset.bds10FallbackFacade=String(scenes.findIndex(x=>x[0]===name));
      choice.addEventListener('click',()=>{
       window.BDS10SelectedFacade={name,size,scene};try{if(typeof state!=='undefined'){state.location=scene;state.sceneName=scene}}catch(e){}
       panel.querySelectorAll('button').forEach(b=>b.style.borderColor='');choice.style.borderColor='#e24a5c';
@@ -85,5 +85,25 @@ document.addEventListener('DOMContentLoaded',function(){
  const tabs=document.getElementById('tabs');if(tabs)new MutationObserver(sync).observe(tabs,{childList:true});
  sync();
 });
+})();
+</script><style id="bds10-xxl-selected-style">#content button[data-giant-facade][data-bds10-selected="yes"],#content button[data-bds10-fallback-facade][data-bds10-selected="yes"]{border:4px solid #ff9800!important;background:#503016!important;box-shadow:inset 0 0 0 1px #ffc266,0 0 0 2px rgba(255,152,0,.35)!important;color:#fff!important}#bds10-facade-status{font-weight:800;color:#ffb347!important}</style><script>
+(function(){
+ const KEY='bds10-xxl-choice';
+ function restore(){
+  let value;try{value=localStorage.getItem(KEY)}catch(e){}
+  if(value==null)return;
+  document.querySelectorAll('#content button[data-giant-facade],#content button[data-bds10-fallback-facade]').forEach(b=>{
+   const index=b.dataset.giantFacade??b.dataset.bds10FallbackFacade;
+   const chosen=index===value;b.dataset.bds10Selected=chosen?'yes':'no';b.setAttribute('aria-pressed',String(chosen));
+  });
+ }
+ document.addEventListener('click',function(e){
+  const b=e.target.closest('button[data-giant-facade],button[data-bds10-fallback-facade]');
+  if(!b)return;
+  const index=b.dataset.giantFacade??b.dataset.bds10FallbackFacade;
+  try{localStorage.setItem(KEY,index)}catch(e){}
+  document.querySelectorAll('#content button[data-giant-facade],#content button[data-bds10-fallback-facade]').forEach(x=>{const active=x===b;x.dataset.bds10Selected=active?'yes':'no';x.setAttribute('aria-pressed',String(active))});
+ },true);
+ document.addEventListener('DOMContentLoaded',()=>{restore();const root=document.getElementById('content');if(root){let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;restore()})}).observe(root,{childList:true,subtree:true})}});
 })();
 </script></body></html>
