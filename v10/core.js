@@ -18,10 +18,12 @@ function validate(input){
  const ids=new Set();for(const f of active){if(!f.id||ids.has(f.id))errors.push("Doppelte/fehlende Figuren-ID");ids.add(f.id)}
  if(x.wall?.enabled&&!firstWord(x.wall.text))errors.push("Wandtext fehlt");
  if(x.poster?.enabled&&!normalize(x.poster.text))errors.push("Plakattext fehlt");
+ if(x.poster?.enabled&&!x.poster.owner)errors.push("Plakatbesitzer fehlt");
  if(x.poster?.enabled&&x.poster.owner&&!ids.has(x.poster.owner))errors.push("Plakatbesitzer ist nicht aktiv");
  if(x.poster?.enabled&&x.poster.mode==="Gehalten"&&active.some(f=>f.id===x.poster.owner&&/taschen|pockets|verschränkt/i.test(f.pose||"")))errors.push("Gehaltenes Plakat kollidiert mit der gewählten Hand-/Armhaltung des Besitzers");
  for(const f of active){if(!modes.has(f.gaze)&&!active.some(other=>other.id===f.gaze&&other.id!==f.id))errors.push("Ungültiges Blickziel für "+f.id);}
- if(active.some(f=>/\b(gehend|laufen|laufend|walking|running)\b/i.test(f.pose||"")))errors.push("Gehende oder laufende Posen sind nicht erlaubt");
+ if(active.some(f=>/(gehend|laufend|walking|running|spaziergang|im flug|gleitschirm)/i.test(f.pose||"")))errors.push("Gehende oder laufende Posen sind nicht erlaubt");
+ if(active.length===0)errors.push("Mindestens eine aktive Figur erforderlich");
  if(x.poster?.enabled&&(!x.poster.colors||typeof x.poster.colors!=="object"||Array.isArray(x.poster.colors)))errors.push("Ungültige Plakat-Wortfarben");
  if(x.poster?.enabled){
   if(!["Freistehend","Gehalten"].includes(x.poster.mode))errors.push("Ungültiger Plakatmodus");
