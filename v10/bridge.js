@@ -55,6 +55,16 @@ function sceneCamera(scene){
  if(/hochhaus|turm|monument|riesig/.test(name+" "+kind))return {lens:"35",distance:55,angle:9};
  return {lens:"35",distance:30,angle:7};
 }
+// V10 IMPACT: rate composition feasibility, not merely facade size.
+function impactAssessment(scene){
+ const label=(String(scene.name||"")+" "+String(scene.kind||"")).toLowerCase();
+ const blocked=/sackgasse|schmaler gang|innenraum|unterführung|enge passage/.test(label);
+ const opposite=/platz|vorplatz|straße|strasse|boulevard|promenade|kanal|hafen|ufer|hof|terminal|industrie/.test(label);
+ const score=blocked?45:opposite?90:70;
+ return {score,level:score>=85?"HOCH":score>=65?"MITTEL":"EINGESCHRÄNKT",
+ reason:blocked?"Gegenüberliegende Figurengruppe und diagonale Blickachse räumlich schwierig.":opposite?"Gute Chance auf getrennte Fassaden- und Vordergrundebenen mit diagonaler Blickachse.":"Gegenüberliegenden sicheren Vordergrund und freie Sichtlinie vor Auswahl prüfen."};
+}
+
 function installCameraSuggestions(){
  if(typeof V988scenes!=="function"||V988scenes.__bds10)return;
  const previous=V988scenes;
@@ -62,13 +72,13 @@ function installCameraSuggestions(){
   let html=previous.apply(this,arguments);
   if(typeof V96==="undefined"||!Array.isArray(V96.proposals))return html;
   for(const p of V96.proposals){
-   const camera=sceneCamera(p);Object.assign(p,camera);
+   const camera=sceneCamera(p);Object.assign(p,camera);p.bds10Impact=impactAssessment(p);
   }
   // Camera labels must correspond to the same values the existing apply handler saves.
   let index=0;
   html=html.replace(/(<button class="btn" data-v96="apply" data-i="\d+">)/g,function(match){
    const p=V96.proposals[index++];
-   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p><p class="hint">'+diagonalRecommendation(p)+'</p>'+match:match;
+   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p><p class="hint">'+diagonalRecommendation(p)+'</p><p class="hint">IMPACT: '+p.bds10Impact.score+'/100 · '+p.bds10Impact.level+' — '+p.bds10Impact.reason+'</p>'+match:match;
   });
   return html;
  };
@@ -87,5 +97,5 @@ document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
  installCameraSuggestions();new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
 });
-window.BDS10Bridge={config,run,sceneCamera,diagonalRecommendation};
+window.BDS10Bridge={config,run,sceneCamera,diagonalRecommendation,impactAssessment};
 })();
