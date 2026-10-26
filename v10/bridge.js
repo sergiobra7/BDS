@@ -418,5 +418,31 @@ document.addEventListener("DOMContentLoaded",()=>{
  const tabs=document.getElementById('tabs');if(tabs)new MutationObserver(install).observe(tabs,{childList:true});
  install();
 });
+
+// V10 is the sole source for the existing LIVE update/copy controls.
+function liveV10(){
+ const output=window.BDS10.generate(config());
+ if(!output.ok){alert('V10: '+output.errors.join('\\n'));return null}
+ const heading=[...document.querySelectorAll('#content h1,#content h2,#content h3')].find(x=>/MASTER.PROMPT\\s*[·•-]\\s*LIVE/i.test(x.textContent||''));
+ const card=heading?.closest('.panel,section,article')||heading?.parentElement;
+ if(card){
+  const field=card.querySelector('textarea');
+  if(field){field.value=output.prompt;field.dispatchEvent(new Event('input',{bubbles:false}))}
+  else{let preview=card.querySelector('#bds10-live-preview');if(!preview){preview=document.createElement('textarea');preview.id='bds10-live-preview';preview.readOnly=true;preview.style.cssText='width:100%;min-height:220px;margin:12px 0;background:#111;color:#fff';heading.after(preview)}preview.value=output.prompt}
+ }
+ window.BDS10LastLivePrompt=output.prompt;
+ return output.prompt;
+}
+document.addEventListener('click',async function(event){
+ const button=event.target.closest('button');if(!button)return;
+ const label=(button.textContent||'').trim();
+ if(!/^MASTER.PROMPT\\s+(AKTUALISIEREN|KOPIEREN)$/i.test(label))return;
+ event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+ const prompt=liveV10();if(!prompt)return;
+ if(/KOPIEREN/i.test(label)){
+  try{await navigator.clipboard.writeText(prompt);const toast=document.getElementById('toast');if(toast)toast.textContent='V10-Prompt kopiert · ohne versteckte Figuren und alte Director-Anweisungen'}
+  catch(e){const field=document.getElementById('bds10-live-preview');if(field){field.focus();field.select();document.execCommand('copy')}else alert('Kopieren nicht möglich. Bitte Prompt im Textfeld markieren.')}
+ }
+},true);
 window.BDS10Bridge={config,run,GIANT_FACADES,MAIN_POSES,openXXL:()=>{window.BDS10XXLTabOpen=true;window.BDS10MainTabOpen=false;showCleanXXLTab();},createXXLFinder:facadeFinderPanel};
 })();
