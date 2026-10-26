@@ -91,6 +91,19 @@ function installMainPose(){
 
 
 
+// Override only the V10-rendered main-character template; legacy source remains untouched.
+if(typeof V941main==='function'&&typeof V941select==='function'){
+ V941main=function(){
+  return '<div class="panel"><h2>Hauptfigur · Mann mit Zopf</h2>'+
+   '<label class="v9823-toggle"><input type="checkbox" data-v941-key="mainEnabled" '+(V941.mainEnabled!==false?'checked':'')+'> Hauptfigur aktiv</label>'+
+   '<label class="label">Pose · 10 Optionen</label><select id="bds10-pose-select">'+MAIN_POSES.map(p=>'<option value="'+p.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" '+(mainPose()===p?'selected':'')+'>'+p+'</option>').join('')+'</select>'+
+   V941select('Position','mainPosition',V941positions,V941.mainPosition)+
+   V941select('Blickrichtung','mainGaze',V941gazes,V941.mainGaze)+
+   '<details class="v94details"><summary>Originalfoto (optional)</summary><div class="v941ref"><input type="file" accept="image/*" data-v941-upload="main"><small id="v941-main-file">'+(V941.mainReference?'Foto hinterlegt: '+V941.mainReference:'Noch kein Foto ausgewählt')+'</small></div></details></div>';
+ };
+ document.addEventListener('change',e=>{if(e.target?.id==='bds10-pose-select'){window.BDS10MainPose=e.target.value;try{localStorage.setItem(POSE_KEY,e.target.value)}catch(err){}}});
+}
+
 function simplifyMainCharacter(){
  const root=document.getElementById('content');if(!root)return;
  const heading=Array.from(root.querySelectorAll('h2')).find(h=>/Hauptfigur.*unabhängige Steuerung/i.test(h.textContent));
