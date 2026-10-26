@@ -191,7 +191,42 @@ function replaceMainFigureTab(){
  content.replaceChildren(panel);
 }
 
+
+function installDedicatedMainTab(){
+ const tabs=document.getElementById('tabs'),content=document.getElementById('content');
+ if(!tabs||!content)return;
+ // The legacy Hauptfigur page is rendered by several separate version wrappers.
+ // Provide one explicit V10 tab, without relying on the legacy tab title.
+ for(const button of tabs.querySelectorAll('button')){
+  if(button.id==='bds10-main-tab')continue;
+  if(/hauptfigur/i.test(button.textContent||'')&&button.style.display!=='none')button.style.display='none';
+ }
+ let button=document.getElementById('bds10-main-tab');
+ if(!button){
+  button=document.createElement('button');button.id='bds10-main-tab';button.type='button';
+  button.textContent='Hauptfigur';tabs.appendChild(button);
+  button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();window.BDS10MainTabOpen=true;showDedicatedMain();},true);
+ }
+ if(window.BDS10MainTabOpen&&!content.querySelector('#bds10-only-main'))showDedicatedMain();
+}
+function showDedicatedMain(){
+ const tabs=document.getElementById('tabs'),content=document.getElementById('content');
+ if(!tabs||!content)return;
+ // Reuse the existing compact form constructor, but activate it with a dedicated tab.
+ let tab=document.getElementById('bds10-main-tab');
+ if(!tab)return;
+ for(const button of tabs.querySelectorAll('button'))button.classList.toggle('active',button===tab);
+ const legacyActive=tab;
+ const proxy=document.createElement('button');proxy.className='active';proxy.textContent='Hauptfigur';proxy.style.display='none';
+ tab.classList.remove('active');tabs.appendChild(proxy);
+ try{replaceMainFigureTab()}finally{proxy.remove();legacyActive.classList.add('active')}
+}
+document.addEventListener('click',e=>{
+ if(e.target.closest('#tabs button:not(#bds10-main-tab)'))window.BDS10MainTabOpen=false;
+},true);
+
 function install(){
+ installDedicatedMainTab();
  replaceMainFigureTab();
  compactAllFigurePanels();
  removeDirectorImpactUI();
