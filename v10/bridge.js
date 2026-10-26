@@ -380,6 +380,7 @@ function install(){
 }
 try{window.BDS10StreetProfile=localStorage.getItem("bds10-street-profile")||""}catch(e){window.BDS10StreetProfile=""}
 document.addEventListener("DOMContentLoaded",()=>{
+ const direct=document.getElementById('bds10-xxl-direct');if(direct)direct.addEventListener('click',()=>{window.BDS10XXLTabOpen=true;window.BDS10MainTabOpen=false;showCleanXXLTab();document.getElementById('content')?.scrollIntoView({behavior:'smooth',block:'start'});});
  const root=document.getElementById("content");if(!root)return;
  new MutationObserver(install).observe(root,{childList:true,subtree:true});
  const tabs=document.getElementById('tabs');if(tabs)new MutationObserver(install).observe(tabs,{childList:true});
