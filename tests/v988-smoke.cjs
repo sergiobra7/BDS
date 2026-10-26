@@ -9,7 +9,7 @@ const ctx={
  window:{scrollX:0,scrollY:0,scrollTo:()=>{}},requestAnimationFrame:()=>{},
  render:()=>{},prompt:()=>'',V970snapshot:()=>({}),V972validate:x=>x,V972restore:()=>{},
  state:{wall:'DEDEME KİME GÜVENEYİM DEDİM',facadeShape:'Auto',lineFilter:'Auto',scene:1,opa:'Nein'},
- V941:{figures,signOn:false,wallOn:true},V96:{proposals:[]},
+ V941:{figures,signOn:false,wallOn:true},V941newFigure:(type)=>({id:'N'+(figures.length+1),type,enabled:false}),V941save:()=>{},V96:{proposals:[]},
  V94matches:()=>Array.from({length:10},(_,i)=>({i,name:'Fassade '+i,score:100-i,shape:'WIDE XXL',lim:[4,10,40]})),
  V96analyse:()=>({topic:'Vertrauen',kinds:['stadt','hafen'],longest:30,action:'Stille Reaktion'}),
  V96SCENES:Array.from({length:10},(_,i)=>({name:'Szene '+i,city:'Istanbul',kind:i%2?'hafen':'stadt'})),
