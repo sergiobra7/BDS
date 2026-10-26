@@ -225,9 +225,36 @@ document.addEventListener('click',e=>{
  if(e.target.closest('#tabs button:not(#bds10-main-tab)'))window.BDS10MainTabOpen=false;
 },true);
 
+
+function simplifyFacadeScreen(){
+ const content=document.getElementById('content'),tabs=document.getElementById('tabs');
+ if(!content||!tabs)return;
+ const active=tabs.querySelector('button.active');
+ const title=(active&&active.textContent||'').trim();
+ if(!/fassade|szene/i.test(title)||/hauptfigur/i.test(title))return;
+ let finder=content.querySelector('#bds10-facade-finder');
+ if(!finder)finder=facadeFinderPanel();
+ // A single V10 façade screen; all legacy manual/511 suggestion cards are excluded.
+ if(content.children.length===1&&content.firstElementChild===finder)return;
+ content.replaceChildren(finder);
+ const titleNode=finder.querySelector('h3');if(titleNode)titleNode.textContent='XXL-FASSADENFINDER · V10';
+ if(!finder.querySelector('#bds10-street-profile')){
+  const wrap=document.createElement('div');wrap.id='bds10-street-profile';wrap.style.margin='16px 0';
+  const label=document.createElement('label');label.className='label';label.textContent='Straßenperspektive';
+  const select=document.createElement('select');select.style.width='100%';
+  for(const [value,text] of [['','Standard · aktuelle Kamera'],['duygukapisi-v7','DUYGUKAPISI V7.0 · ORIGINAL STREET PERSPECTIVE']]){
+   const option=document.createElement('option');option.value=value;option.textContent=text;select.appendChild(option);
+  }
+  select.value=window.BDS10StreetProfile||'';
+  select.addEventListener('change',()=>{window.BDS10StreetProfile=select.value;try{localStorage.setItem('bds10-street-profile',select.value)}catch(e){}});
+  wrap.append(label,select);finder.appendChild(wrap);
+ }
+}
+
 function install(){
  installDedicatedMainTab();
  replaceMainFigureTab();
+ simplifyFacadeScreen();
  compactAllFigurePanels();
  removeDirectorImpactUI();
  simplifyMainCharacter();
