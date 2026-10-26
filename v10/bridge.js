@@ -38,47 +38,9 @@ function run(){
  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
 }
 
-// Global composition policy shared by every scene suggestion and the V10 export.
-function diagonalRecommendation(scene){
- const label=String(scene.name||"")+" "+String(scene.kind||"");
- const left=/wand links|fassade links|linke fassade/i.test(label);
- const right=/wand rechts|fassade rechts|rechte fassade/i.test(label);
- const placement=left?"Wand links oben → Figuren und benutzte Gegenstände rechts unten":right?"Wand rechts oben → Figuren und benutzte Gegenstände links unten":"Diagonale: Wand auf einer oberen Bildseite, Figuren und alle benutzten Gegenstände gegenüber unten";
- return placement+". Kamera auf Figurenseite, Schriftfassade auf der anderen Seite einer sichtbar freien Straße/Platzfläche. Kamera-Fassade-Abstand bleibt unverändert. Bank, Treppe, Stuhl, Geländer und Sitz-/Stützflächen niemals unter dem Wandtext; natürliche Blickachse ohne extreme Halsneigung.";
-}
-
-// V10-only camera suggestions: preserve manually selected settings until "Szene + Kamera" is clicked.
-function sceneCamera(scene){
- const name=String(scene.name||"").toLowerCase();
- const kind=String(scene.kind||"").toLowerCase();
- if(/gasse|innenhof|tunnel|passage|enge|schmal/.test(name+" "+kind))return {lens:"24",distance:12,angle:8};
- if(/platz|bahnhof|vorplatz|promenade|boulevard/.test(name+" "+kind))return {lens:"35",distance:25,angle:7};
- if(/hafen|kanal|industrie|lager|logistik|fabrik/.test(name+" "+kind))return {lens:"50",distance:45,angle:6};
- if(/hochhaus|turm|monument|riesig/.test(name+" "+kind))return {lens:"35",distance:55,angle:9};
- return {lens:"35",distance:30,angle:7};
-}
-function installCameraSuggestions(){
- if(typeof V988scenes!=="function"||V988scenes.__bds10)return;
- const previous=V988scenes;
- V988scenes=function(){
-  let html=previous.apply(this,arguments);
-  if(typeof V96==="undefined"||!Array.isArray(V96.proposals))return html;
-  for(const p of V96.proposals){
-   const camera=sceneCamera(p);Object.assign(p,camera);
-  }
-  // Camera labels must correspond to the same values the existing apply handler saves.
-  let index=0;
-  html=html.replace(/(<button class="btn" data-v96="apply" data-i="\d+">)/g,function(match){
-   const p=V96.proposals[index++];
-   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p><p class="hint">'+diagonalRecommendation(p)+'</p>'+match:match;
-  });
-  return html;
- };
- V988scenes.__bds10=true;
-}
-
+// Director recommendations temporarily disabled for controlled geometry testing.
 function install(){
- installCameraSuggestions();
+
  const anchor=document.getElementById("downloadPrompt");
  if(!anchor||document.getElementById("bds10-export"))return;
  const btn=document.createElement("button");btn.id="bds10-export";btn.className="btn primary";
@@ -87,7 +49,7 @@ function install(){
 }
 document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
- installCameraSuggestions();new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
+ new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
 });
-window.BDS10Bridge={config,run,sceneCamera,diagonalRecommendation};
+window.BDS10Bridge={config,run};
 })();
