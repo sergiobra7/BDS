@@ -144,7 +144,29 @@ function removeDirectorImpactUI(){
  }
 }
 
+function compactAllFigurePanels(){
+ const root=document.getElementById('content');if(!root)return;
+ const allowed=/^Hauptfigur · Mann mit Zopf$/i;
+ for(const panel of root.querySelectorAll('.panel')){
+  const h=panel.querySelector(':scope > h2');
+  if(!h)continue;
+  const title=(h.textContent||'').trim();
+  if(allowed.test(title))continue;
+  if(/Meine Posen & Handlungen|Eigene Pose & Handlung|Hauptfigur · Haltung, Gestik|V9\.6\.3 · Aktivität & Körperhaltung|Figurenverteilung · Hauptfigur|Referenz im Master-Prompt · Mann mit Zopf|Hauptfigur.*Pose|Hauptfigur.*Gestik|Hauptfigur.*Körperhaltung/i.test(title)){
+   if(panel.style.display!=='none')panel.style.display='none';
+  }
+ }
+ // Some late modules render their own character card as a nested section.
+ for(const h of root.querySelectorAll('h2,h3')){
+  const title=(h.textContent||'').trim();
+  if(/^(Meine Posen & Handlungen|Eigene Pose & Handlung|Hauptfigur · Haltung, Gestik|V9\.6\.3 · Aktivität & Körperhaltung|Figurenverteilung · Hauptfigur)/i.test(title)){
+   const panel=h.closest('.panel');if(panel&&panel.style.display!=='none')panel.style.display='none';
+  }
+ }
+}
+
 function install(){
+ compactAllFigurePanels();
  removeDirectorImpactUI();
  simplifyMainCharacter();
 
