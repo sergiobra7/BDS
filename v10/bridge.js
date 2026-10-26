@@ -404,5 +404,5 @@ document.addEventListener("DOMContentLoaded",()=>{
  const tabs=document.getElementById('tabs');if(tabs)new MutationObserver(install).observe(tabs,{childList:true});
  install();
 });
-window.BDS10Bridge={config,run,GIANT_FACADES,MAIN_POSES,openXXL:()=>{window.BDS10XXLTabOpen=true;window.BDS10MainTabOpen=false;showCleanXXLTab();}};
+window.BDS10Bridge={config,run,GIANT_FACADES,MAIN_POSES,openXXL:()=>{window.BDS10XXLTabOpen=true;window.BDS10MainTabOpen=false;showCleanXXLTab();},createXXLFinder:facadeFinderPanel};
 })();
