@@ -356,8 +356,25 @@ function hardRemoveLegacyCards(){
  }
 }
 
+
+function placeXXLButtonUnderText(){
+ const button=document.getElementById('bds10-xxl-direct');
+ const tabs=document.getElementById('tabs'),content=document.getElementById('content');
+ if(!button||!tabs||!content)return;
+ const active=tabs.querySelector('button.active');
+ const label=(active?.textContent||'').trim();
+ const isText=/^text(e)?$/i.test(label);
+ if(isText){
+  if(button.parentElement!==content)content.appendChild(button);
+  button.style.display='block';
+ }else{
+  button.style.display='none';
+ }
+}
+
 function install(){
  installDedicatedMainTab();
+ placeXXLButtonUnderText();
  installCleanXXLTab();
  replaceMainFigureTab();
  simplifyFacadeScreen();
