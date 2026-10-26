@@ -1,4 +1,4 @@
-/* V9.9.29 — per-character gaze authority, preserve independent pose and mix */
+/* V9.9.30 — correct wall first-word parsing, per-figure gaze, poster conflicts */
 (function(){
 'use strict';
 const prior=prompt;
@@ -31,8 +31,8 @@ function unifyGaze(source){
  ];
  for(const rx of clauses)s=s.replace(rx,'');
  // Resolve one gaze target per active figure, respecting the selected mix mode.
- const wall=String(state.wall||'').split(/\\r?\\n/).map(x=>x.trim()).find(Boolean)||'';
- const first=wall.split(/\\s+/)[0]||'FIRST WORD';
+ const wall=String(state.wall||'').split(/\r?\n/).map(x=>x.trim()).find(Boolean)||'';
+ const first=wall.split(/\s+/)[0]||'FIRST WORD';
  const wallOn=typeof V941==='undefined'||V941.wallOn!==false;
  const active=[];
  const enabledMain=typeof V941==='undefined'||V941.mainEnabled!==false;
@@ -56,10 +56,17 @@ function unifyGaze(source){
  }
  const rules=active.map(f=>f.name+': '+target(f)+'.').join('\\n');
  s=s.split('\\n').filter(x=>!x.startsWith('n the geometric CENTER of the FIRST RED WALL TEXT LINE:')).join('\\n');
+ // Remove incompatible legacy poster-action prescriptions when they demand opposite hands.
+ // Keep actual selected owner, physical sign placement, pose and text from the base prompt.
+ const hasLeft=/PLAKAT[^\\n]*LINKEN Hand/i.test(s);
+ const hasRight=/FINAL SMART POSTER DIRECTOR[^\\n]*rechten freien Hand/i.test(s);
+ if(hasLeft&&hasRight){
+   s=s.split('\\n').filter(line=>!line.startsWith('FINAL SMART POSTER DIRECTOR (takes precedence')).join('\\n');
+ }
  s=s.replace(/\\n{3,}/g,'\\n\\n').trimEnd();
- return s+'\\n\\n=== INDIVIDUAL GAZE AUTHORITY V9.9.29 — OVERRIDES CONFLICTING GAZE DIRECTIVES ONLY ===\\n'+
+ return s+'\\n\\n=== INDIVIDUAL GAZE AUTHORITY V9.9.30 — OVERRIDES CONFLICTING GAZE DIRECTIVES ONLY ===\\n'+
  'Apply these per-character gaze targets to ACTIVE figures only. Wall target means the exact FIRST WORD of the FIRST red wall line'+(wallOn?' ("'+first.replace(/"/g,'')+'")':' (wall lettering disabled)')+'.\\n'+rules+'\\n'+
- 'From each figure actual eye position and selected camera perspective, establish a plausible eye-to-target vector. Turn eyes, entire head and neck naturally; adjust torso only when anatomically necessary and allowed by the chosen pose. Do not force all figures to share one target or screen direction. Preserve independent pose, furniture, placard ownership, manual position, architecture and camera settings. Only reposition a figure if its positioning is explicitly AUTO and required for plausible anatomy. POSE MIX OFF retains original individual poses and gaze selections. POSE MIX ON respects each explicitly chosen mix gaze. No extra figures.\\n=== END INDIVIDUAL GAZE AUTHORITY ===\\n';
+ 'From each figure actual eye position and selected camera perspective, establish a plausible eye-to-target vector. Turn eyes, entire head and neck naturally; adjust torso only when anatomically necessary and allowed by the chosen pose. Do not force all figures to share one target or screen direction. Preserve independent pose, furniture, placard ownership, manual position, architecture and camera settings. For wall gaze, the line begins at the first red word on the facade, not in the skyline, the sky, or another building. Each figure must turn its chin, nose bridge and pupils toward that physically located word; looking roughly in the direction of the facade while eyes point elsewhere is incorrect. Only reposition a figure if its positioning is explicitly AUTO and required for plausible anatomy. POSE MIX OFF retains original individual poses and gaze selections. POSE MIX ON respects each explicitly chosen mix gaze. No extra figures.\\n=== END INDIVIDUAL GAZE AUTHORITY ===\\n';
 
 }
 prompt=function(){return unifyGaze(prior.apply(this,arguments))};
