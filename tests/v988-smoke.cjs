@@ -29,6 +29,6 @@ ok('3 scene recommendations',()=>assert.equal((ctx.V988scenes().match(/Szene \+ 
 ok('scene scoring and camera present',()=>{ctx.V988scenes();assert.ok(ctx.V96.proposals.every(p=>p.score>0&&Number(p.distance)>0&&p.lens))});
 ok('3 editorial ideas',()=>assert.equal(ctx.V988editorIdeas().length,3));
 ok('editorial includes active figures',()=>assert.equal(ctx.V988editorIdeas()[0].notes.length,2));
-ok('editorial apply changes saved notes',()=>{const b={dataset:{v988Apply:'0'},hasAttribute:x=>x==='data-v988-apply'};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.ok(ctx.BDS987.notes.main?.includes('ersten roten Textzeile'));assert.ok(ctx.BDS987.notes.N1)});
-ok('manual settings unaffected by recommendation refresh',()=>{const original=ctx.state.scene;const b={dataset:{v988:'scenes'},hasAttribute:()=>false};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.equal(ctx.state.scene,original)});
+ok('editorial apply changes saved notes',()=>{const b={dataset:{v988Apply:'0'},hasAttribute:x=>x==='data-v988-apply',matches:()=>false};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.ok(ctx.BDS987.notes.main?.includes('ersten roten Textzeile'));assert.ok(ctx.BDS987.notes.N1)});
+ok('manual settings unaffected by recommendation refresh',()=>{const original=ctx.state.scene;const b={dataset:{v988:'scenes'},hasAttribute:()=>false,matches:()=>false};for(const cb of listeners.click||[])cb({target:{closest:()=>b}});assert.equal(ctx.state.scene,original)});
 console.log('V9.8.8 functional smoke checks complete');
