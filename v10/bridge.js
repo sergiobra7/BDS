@@ -331,7 +331,7 @@ function suppressLegacyDirector(){
 
 function pruneLegacyPanels(){
  const root=document.getElementById('content');if(!root)return;
- const unwanted=/aktive szenenquelle|kamera\s*[·•:-]\s*schnellzugriff|manueller fassadenfinder|fassadenfinder\s*[·•:-]\s*inaktiv|smart\s*(scene\s*)?director|editorial\s*impact|director|511 passende fassaden|figurenverteilung|v9\.6\.3\s*[·•:-]\s*aktivität/i;
+ const unwanted=/aktive szenenquelle|manueller fassadenfinder|fassadenfinder\s*[·•:-]\s*inaktiv|smart\s*(scene\s*)?director|editorial\s*impact|director|511 passende fassaden|figurenverteilung|v9\.6\.3\s*[·•:-]\s*aktivität/i;
  for(const heading of root.querySelectorAll('h1,h2,h3,h4,h5,summary,strong,button')){
   const title=(heading.textContent||'').trim();
   if(title.length>130||!unwanted.test(title))continue;
@@ -344,7 +344,7 @@ function pruneLegacyPanels(){
 
 function hardRemoveLegacyCards(){
  const root=document.getElementById('content');if(!root)return;
- const unwanted=/kamera\s*[·•:-]\s*schnellzugriff|aktive szenenquelle|manueller fassadenfinder|smart\s*(scene\s*)?director|editorial\s*impact|fassadenfinder\s*[·•:-]\s*inaktiv/i;
+ const unwanted=/aktive szenenquelle|manueller fassadenfinder|smart\s*(scene\s*)?director|editorial\s*impact|fassadenfinder\s*[·•:-]\s*inaktiv/i;
  for(const node of root.querySelectorAll('h1,h2,h3,h4,h5,summary,button,strong')){
   const label=(node.textContent||'').trim();
   if(label.length>100||!unwanted.test(label))continue;
@@ -405,5 +405,5 @@ document.addEventListener("DOMContentLoaded",()=>{
  const tabs=document.getElementById('tabs');if(tabs)new MutationObserver(install).observe(tabs,{childList:true});
  install();
 });
-window.BDS10Bridge={config,run,GIANT_FACADES,MAIN_POSES};
+window.BDS10Bridge={config,run,GIANT_FACADES,MAIN_POSES,openXXL:()=>{window.BDS10XXLTabOpen=true;window.BDS10MainTabOpen=false;showCleanXXLTab();}};
 })();
