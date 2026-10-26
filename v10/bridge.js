@@ -165,7 +165,34 @@ function compactAllFigurePanels(){
  }
 }
 
+
+function replaceMainFigureTab(){
+ const content=document.getElementById('content');
+ const active=document.querySelector('#tabs button.active, #tabs [aria-selected="true"]');
+ if(!content||!active||!/hauptfigur/i.test(active.textContent||''))return;
+ if(content.querySelector('#bds10-only-main'))return;
+ const panel=document.createElement('section');panel.className='panel';panel.id='bds10-only-main';
+ const h=document.createElement('h2');h.textContent='Hauptfigur · Mann mit Zopf';panel.appendChild(h);
+ const toggle=document.createElement('label');toggle.className='v9823-toggle';
+ const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=typeof V941==='undefined'||V941.mainEnabled!==false;
+ checkbox.addEventListener('change',()=>{if(typeof V941!=='undefined'){V941.mainEnabled=checkbox.checked;if(typeof V941save==='function')V941save()}});
+ toggle.append(checkbox,document.createTextNode(' Hauptfigur aktiv'));panel.appendChild(toggle);
+ function addSelect(label,values,value,change){
+  const l=document.createElement('label');l.className='label';l.textContent=label;
+  const select=document.createElement('select');
+  for(const [key,title] of values){const o=document.createElement('option');o.value=key;o.textContent=title;select.appendChild(o)}
+  select.value=value;select.addEventListener('change',()=>change(select.value));panel.append(l,select);
+ }
+ addSelect('Pose',MAIN_POSES.map(p=>[p,p]),MAIN_POSES.includes(mainPose())?mainPose():MAIN_POSES[0],v=>{window.BDS10MainPose=v;try{localStorage.setItem(POSE_KEY,v)}catch(e){}});
+ const v=typeof V941!=='undefined'?V941:{};
+ addSelect('Position',(typeof V941positions!=='undefined'?V941positions:['Links im Vordergrund','Rechts im Vordergrund','Gegenüberliegender Gehweg']).map(x=>[x,x]),v.mainPosition||'Links im Vordergrund',value=>{if(typeof V941!=='undefined'){V941.mainPosition=value;if(typeof V941save==='function')V941save()}});
+ addSelect('Blickrichtung',(typeof V941gazes!=='undefined'?V941gazes:['Zur Wand','Zur Kamera']).map(x=>[x,x]),v.mainGaze||'Zur Wand',value=>{if(typeof V941!=='undefined'){V941.mainGaze=value;if(typeof V941save==='function')V941save()}});
+ const note=document.createElement('p');note.className='hint';note.textContent='Referenzfoto des Mannes mit Zopf beim Bildgenerator separat hochladen.';panel.appendChild(note);
+ content.replaceChildren(panel);
+}
+
 function install(){
+ replaceMainFigureTab();
  compactAllFigurePanels();
  removeDirectorImpactUI();
  simplifyMainCharacter();
