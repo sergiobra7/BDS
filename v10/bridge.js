@@ -89,7 +89,22 @@ function installMainPose(){
  wrapper.append(label,select);heading.insertAdjacentElement("afterend",wrapper);
 }
 
+
+function removeDirectorImpactUI(){
+ const root=document.getElementById('content');if(!root)return;
+ for(const el of root.querySelectorAll('section, .panel, .v96director')){
+  if(el.id==='bds10-facade-finder'||el.id==='bds10-main-pose')continue;
+  const heading=el.querySelector('h2, h3, .v96head strong');
+  if(!heading)continue;
+  const title=(heading.textContent||'').trim();
+  if(/SMART SCENE DIRECTOR|EDITORIAL IMPACT PRO/i.test(title)){
+   if(el.style.display!=='none')el.style.display='none';
+  }
+ }
+}
+
 function install(){
+ removeDirectorImpactUI();
  installMainPose();
 
  const anchor=document.getElementById("downloadPrompt");
