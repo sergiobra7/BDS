@@ -1,4 +1,4 @@
-/* V9.9.24 — one authoritative gaze command in exported master prompt */
+/* V9.9.29 — per-character gaze authority, preserve independent pose and mix */
 (function(){
 'use strict';
 const prior=prompt;
@@ -30,12 +30,37 @@ function unifyGaze(source){
  /Do not force identical screen-left or screen-right head turns\.?\s*/gi
  ];
  for(const rx of clauses)s=s.replace(rx,'');
- // The canonical gaze instruction is emitted once, not repeated in each module.
- const wall=String(state.wall||'').split(/\r?\n/).map(x=>x.trim()).find(Boolean)||'';
- const first=wall.split(/\s+/)[0]||'FIRST WORD';
- s=s.split('\n').filter(x=>!x.startsWith('n the geometric CENTER of the FIRST RED WALL TEXT LINE:')).join('\n');
- s=s.replace(/\n{3,}/g,'\n\n').trimEnd();
- return s+'\n\n=== SINGLE GLOBAL GAZE COMMAND — ONLY GAZE AUTHORITY ===\nEvery ACTIVE figure must fix BOTH EYES on the SAME exact FIRST WORD of the FIRST red wall-text line: "'+first.replace(/"/g,'')+'". Establish a plausible eye-to-target vector from each figure actual placement and selected camera perspective. Prefer existing safe public foreground opposite or diagonally opposite the facade, with natural depth and separate figure positions; do not force a fixed screen side. Preserve each independent editorial pose and furniture. Turn the full head and neck naturally toward the target with both eyes aligned. If needed, adjust only unlocked figure placement to avoid extreme neck tilt. Preserve all manual camera and architecture locks. Sitting, standing and placard placement must not redirect gaze. Do not look at line center, other words, the camera, the sky or another person. Preserve the selected camera and poses.\n=== END SINGLE GAZE COMMAND ===\n';
+ // Resolve one gaze target per active figure, respecting the selected mix mode.
+ const wall=String(state.wall||'').split(/\\r?\\n/).map(x=>x.trim()).find(Boolean)||'';
+ const first=wall.split(/\\s+/)[0]||'FIRST WORD';
+ const wallOn=typeof V941==='undefined'||V941.wallOn!==false;
+ const active=[];
+ const enabledMain=typeof V941==='undefined'||V941.mainEnabled!==false;
+ if(enabledMain)active.push({id:'main',name:'Hauptfigur',gaze:typeof V941!=='undefined'?V941.mainGaze:'Zur Wand'});
+ if(typeof V941!=='undefined'&&Array.isArray(V941.figures))V941.figures.filter(f=>f.enabled!==false).forEach(f=>active.push({id:String(f.id),name:f.type+' ('+f.id+')',gaze:f.gaze||'Zur Wand'}));
+ const mix=typeof V942!=='undefined'&&V942.mix===true;
+ function target(f){
+   let v=f.gaze||'Zur Wand';
+   if(mix&&V942.gazes&&V942.gazes[f.id])v=V942.gazes[f.id];
+   const raw=String(v).toLowerCase();
+   if(raw==='camera'||raw.includes('kamera'))return 'camera lens';
+   if(raw==='street'||raw.includes('straße'))return 'street';
+   if(raw==='sign'||raw.includes('plakat'))return typeof V941!=='undefined'&&V941.signOn?'physical placard':'the selected scene';
+   if(raw.includes('hauptfigur'))return enabledMain?'main character':'the selected scene';
+   if(raw.includes('nebenfigur'))return active.find(x=>x.id!==f.id&&x.id!=='main')?.name||'the selected scene';
+   const match=active.find(x=>x.id===v);
+   if(match)return match.name;
+   if(raw.includes('auto'))return wallOn?'first word of the first red wall line':'natural scene-specific gaze';
+   if(raw==='wall'||raw.includes('wand')||raw.includes('textzeile'))return wallOn?'first word of the first red wall line':'natural scene-specific gaze';
+   return wallOn?'first word of the first red wall line':'natural scene-specific gaze';
+ }
+ const rules=active.map(f=>f.name+': '+target(f)+'.').join('\\n');
+ s=s.split('\\n').filter(x=>!x.startsWith('n the geometric CENTER of the FIRST RED WALL TEXT LINE:')).join('\\n');
+ s=s.replace(/\\n{3,}/g,'\\n\\n').trimEnd();
+ return s+'\\n\\n=== INDIVIDUAL GAZE AUTHORITY V9.9.29 — OVERRIDES CONFLICTING GAZE DIRECTIVES ONLY ===\\n'+
+ 'Apply these per-character gaze targets to ACTIVE figures only. Wall target means the exact FIRST WORD of the FIRST red wall line'+(wallOn?' ("'+first.replace(/"/g,'')+'")':' (wall lettering disabled)')+'.\\n'+rules+'\\n'+
+ 'From each figure actual eye position and selected camera perspective, establish a plausible eye-to-target vector. Turn eyes, entire head and neck naturally; adjust torso only when anatomically necessary and allowed by the chosen pose. Do not force all figures to share one target or screen direction. Preserve independent pose, furniture, placard ownership, manual position, architecture and camera settings. Only reposition a figure if its positioning is explicitly AUTO and required for plausible anatomy. POSE MIX OFF retains original individual poses and gaze selections. POSE MIX ON respects each explicitly chosen mix gaze. No extra figures.\\n=== END INDIVIDUAL GAZE AUTHORITY ===\\n';
+
 }
 prompt=function(){return unifyGaze(prior.apply(this,arguments))};
 globalThis.BDS_SINGLE_GAZE_924=unifyGaze;
