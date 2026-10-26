@@ -35,7 +35,39 @@ function run(){
  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="BDS-V10-master-prompt.txt";
  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
 }
+
+// V10-only camera suggestions: preserve manually selected settings until "Szene + Kamera" is clicked.
+function sceneCamera(scene){
+ const name=String(scene.name||"").toLowerCase();
+ const kind=String(scene.kind||"").toLowerCase();
+ if(/gasse|innenhof|tunnel|passage|enge|schmal/.test(name+" "+kind))return {lens:"24",distance:12,angle:8};
+ if(/platz|bahnhof|vorplatz|promenade|boulevard/.test(name+" "+kind))return {lens:"35",distance:25,angle:7};
+ if(/hafen|kanal|industrie|lager|logistik|fabrik/.test(name+" "+kind))return {lens:"50",distance:45,angle:6};
+ if(/hochhaus|turm|monument|riesig/.test(name+" "+kind))return {lens:"35",distance:55,angle:9};
+ return {lens:"35",distance:30,angle:7};
+}
+function installCameraSuggestions(){
+ if(typeof V988scenes!=="function"||V988scenes.__bds10)return;
+ const previous=V988scenes;
+ V988scenes=function(){
+  let html=previous.apply(this,arguments);
+  if(typeof V96==="undefined"||!Array.isArray(V96.proposals))return html;
+  for(const p of V96.proposals){
+   const camera=sceneCamera(p);Object.assign(p,camera);
+  }
+  // Camera labels must correspond to the same values the existing apply handler saves.
+  let index=0;
+  html=html.replace(/(<button class="btn" data-v96="apply" data-i="\d+">)/g,function(match){
+   const p=V96.proposals[index++];
+   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p>'+match:match;
+  });
+  return html;
+ };
+ V988scenes.__bds10=true;
+}
+
 function install(){
+ installCameraSuggestions();
  const anchor=document.getElementById("downloadPrompt");
  if(!anchor||document.getElementById("bds10-export"))return;
  const btn=document.createElement("button");btn.id="bds10-export";btn.className="btn primary";
@@ -44,7 +76,7 @@ function install(){
 }
 document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
- new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
+ installCameraSuggestions();new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
 });
 window.BDS10Bridge={config,run};
 })();
