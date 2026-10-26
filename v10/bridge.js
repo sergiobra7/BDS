@@ -70,7 +70,7 @@ function installCameraSuggestions(){
   let index=0;
   html=html.replace(/(<button class="btn" data-v96="apply" data-i="\d+">)/g,function(match){
    const p=V96.proposals[index++];
-   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p><p class="hint">'+diagonalRecommendation(p)+'</p><p class="hint">IMPACT: '+p.bds10Impact.score+'/100 · '+p.bds10Impact.level+' — '+p.bds10Impact.reason+'</p>'+match:match;
+   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p><p class="hint">'+diagonalRecommendation(p)+'</p>'+match:match;
   });
   return html;
  };
