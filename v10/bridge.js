@@ -17,6 +17,7 @@ function config(){
  base.poster.enabled=v.signOn===true;
  base.poster.text=String(s.signTextMode==="Wandtext übernehmen"?s.wall:s.signText||"");
  base.figures[0].name=String(v.mainSource||base.figures[0].name);
+ base.figures[0].pose=mainPose();
  base.figures[0].position=String(v.mainPosition||base.figures[0].position);
  base.figures[0].orientation=String(v.mainOrientation||base.figures[0].orientation);
  const gazes={"Zur Wand":"wall","Zur Kamera":"camera","Zur Hauptfigur":"camera","Zur Nebenfigur":"camera"};
@@ -58,7 +59,36 @@ function facadeFinderPanel(){
  const status=document.createElement("p");status.id="bds10-facade-status";status.className="hint";box.appendChild(status);return box;
 }
 
+
+const MAIN_POSES=[
+ "Auf stabiler Bank sitzen, Unterarme auf den Knien",
+ "Auf breiter Treppe sitzen, Ellbogen auf den Oberschenkeln",
+ "Auf Parkbank sitzen, Hände locker auf den Knien",
+ "Rückwärts auf stabilem Stuhl sitzen, Unterarme auf der Lehne",
+ "Auf niedrigem Hocker sitzen, Hände entspannt",
+ "Ruhig stehen, Arme seitlich",
+ "Ruhig stehen, Hände hinter dem Rücken",
+ "Seitlich an freistehendem Geländer lehnen",
+ "Auf niedriger Mauer sitzen, Beine ruhig am Boden",
+ "Auf Bank sitzen, Oberkörper leicht nach vorn geneigt"
+];
+const POSE_KEY="bds10-main-pose";
+function mainPose(){try{return localStorage.getItem(POSE_KEY)||MAIN_POSES[0]}catch(e){return window.BDS10MainPose||MAIN_POSES[0]}}
+function installMainPose(){
+ const content=document.getElementById("content");if(!content)return;
+ const heading=Array.from(content.querySelectorAll("h2")).find(h=>/Hauptfigur.*unabhängige Steuerung/i.test(h.textContent));
+ if(!heading||document.getElementById("bds10-main-pose"))return;
+ const wrapper=document.createElement("div");wrapper.id="bds10-main-pose";
+ const label=document.createElement("label");label.textContent="Mann mit Zopf · Pose (10 Optionen)";label.htmlFor="bds10-pose-select";
+ const select=document.createElement("select");select.id="bds10-pose-select";select.style.cssText="display:block;width:100%;margin:8px 0 14px";
+ for(const pose of MAIN_POSES){const option=document.createElement("option");option.value=pose;option.textContent=pose;select.appendChild(option)}
+ select.value=MAIN_POSES.includes(mainPose())?mainPose():MAIN_POSES[0];
+ select.addEventListener("change",()=>{window.BDS10MainPose=select.value;try{localStorage.setItem(POSE_KEY,select.value)}catch(e){}});
+ wrapper.append(label,select);heading.insertAdjacentElement("afterend",wrapper);
+}
+
 function install(){
+ installMainPose();
 
  const anchor=document.getElementById("downloadPrompt");
  const content=document.getElementById("content");
@@ -72,5 +102,5 @@ document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
  new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
 });
-window.BDS10Bridge={config,run,GIANT_FACADES};
+window.BDS10Bridge={config,run,GIANT_FACADES,MAIN_POSES};
 })();
