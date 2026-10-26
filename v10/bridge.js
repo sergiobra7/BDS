@@ -376,7 +376,6 @@ function placeXXLButtonUnderText(){
 }
 function install(){
  installDedicatedMainTab();
- placeXXLButtonUnderText();
  installCleanXXLTab();
  replaceMainFigureTab();
  simplifyFacadeScreen();
