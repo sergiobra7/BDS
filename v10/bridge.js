@@ -12,6 +12,8 @@ function config(){
  base.camera.format=String(s.format||base.camera.format);
  base.camera.lens=Number(s.lens||s.cameraLens||base.camera.lens);
  base.camera.distance=Number(s.distance||s.cameraDistance||base.camera.distance);
+ const separation=Number(s.figureToFacadeDistance||0);
+ if(separation>0)base.camera.figureToFacade=separation;
  base.poster.enabled=v.signOn===true;
  base.poster.text=String(s.signTextMode==="Wandtext übernehmen"?s.wall:s.signText||"");
  base.figures[0].name=String(v.mainSource||base.figures[0].name);
@@ -42,7 +44,7 @@ function diagonalRecommendation(scene){
  const left=/wand links|fassade links|linke fassade/i.test(label);
  const right=/wand rechts|fassade rechts|rechte fassade/i.test(label);
  const placement=left?"Wand links oben → Figuren und benutzte Gegenstände rechts unten":right?"Wand rechts oben → Figuren und benutzte Gegenstände links unten":"Diagonale: Wand auf einer oberen Bildseite, Figuren und alle benutzten Gegenstände gegenüber unten";
- return placement+". Bank, Treppe, Stuhl, Geländer und Sitz-/Stützflächen niemals unter dem Wandtext; natürliche Blickachse ohne extreme Halsneigung.";
+ return placement+". Kamera auf Figurenseite, Schriftfassade auf der anderen Seite einer sichtbar freien Straße/Platzfläche. Kamera-Fassade-Abstand bleibt unverändert. Bank, Treppe, Stuhl, Geländer und Sitz-/Stützflächen niemals unter dem Wandtext; natürliche Blickachse ohne extreme Halsneigung.";
 }
 
 // V10-only camera suggestions: preserve manually selected settings until "Szene + Kamera" is clicked.
@@ -60,9 +62,9 @@ function impactAssessment(scene){
  const label=(String(scene.name||"")+" "+String(scene.kind||"")).toLowerCase();
  const blocked=/sackgasse|schmaler gang|innenraum|unterführung|enge passage/.test(label);
  const opposite=/platz|vorplatz|straße|strasse|boulevard|promenade|kanal|hafen|ufer|hof|terminal|industrie/.test(label);
- const score=blocked?45:opposite?90:70;
+ const score=blocked?35:opposite?90:65;
  return {score,level:score>=85?"HOCH":score>=65?"MITTEL":"EINGESCHRÄNKT",
- reason:blocked?"Gegenüberliegende Figurengruppe und diagonale Blickachse räumlich schwierig.":opposite?"Gute Chance auf getrennte Fassaden- und Vordergrundebenen mit diagonaler Blickachse.":"Gegenüberliegenden sicheren Vordergrund und freie Sichtlinie vor Auswahl prüfen."};
+ reason:blocked?"WARNUNG: Kein verlässlich geeigneter gegenüberliegender Vordergrund; Szene für Sitzmöbel und diagonale Blickachse ungeeignet.":opposite?"Gute Chance auf getrennte Fassaden- und Vordergrundebenen mit diagonaler Blickachse.":"Gegenüberliegenden sicheren Vordergrund und freie Sichtlinie vor Auswahl prüfen."};
 }
 
 function installCameraSuggestions(){
