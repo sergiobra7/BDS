@@ -272,6 +272,17 @@ function enforceOnlyXXLFinder(){
   if(finder){finder.style.display='block';if(root.firstElementChild!==finder)root.prepend(finder)}
  }
 }
+
+function removeLegacyFacadeFinderEverywhere(){
+ const root=document.getElementById('content');if(!root)return;
+ for(const el of root.querySelectorAll('button,summary,h2,h3,h4,strong')){
+  const label=(el.textContent||'').trim();
+  if(!/^(MANUELLER FASSADENFINDER|FASSADENFINDER\s*[·•:]\s*INAKTIV|AKTIVE SZENENQUELLE\s*:)/i.test(label))continue;
+  const block=el.closest('.panel,details,section');
+  if(block&&block.id!=='bds10-facade-finder'&&block!==root&&block.style.display!=='none')block.style.display='none';
+ }
+}
+
 function install(){
  installDedicatedMainTab();
  replaceMainFigureTab();
