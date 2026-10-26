@@ -341,6 +341,21 @@ function pruneLegacyPanels(){
  }
 }
 
+
+function hardRemoveLegacyCards(){
+ const root=document.getElementById('content');if(!root)return;
+ const unwanted=/kamera\s*[·•:-]\s*schnellzugriff|aktive szenenquelle|manueller fassadenfinder|smart\s*(scene\s*)?director|editorial\s*impact|fassadenfinder\s*[·•:-]\s*inaktiv/i;
+ for(const node of root.querySelectorAll('h1,h2,h3,h4,h5,summary,button,strong')){
+  const label=(node.textContent||'').trim();
+  if(label.length>100||!unwanted.test(label))continue;
+  let el=node;
+  while(el.parentElement&&el.parentElement!==root&&!el.classList.contains('panel')&&el.tagName!=='SECTION')el=el.parentElement;
+  if(el===root||el.id==='bds10-facade-finder'||el.id==='bds10-xxl-screen')continue;
+  if(el.parentElement===root){el.remove();continue}
+  el.style.setProperty('display','none','important');
+ }
+}
+
 function install(){
  installDedicatedMainTab();
  installCleanXXLTab();
@@ -349,6 +364,7 @@ function install(){
  enforceOnlyXXLFinder();
  suppressLegacyDirector();
  pruneLegacyPanels();
+ hardRemoveLegacyCards();
  removeLegacyFacadeFinderEverywhere();
  compactAllFigurePanels();
  removeDirectorImpactUI();
