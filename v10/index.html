@@ -1,6 +1,6 @@
 <!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101114"><title>BİR.DUVARSESİ V10 · CLEAN</title><style>
 *{box-sizing:border-box}body{margin:0;background:#101114;color:#f4f4f5;font-family:system-ui,-apple-system,sans-serif}main{max-width:780px;margin:auto;padding:20px 16px 80px}header{padding:20px 16px;border-bottom:1px solid #39393f;text-align:center}header small{color:#a5a5b0}h1{font-size:29px;margin:8px 0}h1 span{color:#e43a4f}h2{font-size:20px;margin:0 0 20px}.card{background:#1b1b21;border:1px solid #41414b;border-radius:17px;padding:20px;margin:16px 0}label{display:block;color:#c9c9d0;font-weight:600;margin:16px 0}input:not([type=checkbox]),select,textarea{display:block;width:100%;margin-top:9px;padding:15px;background:#111116;border:1px solid #555562;border-radius:12px;color:#fff;font:inherit;font-weight:400}textarea{resize:vertical}button{cursor:pointer;background:#303039;color:white;border:1px solid #585866;border-radius:12px;padding:15px;font:inherit;font-weight:650}button.red{width:100%;background:#c32840;border-color:#ef455c;padding:20px 14px;margin:10px 0;font-size:17px}.facade{display:block;width:100%;text-align:left;margin:10px 0}.facade small{display:block;margin-top:7px;color:#c4c4ca;font-weight:400}.facade.chosen{border:2px solid #f04a5e;background:#4a242c}#xxl-panel[hidden]{display:none}#output{font-size:13px;line-height:1.55}#copy,#download{margin:8px 8px 0 0}#status{color:#b5dcb8}
-</style></head><body><header><small>V10 · CLEAN · ISOLATED</small><h1>BİR.<span>DUVARSESİ</span></h1></header><main><div id="content"></div></main><script src="./core.js"></script><script>(()=>{'use strict';
+</style></head><body><header><small>V10 · CLEAN · ISOLATED</small><h1>BİR.<span>DUVARSESİ</span></h1></header><main><div id="content"><section class="card"><h2>V10 wird geladen</h2><p>Falls dieser Text stehen bleibt, wurde die Bedienoberfläche nicht gestartet.</p></section></div></main><script src="./core.js"></script><script>(()=>{'use strict';
 const $=id=>document.getElementById(id);
 const facades=[
 ['EXTREM BREIT · Schwarze Industrie-Brandwand','80–120 m breit · 25–45 m hoch','Extrem breite schwarze Industrie-Brandwand jenseits einer breiten öffentlichen Straße.'],
@@ -34,5 +34,13 @@ function render(){
  $('download').addEventListener('click',()=>{const blob=new Blob([$('output').value],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='BDS-V10-master-prompt.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
  update();
 }
-document.addEventListener('DOMContentLoaded',render);
+function boot(){
+ try{render();document.documentElement.dataset.v10Boot='ok'}
+ catch(error){
+  document.documentElement.dataset.v10Boot='failed';
+  const target=document.getElementById('content');
+  if(target){target.innerHTML='<section class="card"><h2>V10 · Startfehler</h2><p id="v10-error"></p><button onclick="location.reload()">Erneut laden</button></section>';document.getElementById('v10-error').textContent=String(error&&error.stack||error)}
+ }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();</script></body></html>
