@@ -4,7 +4,7 @@
 const DEFAULTS={scene:"",facade:"Schwarzer Backstein",time:"Nacht",camera:{perspective:"Low Angle",lens:35,distance:45,format:"9:16"},wall:{enabled:true,text:"",font:"DIN CONDENSED BLACK",color:"Mattrot",dominance:90},poster:{enabled:false,text:"",owner:"main",mode:"Freistehend",hand:"Keine",colors:{}},mix:false,figures:[{id:"main",name:"Mann mit Zopf",enabled:true,pose:"Aufrecht stehen",position:"Linker Vordergrund",gaze:"wall",orientation:"Automatisch"}]};
 const clone=x=>JSON.parse(JSON.stringify(x));
 const normalize=s=>String(s||"").trim();
-const firstWord=s=>normalize(s).split(/\s+/u)[0]||"";
+const firstWord=s=>String(s||"").split(/\r?\n/u).map(v=>v.trim()).find(Boolean)?.split(/\s+/u)[0]||"";
 const modes=new Set(["wall","camera","street","poster","auto"]);
 function validate(input){
  const x=clone(input||{});const errors=[];
@@ -20,11 +20,12 @@ function validate(input){
  if(x.poster?.enabled&&!normalize(x.poster.text))errors.push("Plakattext fehlt");
  if(x.poster?.enabled&&!x.poster.owner)errors.push("Plakatbesitzer fehlt");
  if(x.poster?.enabled&&x.poster.owner&&!ids.has(x.poster.owner))errors.push("Plakatbesitzer ist nicht aktiv");
- if(x.poster?.enabled&&x.poster.mode==="Gehalten"&&active.some(f=>f.id===x.poster.owner&&/taschen|pockets|verschränkt/i.test(f.pose||"")))errors.push("Gehaltenes Plakat kollidiert mit der gewählten Hand-/Armhaltung des Besitzers");
+ if(x.poster?.enabled&&x.poster.mode==="Gehalten"&&active.some(f=>f.id===x.poster.owner&&/taschen|pockets|verschränkt|beide hände|both hands/i.test(f.pose||"")))errors.push("Gehaltenes Plakat kollidiert mit der gewählten Hand-/Armhaltung des Besitzers");
  for(const f of active){if(!modes.has(f.gaze)&&!active.some(other=>other.id===f.gaze&&other.id!==f.id))errors.push("Ungültiges Blickziel für "+f.id);}
  if(active.some(f=>/(gehend|laufend|walking|running|spaziergang|im flug|gleitschirm)/i.test(f.pose||"")))errors.push("Gehende oder laufende Posen sind nicht erlaubt");
  if(active.length===0)errors.push("Mindestens eine aktive Figur erforderlich");
  if(x.poster?.enabled&&(!x.poster.colors||typeof x.poster.colors!=="object"||Array.isArray(x.poster.colors)))errors.push("Ungültige Plakat-Wortfarben");
+ if(x.poster?.enabled&&Object.entries(x.poster.colors||{}).some(([word,color])=>!word.trim()||typeof color!=="string"||!color.trim()))errors.push("Wortfarben benötigen nichtleere Wörter und Farbnamen");
  if(x.poster?.enabled){
   if(!["Freistehend","Gehalten"].includes(x.poster.mode))errors.push("Ungültiger Plakatmodus");
   if(x.poster.mode==="Freistehend"&&x.poster.hand!=="Keine")errors.push("Freistehendes Plakat darf keine Haltehand haben");
