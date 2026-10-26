@@ -53,6 +53,15 @@ jobs:
           cp index.html _site/index.html
           cp styles.css _site/styles.css
           cp sw.js _site/sw.js
+          # Include the separately developed V10 application in the published artifact.
+          test -f v10/index.html
+          test -f v10/core.js
+          test -f v10/catalog.js
+          mkdir -p _site/v10
+          cp v10/index.html v10/core.js v10/catalog.js v10/tests.js _site/v10/
+          node --check v10/core.js
+          node --check v10/catalog.js
+          node --check v10/tests.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
