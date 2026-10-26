@@ -59,7 +59,7 @@ function facadeFinderPanel(){
   window.BDS10SelectedFacade=f;
   box.querySelectorAll('[data-giant-facade]').forEach(option=>{
    const active=option===btn;
-   option.style.setProperty('border',active?'4px solid #ff9800':'2px solid #484850','important');
+   option.style.setProperty('border',active?'4px solid #ff9800':'4px solid #484850','important');
    option.style.setProperty('background-color',active?'#593315':'#29292f','important');
    option.style.setProperty('box-shadow',active?'0 0 0 2px rgba(255,152,0,.45)':'none','important');
    option.setAttribute('aria-pressed',String(active));
