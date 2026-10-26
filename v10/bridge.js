@@ -36,6 +36,15 @@ function run(){
  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
 }
 
+// Global composition policy shared by every scene suggestion and the V10 export.
+function diagonalRecommendation(scene){
+ const label=String(scene.name||"")+" "+String(scene.kind||"");
+ const left=/wand links|fassade links|linke fassade/i.test(label);
+ const right=/wand rechts|fassade rechts|rechte fassade/i.test(label);
+ const placement=left?"Wand links oben → Figuren und benutzte Gegenstände rechts unten":right?"Wand rechts oben → Figuren und benutzte Gegenstände links unten":"Diagonale: Wand auf einer oberen Bildseite, Figuren und alle benutzten Gegenstände gegenüber unten";
+ return placement+". Bank, Treppe, Stuhl, Geländer und Sitz-/Stützflächen niemals unter dem Wandtext; natürliche Blickachse ohne extreme Halsneigung.";
+}
+
 // V10-only camera suggestions: preserve manually selected settings until "Szene + Kamera" is clicked.
 function sceneCamera(scene){
  const name=String(scene.name||"").toLowerCase();
@@ -59,7 +68,7 @@ function installCameraSuggestions(){
   let index=0;
   html=html.replace(/(<button class="btn" data-v96="apply" data-i="\d+">)/g,function(match){
    const p=V96.proposals[index++];
-   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p>'+match:match;
+   return p?'<p class="hint">Kameraempfehlung: '+p.lens+' mm · '+p.distance+' m</p><p class="hint">'+diagonalRecommendation(p)+'</p>'+match:match;
   });
   return html;
  };
@@ -78,5 +87,5 @@ document.addEventListener("DOMContentLoaded",()=>{
  const root=document.getElementById("content");if(!root)return;
  installCameraSuggestions();new MutationObserver(install).observe(root,{childList:true,subtree:true});install();
 });
-window.BDS10Bridge={config,run};
+window.BDS10Bridge={config,run,sceneCamera,diagonalRecommendation};
 })();
