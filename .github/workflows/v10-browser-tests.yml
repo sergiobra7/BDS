@@ -1,0 +1,31 @@
+name: V10 browser acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'v10/**'
+      - 'tests/v10/**'
+      - '.github/workflows/v10-browser-tests.yml'
+jobs:
+  browser-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save @playwright/test@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - name: Serve repository
+        run: python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/v10-server.log 2>&1 &
+      - name: Run real browser tests
+        run: npx playwright test tests/v10/xxl.spec.cjs --reporter=line
+      - name: Upload screenshots and traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v10-browser-failures
+          path: test-results/
+          if-no-files-found: ignore
