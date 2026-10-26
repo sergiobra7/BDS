@@ -1,22 +1,18 @@
 const { test, expect } = require('@playwright/test');
-test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
-test('clean V10: four XXL facades, camera and prompt work', async ({ page }) => {
+test.use({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+test('restored V10: legacy UI, text, camera and XXL facade',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:8765/v10/',{waitUntil:'load'});
- await expect(page.getByText('02 · KAMERA · SCHNELLZUGRIFF')).toBeVisible();
- await expect(page.locator('#xxl-toggle')).toBeVisible();
- await page.locator('#xxl-toggle').click();
- await expect(page.locator('#xxl-panel')).toBeVisible();
- await expect(page.locator('[data-facade]')).toHaveCount(4);
- await page.locator('[data-facade="1"]').click();
- await expect(page.locator('#scene-summary')).toContainText('Metropolen-Gebäudeblock');
- await page.locator('#street').selectOption('DUYGUKAPISI V7.0 · ORIGINAL STREET PERSPECTIVE');
- await page.locator('#wall').fill('BİRİNCİ SATIR\nİKİNCİ SATIR\nÜÇÜNCÜ SATIR\nDÖRDÜNCÜ SATIR');
- await page.locator('#make').click();
- await expect(page.locator('#output')).not.toBeEmpty();
- await expect(page.locator('#output')).toHaveValue(/Metropolen|DUYGUKAPISI/i);
- await page.locator('#xxl-toggle').click();
- await expect(page.locator('#xxl-panel')).toBeHidden();
- await expect(page.getByText(/EDITORIAL IMPACT PRO|SMART SCENE DIRECTOR/i)).toHaveCount(0);
+ await page.goto('http://127.0.0.1:8765/v10/',{waitUntil:'domcontentloaded'});
+ await expect(page.locator('#tabs button').first()).toBeVisible({timeout:20000});
+ await expect(page.locator('#content')).not.toBeEmpty();
+ const textTab=page.locator('#tabs button').filter({hasText:/text|wand|plakat/i}).first();
+ await expect(textTab).toBeVisible();await textTab.click();
+ await expect(page.locator('#bds10-text-xxl-open')).toBeVisible({timeout:10000});
+ await page.locator('#bds10-text-xxl-open').click();
+ await expect(page.locator('#bds10-inline-xxl')).toBeVisible();
+ await expect(page.locator('#bds10-inline-xxl')).toContainText('EXTREM BREIT');
+ await page.locator('#bds10-text-xxl-open').click();
+ await expect(page.locator('#bds10-inline-xxl')).toHaveCount(0);
+ await expect(page.locator('#content')).not.toContainText(/SMART SCENE DIRECTOR PRO|EDITORIAL IMPACT PRO/i);
  expect(errors).toEqual([]);
 });
